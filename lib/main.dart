@@ -99,6 +99,8 @@ class MyApp extends StatelessWidget {
       title: 'E3tmed',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+                    useMaterial3: false,
+
           primaryColor: const Color.fromRGBO(18, 0, 66, 1),
           appBarTheme: AppBarTheme(
               backgroundColor: backgroundColor,
