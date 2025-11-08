@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:e3tmed/logic/interfaces/IAuth.dart';
 import 'package:e3tmed/logic/interfaces/IConfiguration.dart';
 import 'package:e3tmed/viewmodels/baseViewModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:injector/injector.dart';
-import 'package:package_info/package_info.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:rxdart/rxdart.dart';
 
 class SplashScreenViewModel extends BaseViewModelWithLogic<IAuth> {
@@ -24,7 +23,8 @@ class SplashScreenViewModel extends BaseViewModelWithLogic<IAuth> {
     String latestVersion = await versionConfig.getCurrentVersion();
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String version = packageInfo.version;
-    if (latestVersion == version) {
+    // skipping logic if failed to get latest version
+    if ((latestVersion.isEmpty) || latestVersion == version) {
       _isNewVersion.add(false);
       switch (state) {
         case LoginState.unAuthenticated:
@@ -34,7 +34,8 @@ class SplashScreenViewModel extends BaseViewModelWithLogic<IAuth> {
           nav.popAndPushNamed("/aHomeScreen");
           break;
         case LoginState.user:
-          nav.popAndPushNamed('/home');
+          // nav.popAndPushNamed('/home');
+          nav.popAndPushNamed("/aHomeScreen");
           break;
       }
     } else {

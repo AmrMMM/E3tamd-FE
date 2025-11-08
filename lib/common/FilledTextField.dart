@@ -28,7 +28,7 @@ class FilledTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextField(
       onChanged: onTextChanged,
-      style: Theme.of(context).textTheme.bodyText2!.copyWith(
+      style: Theme.of(context).textTheme.bodyMedium!.copyWith(
           color: textColor,
           decorationColor: fillColor,
           fontSize: fontSize,
@@ -39,7 +39,7 @@ class FilledTextField extends StatelessWidget {
           hintText: hintText,
           hintStyle: Theme.of(context)
               .textTheme
-              .bodyText2!
+              .bodyMedium!
               .copyWith(color: textColor, fontSize: fontSize),
           filled: true,
           fillColor: fillColor,

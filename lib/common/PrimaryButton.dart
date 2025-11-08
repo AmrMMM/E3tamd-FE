@@ -116,7 +116,7 @@ class PrimaryButtonState extends State<PrimaryButton>
                 child: Theme(
                     data: ThemeData(
                         primaryTextTheme: const TextTheme(
-                            headline1: TextStyle(color: Colors.white))),
+                            headlineMedium: TextStyle(color: Colors.white))),
                     child: Container(
                       clipBehavior: Clip.hardEdge,
                       decoration: const BoxDecoration(),

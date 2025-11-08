@@ -2,7 +2,7 @@ import 'package:e3tmed/common/BaseWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:injector/injector.dart';
-import 'package:launch_review/launch_review.dart';
+import 'package:url_launcher/url_launcher.dart' as LaunchReview;
 
 import '../../../common/customalertdialog/custom_alert_dialog.dart';
 import '../../../logic/interfaces/IStrings.dart';
@@ -40,7 +40,7 @@ class SplashScreenState
                       description: _strings.getStrings(AllStrings
                           .aNewVersionHasBeenReleasedPleaseUpdateTitle),
                       onPositivePressed: () {
-                        LaunchReview.launch(writeReview: false);
+                        LaunchReview.launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=com.e3tmed'));
                         SystemChannels.platform
                             .invokeMethod('SystemNavigator.pop');
                       }),

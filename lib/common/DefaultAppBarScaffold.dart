@@ -20,9 +20,9 @@ class DefaultAppBarScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor ?? Theme.of(context).backgroundColor,
+      backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: Text(title, style: Theme.of(context).textTheme.headline3),
+        title: Text(title, style: Theme.of(context).textTheme.headlineMedium),
         centerTitle: true,
         backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         actions: actions,

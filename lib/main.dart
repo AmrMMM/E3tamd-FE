@@ -33,7 +33,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setDependencies();
   AndroidInitializationSettings androidSettings =
-      const AndroidInitializationSettings("@drawable/logo_colored");
+      const AndroidInitializationSettings("@drawable/launch_background");
   DarwinInitializationSettings iosSettings = const DarwinInitializationSettings(
     requestAlertPermission: true,
     requestBadgePermission: true,

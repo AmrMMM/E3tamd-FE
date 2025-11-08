@@ -111,7 +111,6 @@ class IntroScreenState extends BaseStateObject<IntroScreen, IntroViewModel> {
           showSkipButton: true,
           showDoneButton: true,
           showNextButton: false,
-          isBottomSafeArea: true,
         ),
       ),
     );

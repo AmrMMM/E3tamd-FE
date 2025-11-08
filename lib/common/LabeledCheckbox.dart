@@ -40,7 +40,7 @@ class LabeledCheckbox extends StatelessWidget {
                   offset: const Offset(15, 0),
                   child: Text(
                     label!,
-                    style: Theme.of(context).textTheme.bodyText1,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   )),
             AbsorbPointer(
               absorbing: !enabled,
