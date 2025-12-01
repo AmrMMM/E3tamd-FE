@@ -51,7 +51,7 @@ class MyOrdersCardWidget extends StatelessWidget {
                         children: [
                           const SizedBox(),
                           Text(
-                            strings.getOrderStatusString(order.status!),
+                            strings.getOrderStatusString(order.status),
                             style: const TextStyle(
                               color: Colors.orangeAccent,
                               fontSize: 12,

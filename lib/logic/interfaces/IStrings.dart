@@ -199,7 +199,7 @@ abstract class IStrings {
 
   String getOrderFilterString(AgentOrderFilters filter);
 
-  String getOrderStatusString(OrderStatus status);
+  String getOrderStatusString(OrderStatus? status);
 
   String getUserOrderStatusInformationString(OrderStatus status);
 

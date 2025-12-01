@@ -249,7 +249,7 @@ class ArStrings implements IStrings {
       case AllStrings.changeLanguageTitle:
         return "تغيير اللغة";
       case AllStrings
-            .priceMayChangeAccordingToAgentsVisitAndFeesWillBeDeductedFromTotalPaymentWhenTheRequestIsCompletedTitle:
+          .priceMayChangeAccordingToAgentsVisitAndFeesWillBeDeductedFromTotalPaymentWhenTheRequestIsCompletedTitle:
         return "يمكن للسعر أن يتغير بناء علي زيارة أحد موظفينا اليك, و سيتم استقطاع هذا المبلغ من السعر الاجمالي في حاله تم تأكيد طلبكم";
       case AllStrings.ifYouDontKnowTheDoorDimensionsYouCanAskForAnAgentTitle:
         return "في حالة عدم معرفة الأبعاد الصحيحة, يمكنك طلب أحد موظفينا";
@@ -260,10 +260,10 @@ class ArStrings implements IStrings {
       case AllStrings.confirmTitle:
         return "تأكيد";
       case AllStrings
-            .youWillReceiveACodeToVerifyYourPhoneNumberPleaseWriteItDownWhenYouReceiveItTitle:
+          .youWillReceiveACodeToVerifyYourPhoneNumberPleaseWriteItDownWhenYouReceiveItTitle:
         return "سوف تصلك رسالة بها رمز التأكيد الخاص بك, برجاء إدخال رمز التأكيد";
       case AllStrings
-            .youWillReceiveACodeToResetYourPasswordPleaseWriteItDownWhenYouReceiveItTitle:
+          .youWillReceiveACodeToResetYourPasswordPleaseWriteItDownWhenYouReceiveItTitle:
         return "سوف تصلك رسالة بها رمز التأكيد الخاص بك لتغيير رقم السري الخاص بك, برجاء إدخال رمز التأكيد";
       case AllStrings.codeTitle:
         return "رمز";
@@ -389,7 +389,7 @@ class ArStrings implements IStrings {
   }
 
   @override
-  String getOrderStatusString(OrderStatus status) {
+  String getOrderStatusString(OrderStatus? status) {
     switch (status) {
       case OrderStatus.unassigned:
         return "غير مؤكد";
@@ -401,6 +401,10 @@ class ArStrings implements IStrings {
         return "جاهز للتوصيل";
       case OrderStatus.finished:
         return "تم التوصيل";
+      case OrderStatus.aWaitingForConfirmation:
+        return "في انتظار تأكيد العميل";
+      default:
+        return "غير معروف";
     }
   }
 
@@ -417,6 +421,8 @@ class ArStrings implements IStrings {
         return "تم التكريب بنجاح";
       case OrderStatus.toBeDelivered:
         return "الطلب جاهز للتوصيل";
+      case OrderStatus.aWaitingForConfirmation:
+        return "في انتظار تأكيد العميل";
     }
   }
 
@@ -433,6 +439,8 @@ class ArStrings implements IStrings {
         return "تم اكمال طلبك بنجاح";
       case OrderStatus.toBeDelivered:
         return "طلبكم قيد التوصيل";
+      case OrderStatus.aWaitingForConfirmation:
+        return "في انتظار تأكيد العميل";
     }
   }
 

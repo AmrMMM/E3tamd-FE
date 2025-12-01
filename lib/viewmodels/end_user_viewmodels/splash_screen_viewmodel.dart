@@ -34,8 +34,8 @@ class SplashScreenViewModel extends BaseViewModelWithLogic<IAuth> {
           nav.popAndPushNamed("/aHomeScreen");
           break;
         case LoginState.user:
-          // nav.popAndPushNamed('/home');
-          nav.popAndPushNamed("/aHomeScreen");
+          nav.popAndPushNamed('/home');
+          // nav.popAndPushNamed("/aHomeScreen");
           break;
       }
     } else {

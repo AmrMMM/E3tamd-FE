@@ -18,7 +18,7 @@ class NetworkException implements Exception {
 }
 
 class IOHTTP implements IHTTP {
-  final String _baseUrl = "http://72.61.161.130/api/";
+  final String _baseUrl = "https://eatmed.cloud/api/";
   final Map<String, String> _headers = <String, String>{};
 
   void log(String method, String endpoint, [Map<String, dynamic>? queryArgs]) {

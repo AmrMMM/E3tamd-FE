@@ -7,7 +7,7 @@ import '../screens/end_user_phase/settings/settings_screen.dart';
 import 'IModelFactory.dart';
 import 'order.dart';
 
-enum OrderStatus { unassigned, pending, confirmed, toBeDelivered, finished }
+enum OrderStatus { unassigned, pending, confirmed, toBeDelivered, finished, aWaitingForConfirmation }
 
 class AgentRequest implements IJsonSerializable {
   int id;

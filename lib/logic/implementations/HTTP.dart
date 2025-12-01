@@ -6,7 +6,7 @@ import 'package:e3tmed/logic/interfaces/IHTTP.dart';
 import 'package:e3tmed/models/IModelFactory.dart';
 
 class HTTP implements IHTTP {
-  final String _baseUrl = "http://72.61.161.130/api/";
+  final String _baseUrl = "https://eatmed.cloud/api/";
   final _headers = <String, String>{"content-type": "application/json"};
 
   String _urlStringConstructor(String endpoint,

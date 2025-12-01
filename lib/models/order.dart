@@ -213,6 +213,12 @@ class OrderFactory implements IModelFactory<Order> {
         Injector.appInstance.get<IModelFactory<OrderItem>>();
     final addressFactory =
         Injector.appInstance.get<IModelFactory<UserAddress>>();
+    final statusValue = jsonMap["status"] as int?;
+    final status = statusValue != null &&
+            statusValue >= 0 &&
+            statusValue < OrderStatus.values.length
+        ? OrderStatus.values[statusValue]
+        : null;
     return Order(
         address: addressFactory.fromJson(jsonMap["address"]),
         phoneNumber: jsonMap["phoneNumber"],
@@ -220,7 +226,7 @@ class OrderFactory implements IModelFactory<Order> {
         items: jsonMap["items"]
             .map<OrderItem>((u) => orderItemFactory.fromJson(u))
             .toList(),
-        status: OrderStatus.values[jsonMap["status"]],
+        status: status,
         id: jsonMap["id"],
         totalPrice: jsonMap["totalPrice"].toDouble());
   }

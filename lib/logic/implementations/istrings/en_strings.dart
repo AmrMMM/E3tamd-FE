@@ -251,7 +251,7 @@ class EnStrings implements IStrings {
       case AllStrings.changeLanguageTitle:
         return "Change language";
       case AllStrings
-            .priceMayChangeAccordingToAgentsVisitAndFeesWillBeDeductedFromTotalPaymentWhenTheRequestIsCompletedTitle:
+          .priceMayChangeAccordingToAgentsVisitAndFeesWillBeDeductedFromTotalPaymentWhenTheRequestIsCompletedTitle:
         return "Price may change according to agent’s visit, and fees will be deducted from total payment when the request is completed.";
       case AllStrings.ifYouDontKnowTheDoorDimensionsYouCanAskForAnAgentTitle:
         return "If you dont know the door dimensions, you can ask for an agent";
@@ -262,10 +262,10 @@ class EnStrings implements IStrings {
       case AllStrings.confirmTitle:
         return "Confirm";
       case AllStrings
-            .youWillReceiveACodeToVerifyYourPhoneNumberPleaseWriteItDownWhenYouReceiveItTitle:
+          .youWillReceiveACodeToVerifyYourPhoneNumberPleaseWriteItDownWhenYouReceiveItTitle:
         return "You will receive a code to verify your ${currentAuthenticationMode.name}, please write it down when you receive it.";
       case AllStrings
-            .youWillReceiveACodeToResetYourPasswordPleaseWriteItDownWhenYouReceiveItTitle:
+          .youWillReceiveACodeToResetYourPasswordPleaseWriteItDownWhenYouReceiveItTitle:
         return "You will receive a code to reset your password, please write it down when you receive it.";
       case AllStrings.codeTitle:
         return "Code";
@@ -391,7 +391,7 @@ class EnStrings implements IStrings {
   }
 
   @override
-  String getOrderStatusString(OrderStatus status) {
+  String getOrderStatusString(OrderStatus? status) {
     switch (status) {
       case OrderStatus.unassigned:
         return "Unassigned";
@@ -403,6 +403,10 @@ class EnStrings implements IStrings {
         return "Ready for delivery";
       case OrderStatus.finished:
         return "Finished";
+      case OrderStatus.aWaitingForConfirmation:
+        return "Awaiting confirmation";
+      default:
+        return "Unknown";
     }
   }
 
@@ -419,6 +423,8 @@ class EnStrings implements IStrings {
         return "You order installed successfully";
       case OrderStatus.toBeDelivered:
         return "Your order is ready to be delivered";
+      case OrderStatus.aWaitingForConfirmation:
+        return "Awaiting confirmation";
     }
   }
 
@@ -435,6 +441,8 @@ class EnStrings implements IStrings {
         return "Your order is completed successfully";
       case OrderStatus.toBeDelivered:
         return "Your order is ready to be delivered";
+      case OrderStatus.aWaitingForConfirmation:
+        return "Awaiting confirmation";
     }
   }
 
