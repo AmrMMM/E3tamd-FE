@@ -58,5 +58,25 @@
     </array>
     <key>FLTEnableImpeller</key>
     <false/>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <!-- Allow HTTPS connections by default -->
+        <key>NSAllowsArbitraryLoads</key>
+        <false/>
+        <!-- Allow specific exceptions if payment gateway requires it -->
+        <key>NSExceptionDomains</key>
+        <dict>
+            <!-- Add specific payment gateway domains here if needed -->
+            <!-- Example:
+            <key>payment.example.com</key>
+            <dict>
+                <key>NSExceptionAllowsInsecureHTTPLoads</key>
+                <true/>
+                <key>NSIncludesSubdomains</key>
+                <true/>
+            </dict>
+            -->
+        </dict>
+    </dict>
 </dict>
 </plist>

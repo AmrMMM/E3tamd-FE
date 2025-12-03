@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:e3tmed/common/BaseWidgets.dart';
 import 'package:e3tmed/common/main_loading.dart';
 import 'package:e3tmed/models/order.dart';
@@ -38,19 +36,67 @@ class PaymentScreenState extends BaseStateArgumentObject<PaymentScreen,
 
     viewModel.paymentResultStream.listen((event) {
       if (event != null) {
-        controller.loadRequest(Uri.parse(event.paymentUrl),
-            headers: {"Accept": viewModel.accept});
+        // Set navigation delegate before loading the URL
         controller.setNavigationDelegate(
-            NavigationDelegate(onNavigationRequest: (request) {
-          if (request.url == event.successUrl) {
-            viewModel.onConfirm();
-            return NavigationDecision.prevent;
-          } else if (request.url == event.failureUrl) {
-            viewModel.onAbort();
-            return NavigationDecision.prevent;
-          }
-          return NavigationDecision.navigate;
-        }));
+          NavigationDelegate(
+            onNavigationRequest: (request) {
+              if (request.url == event.successUrl) {
+                viewModel.onConfirm();
+                return NavigationDecision.prevent;
+              } else if (request.url == event.failureUrl) {
+                viewModel.onAbort();
+                return NavigationDecision.prevent;
+              }
+              return NavigationDecision.navigate;
+            },
+            onWebResourceError: (error) {
+              // Handle WebView errors
+              debugPrint('WebView Error: ${error.description}');
+              debugPrint('Error Code: ${error.errorCode}');
+              debugPrint('Error Type: ${error.errorType}');
+              debugPrint('Failed URL: ${error.url}');
+
+              // Show user-friendly error message
+              if (error.errorCode == -2 ||
+                  error.description.contains('ERR_NAME_NOT_RESOLVED') == true ||
+                  error.description.contains('net::ERR_NAME_NOT_RESOLVED') ==
+                      true) {
+                // Network/DNS error
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                        'Network error: Unable to connect to payment server. Please check your internet connection.'),
+                    duration: Duration(seconds: 5),
+                  ),
+                );
+              }
+            },
+            onPageStarted: (url) {
+              debugPrint('Page started loading: $url');
+            },
+            onPageFinished: (url) {
+              debugPrint('Page finished loading: $url');
+            },
+          ),
+        );
+
+        // Load the payment URL with proper headers
+        try {
+          final uri = Uri.parse(event.paymentUrl);
+          debugPrint('Loading payment URL: ${uri.toString()}');
+          controller.loadRequest(
+            uri,
+            headers: {"Accept": viewModel.accept},
+          );
+        } catch (e) {
+          debugPrint('Error parsing payment URL: $e');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Invalid payment URL: $e'),
+              duration: const Duration(seconds: 5),
+            ),
+          );
+        }
       }
     });
   }
