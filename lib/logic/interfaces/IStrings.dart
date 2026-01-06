@@ -126,6 +126,7 @@ enum AllStrings {
   cardHolderFirstNameTitle,
   cardHolderLastNameTitle,
   changeTitle,
+  addTitle,
   enterThePhoneNumberTitle,
   isRequiredTitle,
   enterCorrectTitle,

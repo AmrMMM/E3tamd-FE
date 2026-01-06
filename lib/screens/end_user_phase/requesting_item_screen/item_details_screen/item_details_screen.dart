@@ -5,7 +5,7 @@ import 'package:e3tmed/common/custom_dotted_border/custom_dotted_border.dart';
 import 'package:e3tmed/common/customtextfield/CustomTextField.dart';
 import 'package:e3tmed/common/image_widgets/product_image.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
-import 'package:e3tmed/models/motor.dart';
+import 'package:e3tmed/models/user_address.dart';
 import 'package:e3tmed/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
@@ -22,10 +22,12 @@ import 'extra_photo_widget.dart';
 class ItemDetailsScreenArgs {
   final Product product;
   final bool maintenanceMode;
+  final UserAddress? selectedAddress;
 
   ItemDetailsScreenArgs({
     required this.product,
     required this.maintenanceMode,
+    this.selectedAddress,
   });
 }
 

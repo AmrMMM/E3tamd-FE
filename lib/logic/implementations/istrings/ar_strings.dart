@@ -230,6 +230,8 @@ class ArStrings implements IStrings {
         return "الإسم العائلى لحامل البطاقة";
       case AllStrings.changeTitle:
         return "تغيير";
+      case AllStrings.addTitle:
+        return "إضافة";
       case AllStrings.enterThePhoneNumberTitle:
         return "أدخل رقم الهاتف";
       case AllStrings.isRequiredTitle:

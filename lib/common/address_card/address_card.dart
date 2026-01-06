@@ -41,10 +41,11 @@ class _AddressCardWidgetState extends State<AddressCardWidget> {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: InkWell(
-          onTap: widget.isSelectionAvailable != false &&
-                  widget.isSelectionAvailable != null
-              ? widget.onTap
-              : widget.selected,
+          onTap: widget.selected ??
+              (widget.isSelectionAvailable != false &&
+                      widget.isSelectionAvailable != null
+                  ? widget.onTap
+                  : null),
           child: Container(
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(5)),
@@ -95,7 +96,11 @@ class _AddressCardWidgetState extends State<AddressCardWidget> {
                   Row(
                     children: [
                       Text(
-                        widget.address.isPrimary ? useLanguage == Languages.arabic.name?"الرئيسي":"Primary" : "",
+                        widget.address.isPrimary
+                            ? useLanguage == Languages.arabic.name
+                                ? "الرئيسي"
+                                : "Primary"
+                            : "",
                         style: TextStyle(
                             color: Theme.of(context).colorScheme.secondary,
                             fontSize: 15),
@@ -107,7 +112,7 @@ class _AddressCardWidgetState extends State<AddressCardWidget> {
                                 InkWell(
                                   onTap: () => widget.onEdit!(widget.address),
                                   child: Text(
-                                    strings.getStrings(AllStrings.editTitle),
+                                    strings.getStrings(AllStrings.addTitle),
                                     style: const TextStyle(
                                         color: Colors.grey, fontSize: 15),
                                   ),

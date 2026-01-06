@@ -367,6 +367,8 @@ class EnStrings implements IStrings {
         return "Pay with bank card";
       case AllStrings.editTitle:
         return "ُEdit";
+      case AllStrings.addTitle:
+        return "Add";
       case AllStrings.deleteAddressTitle:
         return "Delete address";
       case AllStrings.areYouSureYouWantToDeleteThisAddressTitle:
