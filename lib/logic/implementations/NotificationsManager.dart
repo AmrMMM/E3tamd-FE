@@ -68,7 +68,7 @@ class NotificationsManager implements INotificationsManager {
       await disconnect();
     }
     connection = HubConnectionBuilder()
-        .withUrl("https://eatmd.herokuapp.com/hub/notification",
+        .withUrl("https://eatmed.cloud/hub/notification",
             options: HttpConnectionOptions(
                 accessTokenFactory: () => Future.value(token)))
         .withAutomaticReconnect()

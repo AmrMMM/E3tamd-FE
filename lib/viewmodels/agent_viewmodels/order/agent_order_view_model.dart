@@ -30,7 +30,12 @@ class AgentOrderViewModel extends BaseViewModelWithLogic<IAgentOperations> {
   getOrdersDataWithFilter(AgentOrderFilters filter) async {
     _orders.add(null);
     itemMap ??= await logic.getAssignedOrders();
-    _orders.add(itemMap![filter]!);
+    if (itemMap == null) {
+      _orders.add(<AgentRequest>[]);
+      return;
+    }
+    final ordersForFilter = itemMap![filter] ?? <AgentRequest>[];
+    _orders.add(ordersForFilter);
     lastFilter = filter;
   }
 

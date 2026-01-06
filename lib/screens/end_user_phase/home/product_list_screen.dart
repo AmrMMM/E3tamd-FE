@@ -69,8 +69,26 @@ class ProductListState extends BaseStateArgumentObject<ProductListScreen,
                               child: MainLoadinIndicatorWidget(),
                             );
                           }
-                          if (snapshot.data!.isEmpty) {
+                          final items = snapshot.data!;
+                          if (items.isEmpty) {
                             return Container();
+                          }
+                          if (items.length < 2) {
+                            // CupertinoSlidingSegmentedControl asserts length >= 2; show a simple label instead.
+                            final single = items.first;
+                            return Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  single.getName(),
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black),
+                                ),
+                              ),
+                            );
                           }
                           return Column(
                             children: [
@@ -90,7 +108,7 @@ class ProductListState extends BaseStateArgumentObject<ProductListScreen,
                                                 .colorScheme
                                                 .secondary,
                                             children: {
-                                              for (var u in snapshot.data!)
+                                              for (var u in items)
                                                 u: segment(u.getName())
                                             },
                                             onValueChanged: (value) {

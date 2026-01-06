@@ -151,42 +151,49 @@ class OrderItem implements IJsonSerializable {
 class OrderItemFactory implements IModelFactory<OrderItem> {
   @override
   OrderItem fromJson(Map<String, dynamic> jsonMap) {
-    final productFactory = Injector.appInstance.get<IModelFactory<Product>>();
-    final motorFactory = Injector.appInstance.get<IModelFactory<Motor>>();
-    final extrasFactory =
-        Injector.appInstance.get<IModelFactory<OrderItemExtraElement>>();
-    final orderExtraProductFactory =
-        Injector.appInstance.get<IModelFactory<OrderItemExtraProduct>>();
-    final orderItemImageFactory =
-        Injector.appInstance.get<IModelFactory<OrderItemImage>>();
+    try {
+      final productFactory = Injector.appInstance.get<IModelFactory<Product>>();
+      final motorFactory = Injector.appInstance.get<IModelFactory<Motor>>();
+      final extrasFactory =
+          Injector.appInstance.get<IModelFactory<OrderItemExtraElement>>();
+      final orderExtraProductFactory =
+          Injector.appInstance.get<IModelFactory<OrderItemExtraProduct>>();
+      final orderItemImageFactory =
+          Injector.appInstance.get<IModelFactory<OrderItemImage>>();
 
-    return OrderItem(
-        id: jsonMap["id"],
-        product: productFactory.fromJson(jsonMap["product"]),
-        motor: jsonMap["motor"] == null
-            ? null
-            : motorFactory.fromJson(jsonMap["motor"]),
-        dimension: jsonMap["dimension"],
-        thickness: jsonMap["thickness"],
-        isAgent: jsonMap["isAgent"],
-        color: jsonMap["color"],
-        totalPrice: jsonMap["totalPrice"]?.toDouble(),
-        priceWithoutExtras: jsonMap["priceWithoutExtras"]?.toDouble(),
-        additionalNotes: jsonMap["additionalNotes"],
-        maintenance: jsonMap["maintenance"],
-        extras: jsonMap["extras"]
-            .map<OrderItemExtraElement>((u) => extrasFactory.fromJson(u))
-            .toList(),
-        quantity: jsonMap["quantity"],
-        extraProducts: jsonMap["extraProducts"]
-                ?.map<OrderItemExtraProduct>(
-                    (e) => orderExtraProductFactory.fromJson(e))
-                .toList() ??
-            [],
-        images: jsonMap["images"]
-                ?.map<OrderItemImage>((e) => orderItemImageFactory.fromJson(e))
-                .toList() ??
-            []);
+      return OrderItem(
+          id: jsonMap["id"],
+          product: productFactory.fromJson(jsonMap["product"]),
+          motor: jsonMap["motor"] == null
+              ? null
+              : motorFactory.fromJson(jsonMap["motor"]),
+          dimension: jsonMap["dimension"],
+          thickness: jsonMap["thickness"],
+          isAgent: jsonMap["isAgent"],
+          color: jsonMap["color"],
+          totalPrice: jsonMap["totalPrice"]?.toDouble(),
+          priceWithoutExtras: jsonMap["priceWithoutExtras"]?.toDouble(),
+          additionalNotes: jsonMap["additionalNotes"],
+          maintenance: jsonMap["maintenance"],
+          extras: jsonMap["extras"]
+              .map<OrderItemExtraElement>((u) => extrasFactory.fromJson(u))
+              .toList(),
+          quantity: jsonMap["quantity"],
+          extraProducts: jsonMap["extraProducts"]
+                  ?.map<OrderItemExtraProduct>(
+                      (e) => orderExtraProductFactory.fromJson(e))
+                  .toList() ??
+              [],
+          images: jsonMap["images"]
+                  ?.map<OrderItemImage>(
+                      (e) => orderItemImageFactory.fromJson(e))
+                  .toList() ??
+              []);
+    } catch (ex) {
+      print("OrderItemFactory.fromJson error: $ex");
+      print("OrderItemFactory.fromJson data: $jsonMap");
+      rethrow;
+    }
   }
 }
 

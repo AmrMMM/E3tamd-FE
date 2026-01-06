@@ -7,7 +7,14 @@ import '../screens/end_user_phase/settings/settings_screen.dart';
 import 'IModelFactory.dart';
 import 'order.dart';
 
-enum OrderStatus { unassigned, pending, confirmed, toBeDelivered, finished, aWaitingForConfirmation }
+enum OrderStatus {
+  unassigned,
+  pending,
+  confirmed,
+  toBeDelivered,
+  finished,
+  aWaitingForConfirmation
+}
 
 class AgentRequest implements IJsonSerializable {
   int id;
@@ -43,22 +50,35 @@ class AgentRequest implements IJsonSerializable {
 class AgentRequestFactory implements IModelFactory<AgentRequest> {
   @override
   AgentRequest fromJson(Map<String, dynamic> jsonMap) {
-    final orderItemFactory =
-        Injector.appInstance.get<IModelFactory<OrderItem>>();
-    final addressFactory =
-        Injector.appInstance.get<IModelFactory<UserAddress>>();
-    final userFactory = Injector.appInstance.get<IModelFactory<UserInfo>>();
-    return AgentRequest(
-        id: jsonMap["id"],
-        address: addressFactory.fromJson(jsonMap["address"]),
-        phoneNumber: jsonMap["phoneNumber"],
-        user: userFactory.fromJson(jsonMap["user"]),
-        addedDate: DateTime.parse(jsonMap["addedDate"]),
-        status: OrderStatus.values[jsonMap["status"]],
-        items: jsonMap["items"]
-                ?.map<OrderItem>((u) => orderItemFactory.fromJson(u))
-                .toList() ??
-            []);
+    try {
+      final orderItemFactory =
+          Injector.appInstance.get<IModelFactory<OrderItem>>();
+      final addressFactory =
+          Injector.appInstance.get<IModelFactory<UserAddress>>();
+      final userFactory = Injector.appInstance.get<IModelFactory<UserInfo>>();
+      final statusValue = jsonMap["status"] as int?;
+      if (statusValue == null ||
+          statusValue < 0 ||
+          statusValue >= OrderStatus.values.length) {
+        print("AgentRequestFactory: Invalid status value: $statusValue");
+        throw Exception("Invalid status value: $statusValue");
+      }
+      return AgentRequest(
+          id: jsonMap["id"],
+          address: addressFactory.fromJson(jsonMap["address"]),
+          phoneNumber: jsonMap["phoneNumber"],
+          user: userFactory.fromJson(jsonMap["user"]),
+          addedDate: DateTime.parse(jsonMap["addedDate"]),
+          status: OrderStatus.values[statusValue],
+          items: jsonMap["items"]
+                  ?.map<OrderItem>((u) => orderItemFactory.fromJson(u))
+                  .toList() ??
+              []);
+    } catch (ex) {
+      print("AgentRequestFactory.fromJson error: $ex");
+      print("AgentRequestFactory.fromJson data: $jsonMap");
+      rethrow;
+    }
   }
 }
 

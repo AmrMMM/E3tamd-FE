@@ -62,12 +62,13 @@ class AgentRequestImplementation implements IAgentOperations {
       getAssignedOrders() async {
     final res = await http.rget<AgentRequest>("Agent/Assigned");
     if (res.statusCode == 200 && res.body != null) {
-      return {
+      final result = {
         for (var filterValue in AgentOrderFilters.values)
           filterValue: res.body!
               .where((element) => checkAgentOrderStatus(element, filterValue))
               .toList()
       };
+      return result;
     }
     return null;
   }

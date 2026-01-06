@@ -402,7 +402,7 @@ class ArStrings implements IStrings {
       case OrderStatus.finished:
         return "تم التوصيل";
       case OrderStatus.aWaitingForConfirmation:
-        return "في انتظار تأكيد العميل";
+        return "جاري تحضير طلبك";
       default:
         return "غير معروف";
     }

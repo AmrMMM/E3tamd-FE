@@ -65,11 +65,11 @@ class AgentProfileScreenState
             const SizedBox(
               height: 20,
             ),
-            ProfileSectionWidget(
-                label: strings.getStrings(AllStrings.passwordTitle),
-                iconData: Icons.lock_outline,
-                onTap: () =>
-                    Navigator.of(context).pushNamed("/aChangePasswordScreen")),
+            // ProfileSectionWidget(
+            //     label: strings.getStrings(AllStrings.passwordTitle),
+            //     iconData: Icons.lock_outline,
+            //     onTap: () =>
+            //         Navigator.of(context).pushNamed("/aChangePasswordScreen")),
             ProfileSectionWidget(
                 label: strings.getStrings(AllStrings.changeLanguageTitle),
                 iconData: Icons.language_outlined,

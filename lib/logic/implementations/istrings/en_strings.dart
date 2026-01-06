@@ -404,7 +404,7 @@ class EnStrings implements IStrings {
       case OrderStatus.finished:
         return "Finished";
       case OrderStatus.aWaitingForConfirmation:
-        return "Awaiting confirmation";
+        return "Confirmed";
       default:
         return "Unknown";
     }

@@ -84,6 +84,8 @@ class HTTP implements IHTTP {
       }
       return result;
     } catch (ex) {
+      print("HTTP._readAsObject error: $ex");
+      print("HTTP._readAsObject stack trace: ${StackTrace.current}");
       return null;
     }
   }

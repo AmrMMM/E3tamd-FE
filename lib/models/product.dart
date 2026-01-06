@@ -14,8 +14,8 @@ class Product implements IJsonSerializable {
   double basePrice;
   String manufacturerNameAr;
   String manufacturerNameEn;
-  String categoryNameAr;
-  String categoryNameEn;
+  String? categoryNameAr;
+  String? categoryNameEn;
   List<String>? availableDimensions;
   List<String>? availableThickness;
   List<String>? availableColors;
@@ -33,8 +33,8 @@ class Product implements IJsonSerializable {
       required this.basePrice,
       required this.manufacturerNameAr,
       required this.manufacturerNameEn,
-      required this.categoryNameAr,
-      required this.categoryNameEn,
+      this.categoryNameAr,
+      this.categoryNameEn,
       required this.withExtraDetails,
       required this.stock,
       this.availableColors,
@@ -83,9 +83,9 @@ class Product implements IJsonSerializable {
 
   String getCategoryName() {
     if (useLanguage == Languages.arabic.name) {
-      return categoryNameAr;
+      return categoryNameAr ?? '';
     } else {
-      return categoryNameEn;
+      return categoryNameEn ?? '';
     }
   }
 
@@ -101,30 +101,36 @@ class Product implements IJsonSerializable {
 class ProductFactory implements IModelFactory<Product> {
   @override
   Product fromJson(Map<String, dynamic> jsonMap) {
-    final productExtraFactory =
-        Injector.appInstance.get<IModelFactory<ExtraModel>>();
-    final motorFactory = Injector.appInstance.get<IModelFactory<Motor>>();
-    return Product(
-        id: jsonMap["id"],
-        nameAr: jsonMap["nameAr"],
-        nameEn: jsonMap["nameEn"],
-        stock: jsonMap["stock"],
-        description: jsonMap["description"],
-        manufactureDate: DateTime.parse(jsonMap["manufactureDate"]),
-        basePrice: jsonMap["basePrice"].toDouble(),
-        manufacturerNameAr: jsonMap["manufacturerNameAr"],
-        manufacturerNameEn: jsonMap["manufacturerNameEn"],
-        categoryNameAr: jsonMap["categoryNameAr"],
-        categoryNameEn: jsonMap["categoryNameEn"],
-        withExtraDetails: jsonMap["withExtraDetails"],
-        availableColors: jsonMap["availableColors"]?.cast<String>(),
-        availableDimensions: jsonMap["availableDimensions"]?.cast<String>(),
-        availableThickness: jsonMap["availableThickness"]?.cast<String>(),
-        availableExtras: jsonMap["availableExtras"]
-            ?.map<ExtraModel>((u) => productExtraFactory.fromJson(u))
-            .toList(),
-        motors: jsonMap["motors"]
-            ?.map<Motor>((u) => motorFactory.fromJson(u))
-            .toList());
+    try {
+      final productExtraFactory =
+          Injector.appInstance.get<IModelFactory<ExtraModel>>();
+      final motorFactory = Injector.appInstance.get<IModelFactory<Motor>>();
+      return Product(
+          id: jsonMap["id"],
+          nameAr: jsonMap["nameAr"],
+          nameEn: jsonMap["nameEn"],
+          stock: jsonMap["stock"],
+          description: jsonMap["description"],
+          manufactureDate: DateTime.parse(jsonMap["manufactureDate"]),
+          basePrice: jsonMap["basePrice"].toDouble(),
+          manufacturerNameAr: jsonMap["manufacturerNameAr"],
+          manufacturerNameEn: jsonMap["manufacturerNameEn"],
+          categoryNameAr: jsonMap["categoryNameAr"],
+          categoryNameEn: jsonMap["categoryNameEn"],
+          withExtraDetails: jsonMap["withExtraDetails"],
+          availableColors: jsonMap["availableColors"]?.cast<String>(),
+          availableDimensions: jsonMap["availableDimensions"]?.cast<String>(),
+          availableThickness: jsonMap["availableThickness"]?.cast<String>(),
+          availableExtras: jsonMap["availableExtras"]
+              ?.map<ExtraModel>((u) => productExtraFactory.fromJson(u))
+              .toList(),
+          motors: jsonMap["motors"]
+              ?.map<Motor>((u) => motorFactory.fromJson(u))
+              .toList());
+    } catch (ex) {
+      print("ProductFactory.fromJson error: $ex");
+      print("ProductFactory.fromJson data: $jsonMap");
+      rethrow;
+    }
   }
 }

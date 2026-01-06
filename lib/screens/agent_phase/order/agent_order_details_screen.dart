@@ -591,30 +591,8 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                     ),
                     !noteVisible
                         ? const SizedBox()
-                        : Stack(
+                        : Column(
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(2.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const SizedBox(),
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          noteVisible = !noteVisible;
-                                        });
-                                      },
-                                      child: const Icon(
-                                        Icons.close,
-                                        color: Colors.grey,
-                                        size: 18,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
                               PrimaryTextFieldWithHeader(
                                   isObscure: false,
                                   hintText:
