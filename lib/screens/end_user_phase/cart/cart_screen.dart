@@ -85,9 +85,7 @@ class CartScreenState extends BaseStateObject<CartScreen, CartViewModel> {
         ),
       ),
       body: Directionality(
-        textDirection: useLanguage == Languages.arabic.name
-            ? TextDirection.rtl
-            : TextDirection.ltr,
+        textDirection: useLanguage == Languages.arabic.name?TextDirection.rtl:TextDirection.ltr,
         child: Column(
           children: [
             Container(
@@ -99,7 +97,7 @@ class CartScreenState extends BaseStateObject<CartScreen, CartViewModel> {
                 children: [
                   if (_auth?.address != null)
                     TextButton.icon(
-                        onPressed: viewModel.navigateToAddressScreen,
+                        onPressed: null,
                         icon: const Icon(
                           Icons.location_on_outlined,
                           size: 16,
@@ -107,13 +105,12 @@ class CartScreenState extends BaseStateObject<CartScreen, CartViewModel> {
                         ),
                         label: Text(
                           "${strings.getStrings(AllStrings.deliverToTitle)} $_address",
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 12),
+                          style:
+                              const TextStyle(color: Colors.white, fontSize: 12),
                         )),
-                  IconButton(
-                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    onPressed: viewModel.navigateToAddressScreen,
-                    icon: const Icon(
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Icon(
                       Icons.keyboard_arrow_down_outlined,
                       color: Colors.white,
                       size: 20,

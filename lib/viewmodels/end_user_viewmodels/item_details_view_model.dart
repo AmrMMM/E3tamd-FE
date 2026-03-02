@@ -86,8 +86,8 @@ class ItemDetailsViewModel
               images: imagesList
                       ?.map((e) => OrderItemImage(data: base64.encode(e)))
                       .toList() ??
-                  [])
-        ], selectedAddress: args!.selectedAddress));
+                  []),
+        ]));
   }
 
   void navigateToCheckout(
@@ -129,7 +129,7 @@ class ItemDetailsViewModel
                       ?.map((e) => OrderItemImage(data: base64.encode(e)))
                       .toList() ??
                   []),
-        ], selectedAddress: args!.selectedAddress));
+        ]));
   }
 
   void addToCart(

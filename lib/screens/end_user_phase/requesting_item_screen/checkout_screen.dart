@@ -22,9 +22,8 @@ import '../../../viewmodels/end_user_viewmodels/checkout_view_model.dart';
 
 class CheckoutScreenArgs {
   final List<OrderItem> orderItems;
-  final UserAddress? selectedAddress;
 
-  CheckoutScreenArgs({required this.orderItems, this.selectedAddress});
+  CheckoutScreenArgs({required this.orderItems});
 }
 
 class CheckoutScreen extends ScreenWidget {

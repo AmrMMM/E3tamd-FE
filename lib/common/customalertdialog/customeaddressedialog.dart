@@ -49,25 +49,6 @@ class _CustomAddressDialogWidgetState extends State<CustomAddressDialogWidget> {
     }
   }
 
-  bool _isValid() {
-    return userAddress.country.isNotEmpty &&
-        userAddress.city.isNotEmpty &&
-        userAddress.region.isNotEmpty &&
-        userAddress.address.trim().isNotEmpty;
-  }
-
-  void _showValidationError() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          strings.getStrings(AllStrings.pleaseCompleteAllFieldsTitle),
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -136,12 +117,8 @@ class _CustomAddressDialogWidgetState extends State<CustomAddressDialogWidget> {
                         color: Theme.of(context).primaryColor,
                         stream: null,
                         onTap: () {
-                          if (_isValid()) {
-                            Navigator.of(context).pop();
-                            widget.onSaveChanges(userAddress);
-                          } else {
-                            _showValidationError();
-                          }
+                          Navigator.of(context).pop();
+                          widget.onSaveChanges(userAddress);
                         }),
                   ),
                   const SizedBox(

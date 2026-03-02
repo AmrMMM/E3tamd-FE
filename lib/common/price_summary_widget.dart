@@ -112,44 +112,44 @@ class _PriceSummaryWidgetState extends State<PriceSummaryWidget> {
                       child: _DetailsItem(
                           item:
                               strings.getStrings(AllStrings.productPriceTitle),
-                          value: totalProductPrice.toStringAsFixed(2))),
+                          value: totalProductPrice.toString())),
                 if (totalSparePartsPrice != 0)
                   Padding(
                       padding: const EdgeInsets.symmetric(vertical: 1),
                       child: _DetailsItem(
                           item: strings.getStrings(AllStrings.sparePartsTitle),
-                          value: totalSparePartsPrice.toStringAsFixed(2))),
+                          value: totalSparePartsPrice.toString())),
                 if (totalExtrasPrice != 0)
                   Padding(
                       padding: const EdgeInsets.symmetric(vertical: 1),
                       child: _DetailsItem(
                           item: strings
                               .getStrings(AllStrings.extrasAndServicesTitle),
-                          value: totalExtrasPrice.toStringAsFixed(2))),
+                          value: totalExtrasPrice.toString())),
                 if (totalAgentVisitPrice != 0)
                   Padding(
                       padding: const EdgeInsets.symmetric(vertical: 1),
                       child: _DetailsItem(
                           item: strings.getStrings(AllStrings.agentVisitTitle),
-                          value: totalAgentVisitPrice.toStringAsFixed(2))),
+                          value: totalAgentVisitPrice.toString())),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 1),
                     child: _DetailsItem(
                         item: strings.getStrings(AllStrings.vatTitle),
-                        value: totalVatPrice.toStringAsFixed(2))),
+                        value: totalVatPrice.toString())),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: _DetailsItem(
                       isTotal: true,
                       item: strings.getStrings(AllStrings.totalTitle),
-                      value: "${finalTotalPrice.toStringAsFixed(2)} SAR",
+                      value: "${finalTotalPrice.toString()} SAR",
                     )),
                 if (paidAmount > 0) ...[
                   Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: _DetailsItem(
                         item: strings.getStrings(AllStrings.paidAmount),
-                        value: "${paidAmount.toStringAsFixed(2)} SAR",
+                        value: "${paidAmount.toString()} SAR",
                       )),
                   Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -157,7 +157,7 @@ class _PriceSummaryWidgetState extends State<PriceSummaryWidget> {
                         isTotal: true,
                         item: strings.getStrings(AllStrings.totalDue),
                         value:
-                            "${(finalTotalPrice - paidAmount).toStringAsFixed(2)} SAR",
+                            "${(finalTotalPrice - paidAmount).toString()} SAR",
                       )),
                 ]
               ],

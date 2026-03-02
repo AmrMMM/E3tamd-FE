@@ -169,13 +169,13 @@ class ArStrings implements IStrings {
       case AllStrings.settingsTitle:
         return "الإعدادات";
       case AllStrings.changeNameTitle:
-        return "تغير الأسم";
+        return "تغيير الأسم";
       case AllStrings.addressesTitle:
         return "العنوان";
       case AllStrings.changePhoneNumberTitle:
-        return "تغير رقم الهاتف";
+        return "تغيير رقم الهاتف";
       case AllStrings.changeEmailTitle:
-        return "تغير البريد الإلكتروني";
+        return "تغيير البريد الإلكتروني";
       case AllStrings.yourListIsEmptyTitle:
         return "لا توجد لديك بيانات في القائمة";
       case AllStrings.deliverToTitle:
@@ -197,7 +197,7 @@ class ArStrings implements IStrings {
       case AllStrings.paymentMethodTitle:
         return "طرق الدفع";
       case AllStrings.changePaymentTitle:
-        return "تغير طريقة الدفع";
+        return "تغيير طريقة الدفع";
       case AllStrings.termAndConditionsTitle:
         return "الأحكام والشروط";
       case AllStrings.iHaveReadAndAcceptedTermAdnConditionsTitle:
@@ -215,7 +215,7 @@ class ArStrings implements IStrings {
       case AllStrings.newPhoneNumberTitle:
         return "رقم الهاتف الجديد";
       case AllStrings.changeAddressTitle:
-        return "تغير العنوان";
+        return "تغيير العنوان";
       case AllStrings.addCardTitle:
         return "إضافة بطاقة";
       case AllStrings.cardNumberTitle:
@@ -229,7 +229,7 @@ class ArStrings implements IStrings {
       case AllStrings.cardHolderLastNameTitle:
         return "الإسم العائلى لحامل البطاقة";
       case AllStrings.changeTitle:
-        return "تغير";
+        return "تغيير";
       case AllStrings.addTitle:
         return "إضافة";
       case AllStrings.enterThePhoneNumberTitle:
@@ -249,7 +249,7 @@ class ArStrings implements IStrings {
       case AllStrings.orderSummaryTitle:
         return "ملخص الطلب";
       case AllStrings.changeLanguageTitle:
-        return "تغير اللغة";
+        return "تغيير اللغة";
       case AllStrings
           .priceMayChangeAccordingToAgentsVisitAndFeesWillBeDeductedFromTotalPaymentWhenTheRequestIsCompletedTitle:
         return "يمكن للسعر أن يتغير بناء علي زيارة أحد موظفينا اليك, و سيتم استقطاع هذا المبلغ من السعر الاجمالي في حاله تم تأكيد طلبكم";
@@ -266,7 +266,7 @@ class ArStrings implements IStrings {
         return "سوف تصلك رسالة بها رمز التأكيد الخاص بك, برجاء إدخال رمز التأكيد";
       case AllStrings
           .youWillReceiveACodeToResetYourPasswordPleaseWriteItDownWhenYouReceiveItTitle:
-        return "سوف تصلك رسالة بها رمز التأكيد الخاص بك لتغير رقم السري الخاص بك, برجاء إدخال رمز التأكيد";
+        return "سوف تصلك رسالة بها رمز التأكيد الخاص بك لتغيير رقم السري الخاص بك, برجاء إدخال رمز التأكيد";
       case AllStrings.codeTitle:
         return "رمز";
       case AllStrings.confirmationCodeTitle:
@@ -318,7 +318,7 @@ class ArStrings implements IStrings {
       case AllStrings.registerSuccessfulPleaseLoginTitle:
         return "نم التسجيل بنجاح ، يرجى تسجيل الدخول";
       case AllStrings.changedSuccessfullyTitle:
-        return "تم التغير بنجاح";
+        return "تم التغيير بنجاح";
       case AllStrings.orderRemovedFromCartTitle:
         return "تمت إزالة الطلب من سلة التسوق";
       case AllStrings.failedToRemoveOrderFromCartTitle:
@@ -334,23 +334,23 @@ class ArStrings implements IStrings {
       case AllStrings.thanksForOrderingTitle:
         return "شكرا للطلب";
       case AllStrings.nameChangedSuccessfullyTitle:
-        return "تم تغير الأسم بنجاح";
+        return "تم تغيير الأسم بنجاح";
       case AllStrings.errorWhileChangingNameTitle:
-        return "خطأ أثناء تغير الأسم";
+        return "خطأ أثناء تغيير الأسم";
       case AllStrings.pleaseSelectAnAddressToContinueTitle:
         return "الرجاء تحديد عنوان للمتابعة";
       case AllStrings.emailChangedSuccessfullyTitle:
-        return "تم تغير البريد الإلكتروني بنجاح";
+        return "تم تغيير البريد الإلكتروني بنجاح";
       case AllStrings.errorWhileChangingEmailTitle:
-        return "خطأ أثناء تغير البريد الإلكتروني";
+        return "خطأ أثناء تغيير البريد الإلكتروني";
       case AllStrings.passwordChangedSuccessfullyTitle:
-        return "تم تغير الرقم السري بنجاح";
+        return "تم تغيير الرقم السري بنجاح";
       case AllStrings.errorWhileChangingPasswordTitle:
-        return "خطأ أثناء تغير كلمة المرور";
+        return "خطأ أثناء تغيير كلمة المرور";
       case AllStrings.phoneNumberChangedSuccessfullyTitle:
-        return "تم تغير رقم الهاتف بنجاح";
+        return "تم تغيير رقم الهاتف بنجاح";
       case AllStrings.errorWhileChangingPhoneNumberTitle:
-        return "خطأ أثناء تغير رقم الهاتف";
+        return "خطأ أثناء تغيير رقم الهاتف";
       case AllStrings.orderCanceledTitle:
         return "إلغاء الطلب";
       case AllStrings.newVersionTitle:
@@ -375,8 +375,6 @@ class ArStrings implements IStrings {
         return "المبلغ المدفوع";
       case AllStrings.totalDue:
         return "المبلغ المتبقى";
-      case AllStrings.pleaseCompleteAllFieldsTitle:
-        return "يرجى إكمال جميع الحقول";
     }
   }
 
@@ -455,7 +453,7 @@ class ArStrings implements IStrings {
       case NotificationType.agentOrderCanceled:
         return "طلب #${order.id} الذاهب الي ${order.address.address} وتكلفته ${order.totalPrice} SAR قد تم الغاءه ";
       case NotificationType.userOrderStatusChanged:
-        return "طلب #${order.id} تم تغير حالته من \"${getOrderStatusString(oldOrderStatus!)}\" إلى \"${getOrderStatusString(order.status!)}\"";
+        return "طلب #${order.id} تم تغيير حالته من \"${getOrderStatusString(oldOrderStatus!)}\" إلى \"${getOrderStatusString(order.status!)}\"";
     }
   }
 
@@ -465,7 +463,7 @@ class ArStrings implements IStrings {
       case NotificationType.agentOrderCanceled:
         return "الغاء طلب";
       case NotificationType.userOrderStatusChanged:
-        return "تغير حالة الطلب";
+        return "تغيير حالة الطلب";
     }
   }
 }

@@ -41,11 +41,10 @@ class _AddressCardWidgetState extends State<AddressCardWidget> {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: InkWell(
-          onTap: widget.selected ??
-              (widget.isSelectionAvailable != false &&
-                      widget.isSelectionAvailable != null
-                  ? widget.onTap
-                  : null),
+          onTap: widget.isSelectionAvailable != false &&
+                  widget.isSelectionAvailable != null
+              ? widget.onTap
+              : widget.selected,
           child: Container(
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(5)),

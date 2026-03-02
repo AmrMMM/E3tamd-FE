@@ -62,8 +62,6 @@ class ProductListViewModel
   void navigateToItemDetails(Product product) {
     Navigator.pushNamed(context, "/itemDetails",
         arguments: ItemDetailsScreenArgs(
-            product: product,
-            maintenanceMode: args!.maintenanceMode,
-            selectedAddress: null));
+            product: product, maintenanceMode: args!.maintenanceMode));
   }
 }

@@ -187,8 +187,7 @@ enum AllStrings {
   deleteAddressTitle,
   areYouSureYouWantToDeleteThisAddressTitle,
   paidAmount,
-  totalDue,
-  pleaseCompleteAllFieldsTitle
+  totalDue
 }
 
 abstract class IStrings {

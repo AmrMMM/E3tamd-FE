@@ -377,8 +377,6 @@ class EnStrings implements IStrings {
         return "Paid amount";
       case AllStrings.totalDue:
         return "Total due";
-      case AllStrings.pleaseCompleteAllFieldsTitle:
-        return "Please complete all fields";
     }
   }
 

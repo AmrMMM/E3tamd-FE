@@ -16,14 +16,13 @@ import 'package:rxdart/rxdart.dart';
 import '../../logic/interfaces/ICart.dart';
 import '../../models/user_address.dart';
 import '../../screens/end_user_phase/requesting_item_screen/checkout_screen.dart';
-import '../../screens/end_user_phase/settings/addresses_screen.dart';
 
 class CartViewModel extends BaseViewModelWithLogic<ICart> {
   CartViewModel(BuildContext context) : super(context) {
     _init();
   }
 
-  UserAddress? _selectedAddress;
+  late UserAddress _selectedAddress;
 
   Stream<List<OrderItem>?> get cartList => logic.carList;
   final IAuth auth = Injector.appInstance.get<IAuth>();
@@ -35,10 +34,10 @@ class CartViewModel extends BaseViewModelWithLogic<ICart> {
   Stream<UserAddress?> get selectedUserAddress => _selectedUserAddress;
 
   void _init() async {
-    if (_selectedAddress != null) return;
     final addresses = (await auth.getUserAddresses());
-    if (addresses.isNotEmpty && _selectedAddress == null) {
-      _selectedAddress = addresses.firstWhere((element) => element.isPrimary);
+    if (addresses.isNotEmpty) {
+      _selectedAddress = (await auth.getUserAddresses())
+          .firstWhere((element) => element.isPrimary);
       _selectedUserAddress.add(_selectedAddress);
     }
   }
@@ -70,22 +69,12 @@ class CartViewModel extends BaseViewModelWithLogic<ICart> {
     Navigator.of(context).pushNamed("/itemDetails",
         arguments: ItemDetailsScreenArgs(
             product: orderItem.product,
-            maintenanceMode: orderItem.maintenance,
-            selectedAddress: _selectedAddress));
+            maintenanceMode: orderItem.maintenance));
   }
 
   proceedToCheckoutAllItem(List<OrderItem> cartList) {
     logic.setCartUsed(true);
     Navigator.of(context).pushNamed("/checkout",
-        arguments: CheckoutScreenArgs(
-            orderItems: cartList, selectedAddress: _selectedAddress));
-  }
-
-  void navigateToAddressScreen() {
-    Navigator.of(context).pushNamed("/addresses",
-        arguments: UserAddressesScreenArguments(selectedCallback: (address) {
-      _selectedAddress = address;
-      _selectedUserAddress.add(_selectedAddress);
-    }));
+        arguments: CheckoutScreenArgs(orderItems: cartList));
   }
 }

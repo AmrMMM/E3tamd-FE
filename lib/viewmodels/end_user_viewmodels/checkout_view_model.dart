@@ -2,6 +2,7 @@ import 'package:e3tmed/logic/interfaces/IAuth.dart';
 import 'package:e3tmed/logic/interfaces/ICart.dart';
 import 'package:e3tmed/logic/interfaces/core_logic.dart';
 import 'package:e3tmed/models/order.dart';
+import 'package:e3tmed/models/payment.dart';
 import 'package:e3tmed/models/user_address.dart';
 import 'package:e3tmed/models/user_auth_model.dart';
 import 'package:e3tmed/screens/end_user_phase/requesting_item_screen/payment_screen.dart';
@@ -17,16 +18,17 @@ import '../../screens/end_user_phase/settings/addresses_screen.dart';
 
 class CheckoutViewModel
     extends BaseViewModelWithLogicAndArgs<ICoreLogic, CheckoutScreenArgs> {
-  CheckoutViewModel(BuildContext context) : super(context);
+  CheckoutViewModel(BuildContext context) : super(context) {
+    _init();
+  }
 
   final authLogic = Injector.appInstance.get<IAuth>();
-  final BehaviorSubject<UserAddress?> _selectedUserAddress = BehaviorSubject<UserAddress?>();
+  final _selectedUserAddress = BehaviorSubject<UserAddress?>.seeded(null);
   final strings = Injector.appInstance.get<IStrings>();
   final _makeOrderState = BehaviorSubject<bool?>.seeded(null);
   final _addressState = BehaviorSubject<bool?>.seeded(null);
   final cartLogic = Injector.appInstance.get<ICart>();
   var isBankCardPayment = false;
-  bool _addressSet = false;
 
   final Order order = Order(
       addedDate: DateTime.now(),
@@ -43,35 +45,24 @@ class CheckoutViewModel
 
   Stream<UserAuthModel?> get auth => authLogic.authData;
 
-  Stream<UserAddress?> get selectedUserAddress => _selectedUserAddress.stream;
+  Stream<UserAddress?> get selectedUserAddress => _selectedUserAddress;
 
   Stream<bool?> get makeOrderState => _makeOrderState;
 
   Stream<bool?> get addressState => _addressState;
 
-  void _setAddress(UserAddress address) {
-    if (_addressSet) return;
-    _addressSet = true;
-    order.address = address;
-    _selectedUserAddress.add(address);
-  }
-
-  void _loadPrimaryAddress() async {
-    if (_addressSet) return;
-    final addresses = await authLogic.getUserAddresses();
-    if (addresses.isNotEmpty && !_addressSet) {
-      _setAddress(addresses.firstWhere((element) => element.isPrimary));
+  void _init() async {
+    final addresses = (await authLogic.getUserAddresses());
+    if (addresses.isNotEmpty) {
+      order.address = (await authLogic.getUserAddresses())
+          .firstWhere((element) => element.isPrimary);
+      _selectedUserAddress.add(order.address);
     }
   }
 
   @override
   void onArgsPushed() {
     order.items = args!.orderItems;
-    if (args!.selectedAddress != null) {
-      _setAddress(args!.selectedAddress!);
-    } else {
-      _loadPrimaryAddress();
-    }
   }
 
   void saveAddressChanges(UserAddress newAddress) async {
@@ -86,6 +77,7 @@ class CheckoutViewModel
       _addressState.add(false);
     }
     _addressState.add(null);
+    _init();
   }
 
   void setPaymentMode(bool isCardPayment) {
@@ -114,7 +106,7 @@ class CheckoutViewModel
   }
 
   void onUpdateAddressCard() {
-    // Address is already set, no need to reload
+    _init();
   }
 
   void deleteAddress(UserAddress address) async {
@@ -124,21 +116,14 @@ class CheckoutViewModel
       _addressState.add(false);
     }
     _addressState.add(null);
+    _init();
   }
 
   void navigateToAddressScreen() {
     Navigator.of(context).pushNamed("/addresses",
         arguments: UserAddressesScreenArguments(selectedCallback: (address) {
       order.address = address;
-      _selectedUserAddress.add(address);
+      _selectedUserAddress.add(order.address);
     }));
-  }
-
-  @override
-  void onClose() {
-    _selectedUserAddress.close();
-    _makeOrderState.close();
-    _addressState.close();
-    super.onClose();
   }
 }
