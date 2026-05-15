@@ -44,8 +44,16 @@
 		<key>NSExceptionDomains</key>
 		<dict/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>E3tmed uses the camera so you can take photos to attach to service requests.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>E3tmed uses your photo library so you can attach existing photos to service requests.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
