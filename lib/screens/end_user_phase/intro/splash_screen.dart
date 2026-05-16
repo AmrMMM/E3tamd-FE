@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:e3tmed/common/BaseWidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:injector/injector.dart';
-import 'package:url_launcher/url_launcher.dart' as LaunchReview;
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 import '../../../common/customalertdialog/custom_alert_dialog.dart';
 import '../../../logic/interfaces/IStrings.dart';
@@ -22,13 +25,14 @@ class SplashScreenState
       : super(() => SplashScreenViewModel(context));
 
   final _strings = Injector.appInstance.get<IStrings>();
+  StreamSubscription<bool>? _newVersionSubscription;
 
   @override
   void initState() {
     super.initState();
     viewModel.splashScreenHandler();
-    viewModel.isNewVersion.listen((event) {
-      if (event == true) {
+    _newVersionSubscription = viewModel.isNewVersion.listen((event) {
+      if (event == true && mounted) {
         showDialog(
             barrierDismissible: true,
             useSafeArea: false,
@@ -40,13 +44,26 @@ class SplashScreenState
                       description: _strings.getStrings(AllStrings
                           .aNewVersionHasBeenReleasedPleaseUpdateTitle),
                       onPositivePressed: () {
-                        LaunchReview.launchUrl(Uri.parse('https://play.google.com/store/apps/details?id=com.e3tmed'));
-                        SystemChannels.platform
-                            .invokeMethod('SystemNavigator.pop');
+                        _openStoreListing();
                       }),
                 ));
       }
     });
+  }
+
+  Future<void> _openStoreListing() async {
+    final packageInfo = await PackageInfo.fromPlatform();
+    final storeUri = Uri.https('play.google.com', '/store/apps/details',
+        {'id': packageInfo.packageName});
+    await url_launcher.launchUrl(storeUri,
+        mode: url_launcher.LaunchMode.externalApplication);
+    await SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+  }
+
+  @override
+  void dispose() {
+    _newVersionSubscription?.cancel();
+    super.dispose();
   }
 
   @override

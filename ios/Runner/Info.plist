@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BGTaskSchedulerPermittedIdentifiers</key>
+	<array>
+		<string>dev.flutter.background.refresh</string>
+	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -24,6 +28,8 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FLTEnableImpeller</key>
+	<false/>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>sms</string>
@@ -31,8 +37,23 @@
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<false/>
+		<key>NSExceptionDomains</key>
+		<dict/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>E3tmed uses the camera so you can take photos to attach to service requests.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>E3tmed uses your photo library so you can attach existing photos to service requests.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -50,33 +71,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-    <key>NSPhotoLibraryUsageDescription</key>
-    <string>This app requires access to the photo library.</string>
-    <key>BGTaskSchedulerPermittedIdentifiers</key>
-    <array>
-        <string>dev.flutter.background.refresh</string>
-    </array>
-    <key>FLTEnableImpeller</key>
-    <false/>
-    <key>NSAppTransportSecurity</key>
-    <dict>
-        <!-- Allow HTTPS connections by default -->
-        <key>NSAllowsArbitraryLoads</key>
-        <false/>
-        <!-- Allow specific exceptions if payment gateway requires it -->
-        <key>NSExceptionDomains</key>
-        <dict>
-            <!-- Add specific payment gateway domains here if needed -->
-            <!-- Example:
-            <key>payment.example.com</key>
-            <dict>
-                <key>NSExceptionAllowsInsecureHTTPLoads</key>
-                <true/>
-                <key>NSIncludesSubdomains</key>
-                <true/>
-            </dict>
-            -->
-        </dict>
-    </dict>
 </dict>
 </plist>
