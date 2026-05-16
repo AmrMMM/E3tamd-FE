@@ -36,7 +36,7 @@ class ServiceButtonWidget extends StatelessWidget {
                         category: category,
                         width: 50,
                         height: 50,
-                        color: Colors.white),
+                        fit: BoxFit.cover),
                   ),
                 ),
                 const SizedBox(

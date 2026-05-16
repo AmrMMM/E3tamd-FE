@@ -20,11 +20,11 @@ class CategoryImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return HTTPImage("Category/Image",
+        key: Key(category.id.toString()),
         queryArgs: {"categoryId": category.id},
         width: width,
         height: height,
         color: color,
-        fit: fit,
-        loadingColor: Colors.white);
+        fit: fit);
   }
 }
