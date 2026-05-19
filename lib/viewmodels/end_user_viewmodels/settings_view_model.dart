@@ -3,6 +3,7 @@ import 'package:e3tmed/screens/end_user_phase/settings/settings_screen.dart';
 import 'package:e3tmed/viewmodels/baseViewModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../DI.dart';
 import '../../main.dart';
@@ -11,10 +12,20 @@ import '../../models/user_auth_model.dart';
 class SettingsViewModel extends BaseViewModelWithLogic<IAuth> {
   SettingsViewModel(BuildContext context) : super(context);
 
+  static final Uri _accountDeletionUri =
+      Uri.parse("https://eatmed.cloud/data-deletion");
+
   Stream<UserAuthModel?> get auth => logic.authData;
 
   navigateToRout(String rout) {
     Navigator.pushNamed(context, rout);
+  }
+
+  Future<void> openAccountDeletionPage() async {
+    await launchUrl(
+      _accountDeletionUri,
+      mode: LaunchMode.externalApplication,
+    );
   }
 
   void logoutUser() async {

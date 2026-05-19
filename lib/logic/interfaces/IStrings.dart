@@ -99,6 +99,7 @@ enum AllStrings {
   addressesTitle,
   changePhoneNumberTitle,
   changeEmailTitle,
+  deleteAccountTitle,
   yourListIsEmptyTitle,
   deliverToTitle,
   subtotalTitle,

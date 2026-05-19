@@ -84,6 +84,10 @@ class SettingsScreenState
                 iconData: Icons.mail_outline,
                 onTap: () => viewModel.navigateToRout("/changeEmail")),
             ProfileSectionWidget(
+                label: strings.getStrings(AllStrings.deleteAccountTitle),
+                iconData: Icons.delete_outline,
+                onTap: () => viewModel.openAccountDeletionPage()),
+            ProfileSectionWidget(
                 label: strings.getStrings(AllStrings.changeLanguageTitle),
                 iconData: Icons.language_outlined,
                 onTap: () => showChangePopUpDialog(context)),
