@@ -40,7 +40,9 @@ import 'package:injector/injector.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'logic/implementations/IOHTTP.dart';
+import 'logic/implementations/PendingAuthActionService.dart';
 import 'logic/interfaces/IAuth.dart';
+import 'logic/interfaces/IPendingAuthAction.dart';
 
 const useStubs = false;
 const supportWhatsAppNumber = "+966542606342";
@@ -95,6 +97,8 @@ Future __setRealDependencies() async {
   final injector = Injector.appInstance;
   injector.registerSingleton<IHTTP>(() => IOHTTP());
   injector.registerSingleton<IAuth>(() => Auth());
+  injector.registerSingleton<IPendingAuthAction>(
+      () => PendingAuthActionService());
   injector.registerSingleton<ISupport>(() => Support());
   injector.registerSingleton<ICoreLogic>(() => CoreLogic());
   injector.registerSingleton<ISocial>(() => SocialImplementation());
