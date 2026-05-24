@@ -180,6 +180,8 @@ class ArStrings implements IStrings {
         return "تغير رقم الهاتف";
       case AllStrings.changeEmailTitle:
         return "تغير البريد الإلكتروني";
+      case AllStrings.deleteAccountTitle:
+        return "حذف الحساب";
       case AllStrings.yourListIsEmptyTitle:
         return "لا توجد لديك بيانات في القائمة";
       case AllStrings.deliverToTitle:

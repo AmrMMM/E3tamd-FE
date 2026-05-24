@@ -182,6 +182,8 @@ class EnStrings implements IStrings {
         return "Change phone number";
       case AllStrings.changeEmailTitle:
         return "Change email";
+      case AllStrings.deleteAccountTitle:
+        return "Delete account";
       case AllStrings.yourListIsEmptyTitle:
         return "Your list is empty";
       case AllStrings.deliverToTitle:
