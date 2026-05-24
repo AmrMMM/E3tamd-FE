@@ -58,6 +58,10 @@ class ArStrings implements IStrings {
         return "المساعدة";
       case AllStrings.helloTitle:
         return "مرحبا";
+      case AllStrings.helloGuestTitle:
+        return "مرحباً، زائر";
+      case AllStrings.loginRequiredTitle:
+        return "يرجى تسجيل الدخول للمتابعة";
       case AllStrings.instructionsTitle:
         return "يمكنك إرسال رسالة لنا, وسيقوم أحد ممثلينا بالتواصل معكم خلال 24 ساعة أو تواصل معنا عن طريق whatsapp";
       case AllStrings.nameTitle:

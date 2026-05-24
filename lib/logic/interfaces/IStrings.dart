@@ -50,6 +50,8 @@ enum AllStrings {
   myOrdersTitle,
   aboutTitle,
   helloTitle,
+  helloGuestTitle,
+  loginRequiredTitle,
   instructionsTitle,
   nameTitle,
   messageTitle,

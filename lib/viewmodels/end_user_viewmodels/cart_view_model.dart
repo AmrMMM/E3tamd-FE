@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:e3tmed/DI.dart';
+import 'package:e3tmed/common/auth/auth_guard.dart';
 import 'package:e3tmed/logic/interfaces/IAuth.dart';
+import 'package:e3tmed/models/pending_auth_action.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/models/order.dart';
 import 'package:e3tmed/models/user_auth_model.dart';
@@ -72,7 +74,11 @@ class CartViewModel extends BaseViewModelWithLogic<ICart> {
             maintenanceMode: orderItem.maintenance));
   }
 
-  proceedToCheckoutAllItem(List<OrderItem> cartList) {
+  proceedToCheckoutAllItem(List<OrderItem> cartList) async {
+    if (!await AuthGuard.requireClientLogin(context,
+        pending: PendingAuthAction.checkoutAll())) {
+      return;
+    }
     logic.setCartUsed(true);
     Navigator.of(context).pushNamed("/checkout",
         arguments: CheckoutScreenArgs(orderItems: cartList));

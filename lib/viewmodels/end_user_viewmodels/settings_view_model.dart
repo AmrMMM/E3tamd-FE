@@ -1,4 +1,6 @@
+import 'package:e3tmed/common/auth/auth_guard.dart';
 import 'package:e3tmed/logic/interfaces/IAuth.dart';
+import 'package:e3tmed/models/pending_auth_action.dart';
 import 'package:e3tmed/screens/end_user_phase/settings/settings_screen.dart';
 import 'package:e3tmed/viewmodels/baseViewModel.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,9 +13,33 @@ import '../../models/user_auth_model.dart';
 class SettingsViewModel extends BaseViewModelWithLogic<IAuth> {
   SettingsViewModel(BuildContext context) : super(context);
 
+  static const _protectedRoutes = {
+    '/accountInformation',
+    '/addresses',
+    '/changePassword',
+    '/changePhoneNumber',
+    '/changeEmail',
+  };
+
   Stream<UserAuthModel?> get auth => logic.authData;
 
-  navigateToRout(String rout) {
+  bool get isGuest => logic.isGuest;
+
+  void navigateToLogin() {
+    AuthGuard.navigateToLogin(context);
+  }
+
+  void navigateToRegister() {
+    Navigator.of(context, rootNavigator: true).pushNamed('/register');
+  }
+
+  navigateToRout(String rout) async {
+    if (_protectedRoutes.contains(rout)) {
+      if (!await AuthGuard.requireClientLogin(context,
+          pending: PendingAuthAction.navigate(rout))) {
+        return;
+      }
+    }
     Navigator.pushNamed(context, rout);
   }
 
@@ -22,7 +48,7 @@ class SettingsViewModel extends BaseViewModelWithLogic<IAuth> {
     if (response) {
       // ignore: use_build_context_synchronously
       Navigator.of(context, rootNavigator: true)
-          .pushNamedAndRemoveUntil("/mainLogin", (route) => false);
+          .pushNamedAndRemoveUntil("/home", (route) => false);
     }
   }
 

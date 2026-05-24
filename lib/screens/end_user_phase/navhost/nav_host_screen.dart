@@ -66,10 +66,13 @@ class GeneralRouteObserver extends RouteObserver {
 
 class NavHostScreenState
     extends BaseStateObject<NavHostScreen, NavHostViewModel> {
+  static final GlobalKey<NavigatorState> navigatorKey =
+      GlobalKey<NavigatorState>();
+
   NavHostScreenState(BuildContext context)
       : super(() => NavHostViewModel(context));
   final strings = Injector.appInstance.get<IStrings>();
-  final thisNavigator = GlobalKey<NavigatorState>();
+  final thisNavigator = navigatorKey;
   final routeObserver = GeneralRouteObserver();
   String currentRoute = "/";
 

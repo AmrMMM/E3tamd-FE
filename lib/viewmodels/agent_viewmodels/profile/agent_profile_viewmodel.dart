@@ -17,8 +17,7 @@ class AgentProfileViewModel extends BaseViewModelWithLogic<IAuth> {
     var res = await logic.logOut();
     if (res) {
       // ignore: use_build_context_synchronously
-      Navigator.pushNamedAndRemoveUntil(
-          context, "/mainLogin", (route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, "/home", (route) => false);
     }
   }
 

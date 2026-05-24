@@ -1,3 +1,4 @@
+import 'package:e3tmed/common/auth/auth_guard.dart';
 import 'package:e3tmed/logic/interfaces/IAuth.dart';
 import 'package:e3tmed/logic/interfaces/core_logic.dart';
 import 'package:e3tmed/models/category.dart';
@@ -20,11 +21,19 @@ class HomeViewModel extends BaseViewModelWithLogic<ICoreLogic> {
 
   Stream<UserAuthModel?> get userModel => authLogic.authData;
 
+  Stream<LoginState?> get loginState => authLogic.loggedInStream;
+
+  bool get isGuest => authLogic.isGuest;
+
   Stream<List<Category>?> get servicesList => _servicesList.stream;
 
   _init() async {
     _rawServiceList = await logic.getRootCategories();
     _servicesList.add(_rawServiceList);
+  }
+
+  void navigateToLogin() {
+    AuthGuard.navigateToLogin(context);
   }
 
   navigateToService(Category category) {

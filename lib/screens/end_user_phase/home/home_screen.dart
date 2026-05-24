@@ -1,5 +1,6 @@
 import 'package:e3tmed/common/BaseWidgets.dart';
 import 'package:e3tmed/common/servicebutton/service_button.dart';
+import 'package:e3tmed/logic/interfaces/IAuth.dart';
 import 'package:e3tmed/models/category.dart';
 import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
@@ -29,6 +30,27 @@ class HomeScreenState extends BaseStateObject<HomeScreen, HomeViewModel> {
       appBar: AppBar(
         title: Text(string.getStrings(AllStrings.homeTitle)),
         elevation: 0,
+        actions: [
+          StreamBuilder<LoginState?>(
+            stream: viewModel.loginState,
+            builder: (context, snapshot) {
+              final isGuest = snapshot.data == LoginState.guest ||
+                  snapshot.data == LoginState.unAuthenticated ||
+                  snapshot.data == null;
+              if (!isGuest) return const SizedBox.shrink();
+              return TextButton(
+                onPressed: viewModel.navigateToLogin,
+                child: Text(
+                  string.getStrings(AllStrings.loginTitle),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Directionality(
         textDirection:
@@ -46,16 +68,33 @@ class HomeScreenState extends BaseStateObject<HomeScreen, HomeViewModel> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: StreamBuilder<UserAuthModel?>(
-                      stream: viewModel.userModel,
-                      builder: (context, snapshot) {
-                        return Text(
-                          "${string.getStrings(AllStrings.helloTitle)} ${snapshot.data?.name}",
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 25,
-                              fontWeight: FontWeight.bold),
-                        );
+                  child: StreamBuilder<LoginState?>(
+                      stream: viewModel.loginState,
+                      builder: (context, loginSnapshot) {
+                        final isGuest = loginSnapshot.data ==
+                                LoginState.guest ||
+                            loginSnapshot.data == LoginState.unAuthenticated ||
+                            loginSnapshot.data == null;
+                        if (isGuest) {
+                          return Text(
+                            string.getStrings(AllStrings.helloGuestTitle),
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold),
+                          );
+                        }
+                        return StreamBuilder<UserAuthModel?>(
+                            stream: viewModel.userModel,
+                            builder: (context, snapshot) {
+                              return Text(
+                                "${string.getStrings(AllStrings.helloTitle)} ${snapshot.data?.name ?? ""}",
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold),
+                              );
+                            });
                       }),
                 ),
                 const SizedBox(

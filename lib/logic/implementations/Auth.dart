@@ -46,7 +46,10 @@ class Auth extends IAuth {
     tokenRenewal = CancelableOperation.fromFuture(Future.delayed(
         Duration(minutes: body.expiresIn - 1), () => _tokenRefresh()));
     isAgent = body.role == "Agent";
-    if (_loggedInController.value == LoginState.unAuthenticated) {
+    final currentState = _loggedInController.value;
+    if (currentState == null ||
+        currentState == LoginState.unAuthenticated ||
+        currentState == LoginState.guest) {
       _loggedInController.add(isAgent! ? LoginState.agent : LoginState.user);
     }
     if (isAgent!) {
@@ -59,15 +62,17 @@ class Auth extends IAuth {
     var res = await http.rpost<LoginResult>('Account/RefreshToken');
     if (res.statusCode != 200) {
       if (!_loggedInController.hasValue ||
-          _loggedInController.value != LoginState.unAuthenticated) {
-        _loggedInController.add(LoginState.unAuthenticated);
+          _loggedInController.value == LoginState.user ||
+          _loggedInController.value == LoginState.agent) {
+        _loggedInController.add(LoginState.guest);
       }
       return;
     }
     isAgent = res.body![0].role == "Agent";
     if (!_loggedInController.hasValue ||
         _loggedInController.value == null ||
-        _loggedInController.value == LoginState.unAuthenticated) {
+        _loggedInController.value == LoginState.unAuthenticated ||
+        _loggedInController.value == LoginState.guest) {
       _loggedInController.add(isAgent! ? LoginState.agent : LoginState.user);
     }
     _processToken(res);
@@ -80,7 +85,7 @@ class Auth extends IAuth {
       http.setJWToken(userAuthToken!);
       _tokenRefresh();
     } else {
-      _loggedInController.add(LoginState.unAuthenticated);
+      _loggedInController.add(LoginState.guest);
     }
   }
 
@@ -102,6 +107,12 @@ class Auth extends IAuth {
   LoginState? isLoggedIn() => _loggedInController.value;
 
   @override
+  bool get isClient => _loggedInController.value == LoginState.user;
+
+  @override
+  bool get isGuest => _loggedInController.value == LoginState.guest;
+
+  @override
   Future<bool> logOut() async {
     final pref = await SharedPreferences.getInstance();
     if (tokenRenewal != null) {
@@ -111,7 +122,7 @@ class Auth extends IAuth {
     await http.post('Account/Logout');
     http.setJWToken("");
     _userData.add(null);
-    _loggedInController.add(LoginState.unAuthenticated);
+    _loggedInController.add(LoginState.guest);
     pref.setString("token", "");
     return true;
   }

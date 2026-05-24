@@ -53,10 +53,12 @@ class CheckoutScreenState extends BaseStateArgumentObject<CheckoutScreen,
       setState(() {
         _auth = event;
         totalPrice = args!.orderItems
-                .map((e) => e.totalPrice! * e.quantity)
-                .reduce((value, element) => value + element) +
+                .map((e) => (e.totalPrice ?? 0) * e.quantity)
+                .fold(0.0, (value, element) => value + element) +
             VAT;
-        viewModel.order.phoneNumber = _auth!.phone!;
+        if (event?.phone != null && event!.phone!.isNotEmpty) {
+          viewModel.order.phoneNumber = event.phone!;
+        }
       });
     });
   }

@@ -1,7 +1,7 @@
 import 'package:e3tmed/models/user_address.dart';
 import 'package:e3tmed/models/user_auth_model.dart';
 
-enum LoginState { unAuthenticated, user, agent }
+enum LoginState { guest, unAuthenticated, user, agent }
 
 enum AuthMode { email, phoneNumber }
 
@@ -25,6 +25,10 @@ abstract class IAuth {
   Future<bool> verifyUsername(String code, bool isRegister);
 
   LoginState? isLoggedIn();
+
+  bool get isClient;
+
+  bool get isGuest;
 
   Future<bool> logOut();
 

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:e3tmed/common/BaseWidgets.dart';
+import 'package:e3tmed/common/profile_card/guest_login_card.dart';
 import 'package:e3tmed/common/profile_card/profile_card.dart';
 import 'package:e3tmed/common/profilesection/profile_sections_widget.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
@@ -61,36 +62,51 @@ class SettingsScreenState
           children: [
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: ProfileCardWidget(auth: _auth),
+              child: viewModel.isGuest || _auth == null
+                  ? GuestLoginCardWidget(
+                      onLoginTap: viewModel.navigateToLogin,
+                      onRegisterTap: viewModel.navigateToRegister,
+                    )
+                  : ProfileCardWidget(auth: _auth),
             ),
-            ProfileSectionWidget(
-                label: strings.getStrings(AllStrings.changeNameTitle),
-                iconData: Icons.person_outline,
-                onTap: () => viewModel.navigateToRout("/accountInformation")),
-            ProfileSectionWidget(
-                label: strings.getStrings(AllStrings.addressesTitle),
-                iconData: Icons.location_on_outlined,
-                onTap: () => viewModel.navigateToRout("/addresses")),
-            ProfileSectionWidget(
-                label: strings.getStrings(AllStrings.changePasswordTitle),
-                iconData: Icons.lock_outline,
-                onTap: () => viewModel.navigateToRout("/changePassword")),
-            ProfileSectionWidget(
-                label: strings.getStrings(AllStrings.changePhoneNumberTitle),
-                iconData: Icons.local_phone_outlined,
-                onTap: () => viewModel.navigateToRout("/changePhoneNumber")),
-            ProfileSectionWidget(
-                label: strings.getStrings(AllStrings.changeEmailTitle),
-                iconData: Icons.mail_outline,
-                onTap: () => viewModel.navigateToRout("/changeEmail")),
+            if (viewModel.isGuest || _auth == null)
+              ProfileSectionWidget(
+                  label: strings.getStrings(AllStrings.loginTitle),
+                  iconData: Icons.login,
+                  onTap: viewModel.navigateToLogin),
+            if (!viewModel.isGuest && _auth != null) ...[
+              ProfileSectionWidget(
+                  label: strings.getStrings(AllStrings.changeNameTitle),
+                  iconData: Icons.person_outline,
+                  onTap: () =>
+                      viewModel.navigateToRout("/accountInformation")),
+              ProfileSectionWidget(
+                  label: strings.getStrings(AllStrings.addressesTitle),
+                  iconData: Icons.location_on_outlined,
+                  onTap: () => viewModel.navigateToRout("/addresses")),
+              ProfileSectionWidget(
+                  label: strings.getStrings(AllStrings.changePasswordTitle),
+                  iconData: Icons.lock_outline,
+                  onTap: () => viewModel.navigateToRout("/changePassword")),
+              ProfileSectionWidget(
+                  label: strings.getStrings(AllStrings.changePhoneNumberTitle),
+                  iconData: Icons.local_phone_outlined,
+                  onTap: () =>
+                      viewModel.navigateToRout("/changePhoneNumber")),
+              ProfileSectionWidget(
+                  label: strings.getStrings(AllStrings.changeEmailTitle),
+                  iconData: Icons.mail_outline,
+                  onTap: () => viewModel.navigateToRout("/changeEmail")),
+            ],
             ProfileSectionWidget(
                 label: strings.getStrings(AllStrings.changeLanguageTitle),
                 iconData: Icons.language_outlined,
                 onTap: () => showChangePopUpDialog(context)),
-            ProfileSectionWidget(
-                label: strings.getStrings(AllStrings.logoutTitle),
-                iconData: Icons.logout,
-                onTap: () => showPopUpDialog(context)),
+            if (!viewModel.isGuest && _auth != null)
+              ProfileSectionWidget(
+                  label: strings.getStrings(AllStrings.logoutTitle),
+                  iconData: Icons.logout,
+                  onTap: () => showPopUpDialog(context)),
           ],
         ),
       ),

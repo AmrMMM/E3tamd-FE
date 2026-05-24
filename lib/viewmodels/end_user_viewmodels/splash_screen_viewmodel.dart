@@ -28,15 +28,13 @@ class SplashScreenViewModel extends BaseViewModelWithLogic<IAuth> {
     if (!isUpdateAvailable) {
       _isNewVersion.add(false);
       switch (state) {
+        case LoginState.guest:
         case LoginState.unAuthenticated:
-          nav.popAndPushNamed("/mainLogin");
+        case LoginState.user:
+          nav.popAndPushNamed('/home');
           break;
         case LoginState.agent:
           nav.popAndPushNamed("/aHomeScreen");
-          break;
-        case LoginState.user:
-          nav.popAndPushNamed('/home');
-          // nav.popAndPushNamed("/aHomeScreen");
           break;
       }
     } else {

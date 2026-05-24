@@ -1,4 +1,6 @@
+import 'package:e3tmed/common/auth/auth_guard.dart';
 import 'package:e3tmed/logic/interfaces/IAuth.dart';
+import 'package:e3tmed/models/pending_auth_action.dart';
 import 'package:e3tmed/logic/interfaces/ICart.dart';
 import 'package:e3tmed/logic/interfaces/core_logic.dart';
 import 'package:e3tmed/models/order.dart';
@@ -85,6 +87,11 @@ class CheckoutViewModel
   }
 
   void makeOrder() async {
+    if (!await AuthGuard.requireClientLogin(context,
+        pending: PendingAuthAction.checkout(
+            CheckoutScreenArgs(orderItems: args!.orderItems)))) {
+      return;
+    }
     if (isBankCardPayment) {
       Navigator.of(context)
           .pushNamed("/payment", arguments: PaymentScreenArgs(request: order));

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
 
 import '../../../DI.dart';
+import '../../../common/profile_card/guest_login_card.dart';
 import '../../../common/profile_card/profile_card.dart';
 import '../../../common/profilesection/profile_sections_widget.dart';
 import '../../../logic/interfaces/IStrings.dart';
@@ -61,7 +62,12 @@ class ProfileScreenState
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ProfileCardWidget(auth: _auth),
+              viewModel.isGuest || _auth == null
+                  ? GuestLoginCardWidget(
+                      onLoginTap: viewModel.navigateToLogin,
+                      onRegisterTap: viewModel.navigateToRegister,
+                    )
+                  : ProfileCardWidget(auth: _auth),
               const SizedBox(
                 height: 15,
               ),
@@ -74,10 +80,13 @@ class ProfileScreenState
                           label: strings.getStrings(AllStrings.offersTitle),
                           iconData: Icons.local_offer_outlined,
                           onTap: () => viewModel.navigateToPage("/offers")),
-                      ProfileSectionWidget(
-                          label: strings.getStrings(AllStrings.myOrdersTitle),
-                          iconData: Icons.card_travel_outlined,
-                          onTap: () => viewModel.navigateToPage('/myOrders')),
+                      if (!viewModel.isGuest && _auth != null)
+                        ProfileSectionWidget(
+                            label:
+                                strings.getStrings(AllStrings.myOrdersTitle),
+                            iconData: Icons.card_travel_outlined,
+                            onTap: () =>
+                                viewModel.navigateToPage('/myOrders')),
                       ProfileSectionWidget(
                           label: strings.getStrings(AllStrings.helpTitle),
                           iconData: Icons.help_outline,

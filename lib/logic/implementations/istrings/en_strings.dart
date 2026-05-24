@@ -60,6 +60,10 @@ class EnStrings implements IStrings {
         return "Help";
       case AllStrings.helloTitle:
         return "Hello";
+      case AllStrings.helloGuestTitle:
+        return "Hello, Guest";
+      case AllStrings.loginRequiredTitle:
+        return "Please log in to continue";
       case AllStrings.instructionsTitle:
         return "You can send us a message , and our agent will contact you within 24 hours or contact us via whatsapp";
       case AllStrings.nameTitle:

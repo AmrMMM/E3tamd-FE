@@ -4,11 +4,13 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:darq/darq.dart';
+import 'package:e3tmed/common/auth/auth_guard.dart';
 import 'package:e3tmed/logic/interfaces/IPriceLogic.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/logic/interfaces/core_logic.dart';
 import 'package:e3tmed/models/motor.dart';
 import 'package:e3tmed/models/order.dart';
+import 'package:e3tmed/models/pending_auth_action.dart';
 import 'package:e3tmed/models/price.dart';
 import 'package:e3tmed/models/product.dart';
 import 'package:e3tmed/viewmodels/baseViewModel.dart';
@@ -67,6 +69,31 @@ class ItemDetailsViewModel
   }
 
   void navigateToCheckoutForAgent(String notes, List<Uint8List>? imagesList) {
+    if (!AuthGuard.isClientLoggedIn) {
+      AuthGuard.navigateToLogin(
+        context,
+        pending: PendingAuthAction.checkout(CheckoutScreenArgs(orderItems: [
+          OrderItem(
+              product: args!.product,
+              motor: null,
+              dimension: null,
+              thickness: null,
+              color: null,
+              totalPrice: 115,
+              priceWithoutExtras: 115,
+              isAgent: true,
+              additionalNotes: notes,
+              maintenance: args!.maintenanceMode,
+              extras: [],
+              quantity: 1,
+              images: imagesList
+                      ?.map((e) => OrderItemImage(data: base64.encode(e)))
+                      .toList() ??
+                  []),
+        ])),
+      );
+      return;
+    }
     cart.setCartUsed(false);
     Navigator.of(context).pushNamed("/checkout",
         arguments: CheckoutScreenArgs(orderItems: [
@@ -102,34 +129,17 @@ class ItemDetailsViewModel
     if (_lastCalculatedPrice == null) {
       await calculatePrice(dimension, thickness, motor, extras);
     }
+    final checkoutArgs = CheckoutScreenArgs(
+        orderItems: [_buildOrderItem(
+            notes, dimension, thickness, color, motor, extras, quantity,
+            imagesList)]);
+    if (!await AuthGuard.requireClientLogin(context,
+        pending: PendingAuthAction.checkout(checkoutArgs))) {
+      return;
+    }
     cart.setCartUsed(false);
-    Navigator.of(context).pushNamed("/checkout",
-        arguments: CheckoutScreenArgs(orderItems: [
-          OrderItem(
-              product: args!.product,
-              motor: motor,
-              dimension: dimension,
-              thickness: thickness,
-              color: color,
-              totalPrice: _lastCalculatedPrice!.totalPrice,
-              priceWithoutExtras:
-                  _lastCalculatedPrice!.items.sum((e) => e.productPrice),
-              isAgent: false,
-              additionalNotes: notes,
-              maintenance: args!.maintenanceMode,
-              extras: extras
-                  .map((e) => OrderItemExtraElement(
-                      extraElement: e,
-                      purchasePrice: e.price,
-                      extraElementId: e.id,
-                      quantity: 1))
-                  .toList(),
-              quantity: quantity,
-              images: imagesList
-                      ?.map((e) => OrderItemImage(data: base64.encode(e)))
-                      .toList() ??
-                  []),
-        ]));
+    Navigator.of(context)
+        .pushNamed("/checkout", arguments: checkoutArgs);
   }
 
   void addToCart(
@@ -145,36 +155,13 @@ class ItemDetailsViewModel
     if (_lastCalculatedPrice == null) {
       await calculatePrice(dimension, thickness, motor, extras);
     }
-    var res = await cart.insertItemIntoCartDB(
-      OrderItem(
-          product: args!.product,
-          motor: motor,
-          dimension: dimension,
-          thickness: thickness,
-          color: color,
-          totalPrice: args!.product.withExtraDetails
-              ? _lastCalculatedPrice!.totalItemsPrice
-              : args!.product.basePrice,
-          priceWithoutExtras:
-              args!.product.withExtraDetails && !args!.maintenanceMode
-                  ? _lastCalculatedPrice!.items.sum((e) => e.productPrice)
-                  : args!.product.basePrice,
-          isAgent: false,
-          additionalNotes: notes,
-          maintenance: args!.maintenanceMode,
-          extras: extras
-              .map((e) => OrderItemExtraElement(
-                  extraElement: e,
-                  purchasePrice: e.price,
-                  extraElementId: e.id,
-                  quantity: 1))
-              .toList(),
-          quantity: quantity,
-          images: imagesList
-                  ?.map((e) => OrderItemImage(data: base64.encode(e)))
-                  .toList() ??
-              []),
-    );
+    final item = _buildOrderItem(
+        notes, dimension, thickness, color, motor, extras, quantity, imagesList);
+    if (!await AuthGuard.requireClientLogin(context,
+        pending: PendingAuthAction.addToCart(item))) {
+      return;
+    }
+    var res = await cart.insertItemIntoCartDB(item);
     if (res) {
       Fluttertoast.showToast(
           msg: strings.getStrings(AllStrings.orderAddedToCartTitle),
@@ -184,6 +171,45 @@ class ItemDetailsViewModel
           msg: strings.getStrings(AllStrings.failedToAddOrderToCartTitle),
           gravity: ToastGravity.BOTTOM);
     }
+  }
+
+  OrderItem _buildOrderItem(
+      String notes,
+      String? dimension,
+      String? thickness,
+      String? color,
+      Motor? motor,
+      List<ExtraModel> extras,
+      int quantity,
+      List<Uint8List>? imagesList) {
+    return OrderItem(
+        product: args!.product,
+        motor: motor,
+        dimension: dimension,
+        thickness: thickness,
+        color: color,
+        totalPrice: args!.product.withExtraDetails
+            ? _lastCalculatedPrice!.totalItemsPrice
+            : args!.product.basePrice,
+        priceWithoutExtras:
+            args!.product.withExtraDetails && !args!.maintenanceMode
+                ? _lastCalculatedPrice!.items.sum((e) => e.productPrice)
+                : args!.product.basePrice,
+        isAgent: false,
+        additionalNotes: notes,
+        maintenance: args!.maintenanceMode,
+        extras: extras
+            .map((e) => OrderItemExtraElement(
+                extraElement: e,
+                purchasePrice: e.price,
+                extraElementId: e.id,
+                quantity: 1))
+            .toList(),
+        quantity: quantity,
+        images: imagesList
+                ?.map((e) => OrderItemImage(data: base64.encode(e)))
+                .toList() ??
+            []);
   }
 
   Future<Uint8List?> pickImageFromGallery() async {
