@@ -4,6 +4,6 @@ import 'package:e3tmed/models/payment.dart';
 abstract class IPaymentLogic {
   Future<PaymentResult?> initiatePayment(
       Order order, String webViewUserAgent, String webViewAccept);
-  Future<bool> completePayment(PaymentResult prevResult);
+  Future<bool> completePayment(String paymentId);
   Future<bool> abortPayment(PaymentResult prevResult);
 }

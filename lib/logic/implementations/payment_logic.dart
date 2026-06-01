@@ -30,9 +30,9 @@ class PaymentLogic implements IPaymentLogic {
   }
 
   @override
-  Future<bool> completePayment(PaymentResult prevResult) async {
+  Future<bool> completePayment(String paymentId) async {
     final res = await http.post("Payment/Confirm",
-        queryArgs: {"code": prevResult.transactionCode});
+        queryArgs: {"paymentId": paymentId});
     return res.statusCode == 200;
   }
 

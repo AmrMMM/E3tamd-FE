@@ -30,10 +30,23 @@ class PaymentScreenViewModel
     _paymentResultStream.add(res);
   }
 
-  void onConfirm() async {
+  static const _confirmPrefix = 'https://eatmed.cloud/api/Payment/Confirm';
+
+  bool onWebViewNavigating(String url) {
+    if (url.startsWith(_confirmPrefix)) {
+      final paymentId = Uri.parse(url).queryParameters['paymentId'];
+      if (paymentId != null && paymentId.isNotEmpty) {
+        onConfirm(paymentId);
+      }
+      return false;
+    }
+    return true;
+  }
+
+  void onConfirm(String paymentId) async {
     final val = _paymentResultStream.value!;
     _paymentResultStream.add(null);
-    final res = await logic.completePayment(val);
+    final res = await logic.completePayment(paymentId);
     if (res) {
       Fluttertoast.showToast(msg: "Payment completed succesfully!");
       Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);

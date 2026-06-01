@@ -40,11 +40,7 @@ class PaymentScreenState extends BaseStateArgumentObject<PaymentScreen,
         controller.setNavigationDelegate(
           NavigationDelegate(
             onNavigationRequest: (request) {
-              if (request.url == event.successUrl) {
-                viewModel.onConfirm();
-                return NavigationDecision.prevent;
-              } else if (request.url == event.failureUrl) {
-                viewModel.onAbort();
+              if (!viewModel.onWebViewNavigating(request.url)) {
                 return NavigationDecision.prevent;
               }
               return NavigationDecision.navigate;
