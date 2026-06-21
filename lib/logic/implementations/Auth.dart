@@ -61,11 +61,11 @@ class Auth extends IAuth {
   void _tokenRefresh() async {
     var res = await http.rpost<LoginResult>('Account/RefreshToken');
     if (res.statusCode != 200) {
-      if (!_loggedInController.hasValue ||
-          _loggedInController.value == LoginState.user ||
-          _loggedInController.value == LoginState.agent) {
-        _loggedInController.add(LoginState.guest);
-      }
+      final pref = await SharedPreferences.getInstance();
+      pref.setString("token", "");
+      http.setJWToken("");
+      _userData.add(null);
+      _loggedInController.add(LoginState.guest);
       return;
     }
     isAgent = res.body![0].role == "Agent";
