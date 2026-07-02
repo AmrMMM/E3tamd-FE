@@ -28,16 +28,13 @@ class ServiceButtonWidget extends StatelessWidget {
               direction: Axis.horizontal,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Card(
-                  color: Theme.of(context).colorScheme.secondary,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: CategoryImage(
-                        category: category,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover),
-                  ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CategoryImage(
+                      category: category,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover),
                 ),
                 const SizedBox(
                   width: 20,
