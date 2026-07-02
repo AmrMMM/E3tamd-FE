@@ -53,6 +53,9 @@ class CheckoutViewModel
 
   Stream<bool?> get addressState => _addressState;
 
+  bool get isAgentCheckout =>
+      args!.orderItems.any((item) => item.isAgent);
+
   void _init() async {
     final addresses = (await authLogic.getUserAddresses());
     if (addresses.isNotEmpty) {
@@ -65,6 +68,9 @@ class CheckoutViewModel
   @override
   void onArgsPushed() {
     order.items = args!.orderItems;
+    if (isAgentCheckout) {
+      isBankCardPayment = true;
+    }
   }
 
   void saveAddressChanges(UserAddress newAddress) async {
@@ -92,7 +98,7 @@ class CheckoutViewModel
             CheckoutScreenArgs(orderItems: args!.orderItems)))) {
       return;
     }
-    if (isBankCardPayment) {
+    if (isAgentCheckout || isBankCardPayment) {
       Navigator.of(context)
           .pushNamed("/payment", arguments: PaymentScreenArgs(request: order));
       return;

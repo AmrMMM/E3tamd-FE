@@ -9,9 +9,13 @@ import 'package:injector/injector.dart';
 class AddPaymentPopUpDialog extends StatefulWidget {
   final void Function(bool) paymentCallback;
   final Order order;
+  final bool cardOnly;
 
   const AddPaymentPopUpDialog(
-      {Key? key, required this.paymentCallback, required this.order})
+      {Key? key,
+      required this.paymentCallback,
+      required this.order,
+      this.cardOnly = false})
       : super(key: key);
 
   @override
@@ -60,19 +64,21 @@ class _AddPaymentPopUpDialogState extends State<AddPaymentPopUpDialog> {
                   const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               child: Column(
                 children: [
-                  PrimaryButtonShape(
-                      width: double.infinity,
-                      text: strings
-                          .getStrings(AllStrings.paymentMethodCashTitle),
-                      color: Theme.of(context).colorScheme.secondary,
-                      stream: null,
-                      onTap: () {
-                        widget.paymentCallback(false);
-                        Navigator.of(context).pop();
-                      }),
-                  const Divider(
-                    thickness: 0.7,
-                  ),
+                  if (!widget.cardOnly) ...[
+                    PrimaryButtonShape(
+                        width: double.infinity,
+                        text: strings
+                            .getStrings(AllStrings.paymentMethodCashTitle),
+                        color: Theme.of(context).colorScheme.secondary,
+                        stream: null,
+                        onTap: () {
+                          widget.paymentCallback(false);
+                          Navigator.of(context).pop();
+                        }),
+                    const Divider(
+                      thickness: 0.7,
+                    ),
+                  ],
                   PrimaryButtonShape(
                       width: double.infinity,
                       text: strings

@@ -223,28 +223,31 @@ class CheckoutScreenState extends BaseStateArgumentObject<CheckoutScreen,
                       RichText(
                           text: TextSpan(children: [
                         TextSpan(
-                          text: !viewModel.isBankCardPayment
-                              ? strings
-                                  .getStrings(AllStrings.paymentMethodCashTitle)
+                          text: viewModel.isAgentCheckout ||
+                                  viewModel.isBankCardPayment
+                              ? strings.getStrings(
+                                  AllStrings.paymentMethodCardTitle)
                               : strings.getStrings(
-                                  AllStrings.paymentMethodCardTitle),
+                                  AllStrings.paymentMethodCashTitle),
                           style: const TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
                               color: Colors.black),
                         )
                       ])),
-                      Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: TextButton(
-                          onPressed: () => showAddPaymentDialog(context),
-                          child: Text(
-                            strings.getStrings(AllStrings.changePaymentTitle),
-                            style: const TextStyle(
-                                fontSize: 14, color: Colors.blueAccent),
+                      if (!viewModel.isAgentCheckout)
+                        Directionality(
+                          textDirection: TextDirection.rtl,
+                          child: TextButton(
+                            onPressed: () => showAddPaymentDialog(context),
+                            child: Text(
+                              strings
+                                  .getStrings(AllStrings.changePaymentTitle),
+                              style: const TextStyle(
+                                  fontSize: 14, color: Colors.blueAccent),
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -362,6 +365,7 @@ class CheckoutScreenState extends BaseStateArgumentObject<CheckoutScreen,
         builder: (context) => Dialog(
               child: AddPaymentPopUpDialog(
                 order: viewModel.order,
+                cardOnly: viewModel.isAgentCheckout,
                 paymentCallback: (isCardPayment) {
                   viewModel.setPaymentMode(isCardPayment);
                   setState(() {});
