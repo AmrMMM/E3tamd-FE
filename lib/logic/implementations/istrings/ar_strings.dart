@@ -387,6 +387,8 @@ class ArStrings implements IStrings {
         return "المبلغ المدفوع";
       case AllStrings.totalDue:
         return "المبلغ المتبقى";
+      case AllStrings.deletedProductTitle:
+        return "منتج محذوف";
     }
   }
 
@@ -432,7 +434,7 @@ class ArStrings implements IStrings {
       case OrderStatus.confirmed:
         return "تم تأكيد طلبك بنجاح";
       case OrderStatus.finished:
-        return "تم التكريب بنجاح";
+        return "تم التركيب بنجاح";
       case OrderStatus.toBeDelivered:
         return "الطلب جاهز للتوصيل";
       case OrderStatus.aWaitingForConfirmation:

@@ -1,6 +1,7 @@
 import 'package:e3tmed/DI.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/models/order.dart';
+import 'package:e3tmed/models/order_item_extensions.dart';
 import 'package:e3tmed/screens/end_user_phase/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
@@ -20,7 +21,7 @@ class MyOrdersCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     String items = order.items
         .map(
-          (e) => e.product.getProductName(),
+          (e) => e.productDisplayName(strings),
         )
         .toString();
     double totalPrice = 0;

@@ -75,7 +75,7 @@ class _CustomCartItemWidgetState extends State<CustomCartItemWidget> {
                           fontSize: 16)),
                 QuantityCounter(
                   initialValue: widget.orderItem.quantity,
-                  max: widget.orderItem.product.stock,
+                  max: widget.orderItem.product!.stock,
                   onQuantityChange: (quantity) => setState(() {
                     widget.callBack(quantity);
                     widget.orderItem.quantity = quantity;

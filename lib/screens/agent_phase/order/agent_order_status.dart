@@ -11,6 +11,7 @@ import '../../../common/image_widgets/product_image.dart';
 import '../../../common/price_summary_widget.dart';
 import '../../../models/agent_requests_model.dart';
 import '../../../models/order.dart';
+import '../../../models/order_item_extensions.dart';
 import 'additional_custom_widgets/order_details_custom_widgets.dart';
 
 class AgentOrderStatusScreenArgs {
@@ -68,7 +69,10 @@ class AgentOrderStatusScreenState extends BaseStateArgumentObject<
                 child: ListView(
                   children: [
                     Text(
-                      args!.request.items[0].product.getCategoryName(),
+                      args!.request.items.isNotEmpty
+                          ? args!.request.items[0]
+                              .categoryDisplayName(strings)
+                          : '',
                       style: const TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
@@ -399,6 +403,13 @@ class _ProductDetailsWidgetState extends State<_ProductDetailsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.item.product == null) {
+      return OrderItemWidget(
+        orderItem: widget.item,
+        displayDetails: true,
+      );
+    }
+    final product = widget.item.product!;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -409,8 +420,8 @@ class _ProductDetailsWidgetState extends State<_ProductDetailsWidget> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               ProductImage(
-                  key: Key(widget.item.product.id.toString()),
-                  product: widget.item.product,
+                  key: Key(product.id.toString()),
+                  product: product,
                   width: 50,
                   height: 50,
                   fit: BoxFit.fill),
@@ -424,7 +435,7 @@ class _ProductDetailsWidgetState extends State<_ProductDetailsWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.item.product.getProductName(),
+                        product.getProductName(),
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Theme.of(context).primaryColor,
@@ -464,7 +475,7 @@ class _ProductDetailsWidgetState extends State<_ProductDetailsWidget> {
                                   fontWeight: FontWeight.bold,
                                   fontSize: 13)),
                         ),
-                      if (!widget.item.product.withExtraDetails)
+                      if (!product.withExtraDetails)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 1.0),
                           child: Text(

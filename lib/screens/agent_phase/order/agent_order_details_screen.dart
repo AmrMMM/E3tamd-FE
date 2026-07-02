@@ -1,4 +1,6 @@
 import 'package:e3tmed/common/BaseWidgets.dart';
+import 'package:e3tmed/common/custom_checkout_item_card/custom_order_item_widget.dart';
+import 'package:e3tmed/models/order_item_extensions.dart';
 import 'package:e3tmed/common/buttons/primarybuttonshape.dart';
 import 'package:e3tmed/common/customalertdialog/add_extra_alert_dialog.dart';
 import 'package:e3tmed/common/customtextfield/CustomTextField.dart';
@@ -69,7 +71,10 @@ class AgentOrderDetailsScreenState extends BaseStateArgumentObject<
                 child: ListView(
                   children: [
                     Text(
-                      args!.request.items[0].product.getCategoryName(),
+                      args!.request.items.isNotEmpty
+                          ? args!.request.items[0]
+                              .categoryDisplayName(strings)
+                          : '',
                       style: const TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
@@ -105,12 +110,17 @@ class AgentOrderDetailsScreenState extends BaseStateArgumentObject<
                     ),
                     Column(
                       children: args!.request.items
-                          .map((e) => ProductDetailsWidget(
-                                currentMoney: totalPrice,
-                                item: e,
-                                viewModel: viewModel,
-                                refreshPrice: refreshPrice,
-                              ))
+                          .map((e) => e.product == null
+                              ? OrderItemWidget(
+                                  orderItem: e,
+                                  displayDetails: true,
+                                )
+                              : ProductDetailsWidget(
+                                  currentMoney: totalPrice,
+                                  item: e,
+                                  viewModel: viewModel,
+                                  refreshPrice: refreshPrice,
+                                ))
                           .toList(),
                     ),
                   ],
@@ -251,6 +261,7 @@ class ProductDetailsWidget extends StatefulWidget {
 
 class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
   final strings = Injector.appInstance.get<IStrings>();
+  late final Product product;
   String? defaultDimensions, defaultThickness, defaultColor, note;
   Motor? defaultMotor;
   var detailsVisible = false;
@@ -266,12 +277,13 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
   @override
   void initState() {
     super.initState();
+    product = widget.item.product!;
     defaultDimensions = widget.item.dimension;
     defaultThickness = widget.item.thickness;
     defaultColor = widget.item.color;
     defaultMotor = widget.item.motor;
     note = widget.item.additionalNotes;
-    motorList = widget.item.product.motors ?? [];
+    motorList = product.motors ?? [];
     final widgetExtrasList = widget.item.extras;
     if (widgetExtrasList.isNotEmpty) {
       extrasList = widgetExtrasList.map((e) => e.extraElement!).toList();
@@ -296,8 +308,8 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               ProductImage(
-                  key: Key(widget.item.product.id.toString()),
-                  product: widget.item.product,
+                  key: Key(product.id.toString()),
+                  product: product,
                   width: 65,
                   height: 65,
                   fit: BoxFit.cover),
@@ -312,12 +324,12 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.item.product.getProductName(),
+                        product.getProductName(),
                         style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontSize: 16),
                       ),
-                      Text(widget.item.product.description,
+                      Text(product.description,
                           style: TextStyle(
                               color: Theme.of(context).primaryColor,
                               fontSize: 13)),
@@ -331,7 +343,7 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                                   fontWeight: FontWeight.bold,
                                   fontSize: 13)),
                         ),
-                      if (!widget.item.product.withExtraDetails)
+                      if (!product.withExtraDetails)
                         Padding(
                           padding: const EdgeInsets.symmetric(vertical: 1.0),
                           child: Text(
@@ -364,7 +376,7 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                       const SizedBox(
                         height: 15,
                       ),
-                      if (widget.item.product.withExtraDetails)
+                      if (product.withExtraDetails)
                         InkWell(
                           onTap: () => setState(() {
                             detailsVisible = !detailsVisible;
@@ -397,7 +409,7 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                       title: strings.getStrings(AllStrings.dimensionsTitle),
                       data: defaultDimensions,
                       onTap: () => openBottomSheet(
-                          widget.item.product.availableDimensions!,
+                          product.availableDimensions!,
                           context,
                           AllStrings.dimensionsTitle, (value) {
                         Navigator.of(context).pop();
@@ -417,7 +429,7 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                       title: strings.getStrings(AllStrings.thicknessTitle),
                       data: defaultThickness,
                       onTap: () => openBottomSheet(
-                          widget.item.product.availableThickness!,
+                          product.availableThickness!,
                           context,
                           AllStrings.thicknessTitle, (value) {
                         Navigator.of(context).pop();
@@ -437,7 +449,7 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                       title: strings.getStrings(AllStrings.colorTitle),
                       data: defaultColor,
                       onTap: () => openBottomSheet(
-                          widget.item.product.availableColors!,
+                          product.availableColors!,
                           context,
                           AllStrings.colorTitle, (value) {
                         Navigator.of(context).pop();
@@ -453,7 +465,7 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                         });
                       }, null),
                     ),
-                    if (widget.item.product.motors?.isNotEmpty ?? false)
+                    if (product.motors?.isNotEmpty ?? false)
                       ProductSpecsDetailsWidget(
                         title: strings.getStrings(AllStrings.motorTitle),
                         data: defaultMotor != null
@@ -564,7 +576,7 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                         icon: Icons.add,
                         title: strings.getStrings(AllStrings.addExtrasTitle),
                         onTap: () => selectExtrasBottomSheet<ExtraModel>(
-                                widget.item.product.availableExtras ?? [],
+                                product.availableExtras ?? [],
                                 context, (value) {
                               setState(() {
                                 extrasList.addAll(value);

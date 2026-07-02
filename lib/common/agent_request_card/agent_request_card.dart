@@ -3,6 +3,7 @@ import 'package:injector/injector.dart';
 
 import '../../logic/interfaces/IStrings.dart';
 import '../../models/agent_requests_model.dart';
+import '../../models/order_item_extensions.dart';
 import '../buttons/primarybuttonshape.dart';
 
 class RequestOuterDetailsWidget extends StatelessWidget {
@@ -76,8 +77,9 @@ class AgentRequestCardWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(
-                      child:
-                          Text(agentRequest.items[0].product.getCategoryName()),
+                      child: Text(agentRequest.items.isNotEmpty
+                          ? agentRequest.items[0].categoryDisplayName(strings)
+                          : ''),
                     ),
                     Text(
                       "${agentRequest.addedDate.day}/${agentRequest.addedDate.month}/${agentRequest.addedDate.year}",
@@ -112,8 +114,10 @@ class AgentRequestCardWidget extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 2.0),
                   child: RequestOuterDetailsWidget(
                       icon: Icons.error_outline,
-                      title:
-                          "${agentRequest.items.map((e) => e.product.getCategoryName()).toList()}"),
+                      title: agentRequest.items
+                          .map((e) => e.categoryDisplayName(strings))
+                          .toList()
+                          .toString()),
                 ),
                 isOrder ?? true
                     ? Padding(

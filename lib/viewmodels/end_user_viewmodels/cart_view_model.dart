@@ -70,7 +70,7 @@ class CartViewModel extends BaseViewModelWithLogic<ICart> {
   navigateToCheckoutScreen(OrderItem orderItem) {
     Navigator.of(context).pushNamed("/itemDetails",
         arguments: ItemDetailsScreenArgs(
-            product: orderItem.product,
+            product: orderItem.product!,
             maintenanceMode: orderItem.maintenance));
   }
 

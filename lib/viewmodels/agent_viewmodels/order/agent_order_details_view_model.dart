@@ -117,7 +117,7 @@ class AgentOrderDetailsViewModel
         requestItem.thickness != null &&
         requestItem.color != null &&
         motor != null) {
-      requestItem.product.withExtraDetails = true;
+      requestItem.product?.withExtraDetails = true;
       requestItem.maintenance = false;
       requestItem.isAgent = false;
     }

@@ -193,7 +193,8 @@ enum AllStrings {
   orderPlacedSuccessfullyDescription,
   continueShoppingTitle,
   paidAmount,
-  totalDue
+  totalDue,
+  deletedProductTitle
 }
 
 abstract class IStrings {

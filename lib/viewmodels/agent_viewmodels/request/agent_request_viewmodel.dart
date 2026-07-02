@@ -24,7 +24,7 @@ class AgentRequestViewModel extends BaseViewModelWithLogic<IAgentOperations> {
   getRequestDataWithFilter(AgentRequestFilters filter) async {
     lastFilter = AgentRequestFilters.all;
     itemMap ??= await logic.getUnassignedOrders();
-    requests.add(itemMap![filter]!);
+    requests.add(itemMap?[filter] ?? <AgentRequest>[]);
   }
 
   void acceptRequest(AgentRequest request) async {

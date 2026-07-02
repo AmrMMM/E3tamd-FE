@@ -78,7 +78,14 @@ class HTTP implements IHTTP {
       final resBody = jsonDecode(bodyString);
       List<O> result;
       if (resBody is List) {
-        result = resBody.map((e) => responseFactory.fromJson(e)).toList();
+        result = [];
+        for (final e in resBody) {
+          try {
+            result.add(responseFactory.fromJson(e));
+          } catch (ex) {
+            print("HTTP._readAsObject: skipping item: $ex");
+          }
+        }
       } else {
         result = [responseFactory.fromJson(resBody)];
       }

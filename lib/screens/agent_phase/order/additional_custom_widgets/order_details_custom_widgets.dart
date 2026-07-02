@@ -221,6 +221,7 @@ class SpareProductWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final strings = Injector.appInstance.get<IStrings>();
     return Row(
       children: [
         Expanded(
@@ -250,7 +251,8 @@ class SpareProductWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item.product!.getProductName(),
+                        item.product?.getProductName() ??
+                            strings.getStrings(AllStrings.deletedProductTitle),
                         style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontSize: 16),
@@ -269,7 +271,7 @@ class SpareProductWidget extends StatelessWidget {
             ],
           ),
         ),
-        removeItem != null
+        removeItem != null && item.product != null
             ? InkWell(
                 onTap: () => removeItem!(item.product!),
                 child: const Icon(

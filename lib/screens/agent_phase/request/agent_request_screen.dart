@@ -14,6 +14,7 @@ import '../../../common/price_summary_widget.dart';
 import '../../../logic/interfaces/IStrings.dart';
 import '../../../models/category.dart';
 import '../../../models/order.dart';
+import '../../../models/order_item_extensions.dart';
 
 class AgentRequestScreenArgs {
   final Category category;
@@ -190,8 +191,10 @@ class AgentRequestScreenState
                 padding: const EdgeInsets.all(5.0),
                 child: RequestOuterDetailsWidget(
                     icon: Icons.error_outline,
-                    title:
-                        "${request.items.map((e) => e.product.getProductName()).toList()}"),
+                    title: request.items
+                        .map((e) => e.productDisplayName(strings))
+                        .toList()
+                        .toString()),
               ),
               const Divider(
                 thickness: 0.7,

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:e3tmed/models/order.dart';
+import 'package:e3tmed/models/order_item_extensions.dart';
 import 'package:e3tmed/screens/agent_phase/order/additional_custom_widgets/order_details_custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
@@ -53,11 +54,19 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
           child: Flex(
             direction: Axis.horizontal,
             children: [
-              ProductImage(
-                  product: widget.orderItem.product,
-                  width: 65,
-                  height: 65,
-                  fit: BoxFit.cover),
+              widget.orderItem.product != null
+                  ? ProductImage(
+                      product: widget.orderItem.product!,
+                      width: 65,
+                      height: 65,
+                      fit: BoxFit.cover)
+                  : Container(
+                      width: 65,
+                      height: 65,
+                      decoration: const BoxDecoration(
+                        color: Colors.black26,
+                      ),
+                    ),
               const SizedBox(
                 width: 5,
               ),
@@ -69,12 +78,12 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.orderItem.product.getProductName(),
+                        widget.orderItem.productDisplayName(strings),
                         style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontSize: 16),
                       ),
-                      Text(widget.orderItem.product.description,
+                      Text(widget.orderItem.product?.description ?? '',
                           style: TextStyle(
                               color: Theme.of(context).primaryColor,
                               fontSize: 13)),
@@ -92,7 +101,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                                 color: Theme.of(context).primaryColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13)),
-                      if (!widget.orderItem.product.withExtraDetails)
+                      if (widget.orderItem.product?.withExtraDetails != true)
                         Text(strings.getStrings(AllStrings.sparePartsTitle),
                             style: TextStyle(
                                 color: Theme.of(context).primaryColor,
@@ -166,7 +175,7 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
               const SizedBox(
                 height: 5,
               ),
-              if (widget.orderItem.product.withExtraDetails &&
+              if (widget.orderItem.product?.withExtraDetails == true &&
                   !widget.orderItem.maintenance && !widget.orderItem.isAgent)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,12 +253,16 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                       Column(
                         children: widget.orderItem.extraProducts!
                             .map((e) => PartsAndExtrasWidget(
-                                  itemName: e.product!.getProductName(),
+                                  itemName: e.product?.getProductName() ??
+                                      strings.getStrings(
+                                          AllStrings.deletedProductTitle),
                                   itemPrice: e.purchasePrice!,
-                                  image: ProductImage(
-                                      product: e.product!,
-                                      width: 40,
-                                      height: 40),
+                                  image: e.product != null
+                                      ? ProductImage(
+                                          product: e.product!,
+                                          width: 40,
+                                          height: 40)
+                                      : null,
                                 ))
                             .toList(),
                       ),

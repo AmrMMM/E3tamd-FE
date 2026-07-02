@@ -89,16 +89,18 @@ class OrderItemExtraProductFactory
   OrderItemExtraProduct fromJson(Map<String, dynamic> jsonMap) {
     final productFactory = Injector.appInstance.get<IModelFactory<Product>>();
     return OrderItemExtraProduct(
-        product: productFactory.fromJson(jsonMap["product"]),
+        product: jsonMap["product"] == null
+            ? null
+            : productFactory.fromJson(jsonMap["product"]),
         productId: jsonMap["productId"],
-        purchasePrice: jsonMap["purchasePrice"].toDouble(),
+        purchasePrice: jsonMap["purchasePrice"]?.toDouble(),
         quantity: jsonMap["quantity"]);
   }
 }
 
 class OrderItem implements IJsonSerializable {
   int? id;
-  Product product;
+  Product? product;
   Motor? motor;
   String? dimension;
   String? thickness;
@@ -133,7 +135,7 @@ class OrderItem implements IJsonSerializable {
   @override
   Map<String, dynamic> toJson() => {
         if (id != null) "id": id,
-        "productId": product.id,
+        if (product != null) "productId": product!.id,
         "motorId": motor?.id,
         "dimension": dimension,
         "thickness": thickness,
@@ -163,7 +165,9 @@ class OrderItemFactory implements IModelFactory<OrderItem> {
 
       return OrderItem(
           id: jsonMap["id"],
-          product: productFactory.fromJson(jsonMap["product"]),
+          product: jsonMap["product"] == null
+              ? null
+              : productFactory.fromJson(jsonMap["product"]),
           motor: jsonMap["motor"] == null
               ? null
               : motorFactory.fromJson(jsonMap["motor"]),
@@ -176,8 +180,10 @@ class OrderItemFactory implements IModelFactory<OrderItem> {
           additionalNotes: jsonMap["additionalNotes"],
           maintenance: jsonMap["maintenance"],
           extras: jsonMap["extras"]
-              .map<OrderItemExtraElement>((u) => extrasFactory.fromJson(u))
-              .toList(),
+                  ?.map<OrderItemExtraElement>(
+                      (u) => extrasFactory.fromJson(u))
+                  .toList() ??
+              [],
           quantity: jsonMap["quantity"],
           extraProducts: jsonMap["extraProducts"]
                   ?.map<OrderItemExtraProduct>(
