@@ -189,6 +189,9 @@ enum AllStrings {
   editTitle,
   deleteAddressTitle,
   areYouSureYouWantToDeleteThisAddressTitle,
+  orderPlacedSuccessfullyTitle,
+  orderPlacedSuccessfullyDescription,
+  continueShoppingTitle,
   paidAmount,
   totalDue
 }

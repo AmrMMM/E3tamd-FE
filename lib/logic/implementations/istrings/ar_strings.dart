@@ -377,6 +377,12 @@ class ArStrings implements IStrings {
         return "مسح العنوان";
       case AllStrings.areYouSureYouWantToDeleteThisAddressTitle:
         return "هل انت متأكد من انك تريد مسح هذا العنوان؟";
+      case AllStrings.orderPlacedSuccessfullyTitle:
+        return "تم تقديم الطلب بنجاح";
+      case AllStrings.orderPlacedSuccessfullyDescription:
+        return "تم استلام طلبك بنجاح. يمكنك متابعته من صفحة طلباتي.";
+      case AllStrings.continueShoppingTitle:
+        return "متابعة التسوق";
       case AllStrings.paidAmount:
         return "المبلغ المدفوع";
       case AllStrings.totalDue:

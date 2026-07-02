@@ -379,6 +379,12 @@ class EnStrings implements IStrings {
         return "Delete address";
       case AllStrings.areYouSureYouWantToDeleteThisAddressTitle:
         return "Are you sure you want to delete this address?";
+      case AllStrings.orderPlacedSuccessfullyTitle:
+        return "Order placed successfully";
+      case AllStrings.orderPlacedSuccessfullyDescription:
+        return "Your order has been placed. You can track it from My Orders.";
+      case AllStrings.continueShoppingTitle:
+        return "Continue shopping";
       case AllStrings.paidAmount:
         return "Paid amount";
       case AllStrings.totalDue:

@@ -1,17 +1,21 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:e3tmed/common/customalertdialog/order_success_dialog.dart';
+import 'package:e3tmed/logic/interfaces/ICart.dart';
 import 'package:e3tmed/logic/interfaces/payment_logic.dart';
 import 'package:e3tmed/models/payment.dart';
 import 'package:e3tmed/screens/end_user_phase/requesting_item_screen/payment_screen.dart';
 import 'package:e3tmed/viewmodels/baseViewModel.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:injector/injector.dart';
 import 'package:rxdart/rxdart.dart';
 
 class PaymentScreenViewModel
     extends BaseViewModelWithLogicAndArgs<IPaymentLogic, PaymentScreenArgs> {
   PaymentScreenViewModel(super.context);
 
+  final cartLogic = Injector.appInstance.get<ICart>();
   final _paymentResultStream = BehaviorSubject<PaymentResult?>.seeded(null);
   Stream<PaymentResult?> get paymentResultStream => _paymentResultStream;
 
@@ -48,8 +52,8 @@ class PaymentScreenViewModel
     _paymentResultStream.add(null);
     final res = await logic.completePayment(paymentId);
     if (res) {
-      Fluttertoast.showToast(msg: "Payment completed succesfully!");
-      Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
+      cartLogic.checkoutCallback();
+      await showOrderSuccessDialog(context);
     } else {
       Fluttertoast.showToast(msg: "Payment failed, please try again");
       Navigator.of(context).pop();

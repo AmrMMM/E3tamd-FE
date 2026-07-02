@@ -9,8 +9,8 @@ import 'package:e3tmed/models/user_address.dart';
 import 'package:e3tmed/models/user_auth_model.dart';
 import 'package:e3tmed/screens/end_user_phase/requesting_item_screen/payment_screen.dart';
 import 'package:e3tmed/viewmodels/baseViewModel.dart';
+import 'package:e3tmed/common/customalertdialog/order_success_dialog.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:injector/injector.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -109,10 +109,7 @@ class CheckoutViewModel
     if (res) {
       // ignore: use_build_context_synchronously
       cartLogic.checkoutCallback();
-      Navigator.of(context).pushNamedAndRemoveUntil("/home", (route) => false);
-      Fluttertoast.showToast(
-          msg: strings.getStrings(AllStrings.thanksForOrderingTitle),
-          gravity: ToastGravity.BOTTOM);
+      await showOrderSuccessDialog(context);
     }
     _addressState.add(false);
     _makeOrderState.add(res);
