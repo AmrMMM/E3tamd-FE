@@ -75,7 +75,9 @@ class OrderDetailsScreenState extends BaseStateArgumentObject<
                   context: context,
                   builder: (BuildContext context) =>
                       OderDetailsBottomSheetWidget(args!.order,
-                          onCancelOrder: () => viewModel.cancelOrder(args!.order)),
+                          onCancelOrder: () => viewModel.cancelOrder(args!.order),
+                          onPayDifference: () =>
+                              viewModel.payDifference(args!.order)),
                 ),
               ),
             )

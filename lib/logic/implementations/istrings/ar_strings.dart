@@ -389,6 +389,8 @@ class ArStrings implements IStrings {
         return "المبلغ المتبقى";
       case AllStrings.deletedProductTitle:
         return "منتج محذوف";
+      case AllStrings.payRemainingTitle:
+        return "دفع المبلغ المتبقى";
     }
   }
 

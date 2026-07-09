@@ -7,6 +7,7 @@ import 'package:injector/injector.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../../screens/end_user_phase/myorders/order_details_screen.dart';
+import '../../screens/end_user_phase/requesting_item_screen/payment_screen.dart';
 import '../baseViewModel.dart';
 
 class OrderDetailsViewModel
@@ -16,6 +17,14 @@ class OrderDetailsViewModel
   final strings = Injector.appInstance.get<IStrings>();
 
   Stream<bool> get loading => _loading;
+
+  void payDifference(Order order) {
+    // Close the details bottom sheet, then open the card-payment WebView for the balance.
+    Navigator.of(context).pop();
+    Navigator.of(context).pushNamed("/payment",
+        arguments:
+            PaymentScreenArgs(request: order, differenceOrderId: order.id));
+  }
 
   cancelOrder(Order order) async {
     _loading.add(true);

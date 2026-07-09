@@ -8,7 +8,10 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class PaymentScreenArgs {
   Order request;
-  PaymentScreenArgs({required this.request});
+  // When set, pays the outstanding balance on this existing order instead of
+  // creating a new one from [request].
+  final int? differenceOrderId;
+  PaymentScreenArgs({required this.request, this.differenceOrderId});
 }
 
 class PaymentScreen extends ScreenWidget {

@@ -12,10 +12,11 @@ import 'customalertdialog/custom_alert_dialog.dart';
 class OderDetailsBottomSheetWidget extends StatelessWidget {
   final Order order;
   final void Function() onCancelOrder;
+  final void Function()? onPayDifference;
   final strings = Injector.appInstance.get<IStrings>();
 
   OderDetailsBottomSheetWidget(this.order,
-      {Key? key, required this.onCancelOrder})
+      {Key? key, required this.onCancelOrder, this.onPayDifference})
       : super(key: key);
 
   @override
@@ -48,7 +49,11 @@ class OderDetailsBottomSheetWidget extends StatelessWidget {
                         (e) => BottomSheetOrderItem(orderItem: e, order: order))
                     .toList(),
               ),
-              PriceSummaryWidget(orderId: order.id),
+              PriceSummaryWidget(
+                orderId: order.id,
+                onPayDifference:
+                    onPayDifference == null ? null : (_) => onPayDifference!(),
+              ),
               const SizedBox(
                 height: 5,
               ),

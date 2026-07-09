@@ -391,6 +391,8 @@ class EnStrings implements IStrings {
         return "Total due";
       case AllStrings.deletedProductTitle:
         return "Deleted product";
+      case AllStrings.payRemainingTitle:
+        return "Pay remaining";
     }
   }
 

@@ -22,9 +22,13 @@ class PaymentScreenViewModel
   final userAgent = "payment-flutter-eatmed";
   final accept = "text/html";
 
+  bool get isDifferencePayment => args!.differenceOrderId != null;
+
   @override
   void onArgsPushed() async {
-    final res = await logic.initiatePayment(args!.request, userAgent, accept);
+    final res = isDifferencePayment
+        ? await logic.payDifference(args!.differenceOrderId!)
+        : await logic.initiatePayment(args!.request, userAgent, accept);
     if (res == null) {
       Fluttertoast.showToast(
           msg: "Bank card payment failed, please try again later");
@@ -52,8 +56,15 @@ class PaymentScreenViewModel
     _paymentResultStream.add(null);
     final res = await logic.completePayment(paymentId);
     if (res) {
-      cartLogic.checkoutCallback();
+      // A difference payment tops up an existing order — the cart is not involved.
+      if (!isDifferencePayment) {
+        cartLogic.checkoutCallback();
+      }
       await showOrderSuccessDialog(context);
+      if (isDifferencePayment) {
+        // Return to order details so the refreshed balance is shown.
+        Navigator.of(context).pop(true);
+      }
     } else {
       Fluttertoast.showToast(msg: "Payment failed, please try again");
       Navigator.of(context).pop();

@@ -30,6 +30,16 @@ class PaymentLogic implements IPaymentLogic {
   }
 
   @override
+  Future<PaymentResult?> payDifference(int orderId) async {
+    final res = await http.rpost<PaymentResult>("Payment/PayDifference",
+        queryArgs: {"orderId": orderId});
+    if (res.statusCode == 200 && res.body != null) {
+      return res.body![0];
+    }
+    return null;
+  }
+
+  @override
   Future<bool> completePayment(String paymentId) async {
     final res = await http.post("Payment/Confirm",
         queryArgs: {"paymentId": paymentId});

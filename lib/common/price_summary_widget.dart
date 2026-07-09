@@ -11,10 +11,15 @@ import '../screens/end_user_phase/settings/settings_screen.dart';
 import 'main_loading.dart';
 
 class PriceSummaryWidget extends StatefulWidget {
-  const PriceSummaryWidget({Key? key, this.orderItems, this.orderId})
+  const PriceSummaryWidget(
+      {Key? key, this.orderItems, this.orderId, this.onPayDifference})
       : super(key: key);
   final List<OrderItem>? orderItems;
   final int? orderId;
+
+  // When provided and there is an outstanding balance, a "Pay remaining" button
+  // is shown that invokes this callback with the amount still due.
+  final void Function(double amountDue)? onPayDifference;
 
   @override
   State<PriceSummaryWidget> createState() => _PriceSummaryWidgetState();
@@ -159,6 +164,22 @@ class _PriceSummaryWidgetState extends State<PriceSummaryWidget> {
                         value:
                             "${(finalTotalPrice - paidAmount).toString()} SAR",
                       )),
+                  if (widget.onPayDifference != null &&
+                      (finalTotalPrice - paidAmount) > 0)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: () => widget.onPayDifference!(
+                              finalTotalPrice - paidAmount),
+                          icon: const Icon(Icons.credit_card),
+                          label: Text(
+                              "${strings.getStrings(AllStrings.payRemainingTitle)} "
+                              "(${(finalTotalPrice - paidAmount).toString()} SAR)"),
+                        ),
+                      ),
+                    ),
                 ]
               ],
             ))
