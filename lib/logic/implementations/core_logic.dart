@@ -105,6 +105,15 @@ class CoreLogic implements ICoreLogic {
   }
 
   @override
+  Future<Order?> getOrder(int orderId) async {
+    final res = await http.rget<Order>("Product/Order/$orderId");
+    if (res.statusCode == 200 && (res.body?.isNotEmpty ?? false)) {
+      return res.body!.first;
+    }
+    return null;
+  }
+
+  @override
   Future<bool> cancelOrder(Order order) async {
     final res =
         await http.delete("Product/Order", queryArgs: {"orderId": order.id});

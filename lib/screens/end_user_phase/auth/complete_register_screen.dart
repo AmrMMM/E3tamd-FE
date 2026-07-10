@@ -43,9 +43,9 @@ class CompleteRegisterScreenState
 
   String _firstName = "";
   String _lastName = "";
-  String _country = "Saudi arabia";
-  String _city = "Riyadh";
-  String _region = "Region 1";
+  String _country = "";
+  String _city = "";
+  String _region = "";
   String _address = "";
 
   @override
@@ -54,6 +54,9 @@ class CompleteRegisterScreenState
     countyList = location.countries ?? [];
     cityList = location.cities ?? [];
     regionList = location.regions ?? [];
+    // Country and city each have a single fixed option; preselect them.
+    _country = countyList.isNotEmpty ? countyList.first.getCountryName() : "";
+    _city = cityList.isNotEmpty ? cityList.first.getCityName() : "";
     viewModel.isRegisteredErrd.listen((event) {
       if (event != null) {
         showDialog(
@@ -163,9 +166,9 @@ class CompleteRegisterScreenState
                   },
                 ),
                 FieldDropDownMenu(
-                  hintText: _strings.getStrings(AllStrings.regionTitle),
+                  hintText: _strings.getStrings(AllStrings.districtTitle),
                   items: regionList.map((e) => e.getRegionName()).toList(),
-                  fixedValue: _region,
+                  initialValue: _region.isEmpty ? null : _region,
                   onChanged: (index, value) {
                     setState(() {
                       _region = value!;

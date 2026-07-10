@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
 
 import '../../../viewmodels/end_user_viewmodels/nav_host_view_model.dart';
+import '../../agent_phase/notification/agent_notification_screen.dart';
 import '../about/about_screen.dart';
 import '../cart/cart_screen.dart';
 import '../help/help_screen.dart';
@@ -125,7 +126,8 @@ class NavHostScreenState
       '/itemDetails': (context) => ItemDetailsScreen(context),
       '/checkout': (context) => CheckoutScreen(context),
       '/orderDetails': (context) => OrderDetailsScreen(context),
-      '/payment': (context) => PaymentScreen(context)
+      '/payment': (context) => PaymentScreen(context),
+      '/notifications': (context) => AgentNotificationScreen(context)
     };
 
     return Scaffold(

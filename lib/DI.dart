@@ -45,7 +45,7 @@ import 'logic/interfaces/IAuth.dart';
 import 'logic/interfaces/IPendingAuthAction.dart';
 
 const useStubs = false;
-const supportWhatsAppNumber = "+966542606342";
+const supportWhatsAppNumber = "+966 53 337 7046";
 String useLanguage = 'english';
 // ignore: constant_identifier_names
 const VAT = 115.0;

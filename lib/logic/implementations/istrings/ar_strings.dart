@@ -53,7 +53,7 @@ class ArStrings implements IStrings {
       case AllStrings.aboutTitle:
         return "من نحن";
       case AllStrings.aboutMessageTile:
-        return "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum";
+        return "مؤسسة اعتمد هي الاختيار الأمثل في المملكة العربية السعودية للحصول على أبواب أوتوماتيكية عالية الجودة، وتركيبها وصيانتها بدقة واحترافية، بأسعار تنافسية، على أيدي فريق من المختصين الذين يتمتعون بخبرة طويلة، ومهارة فنية عالية.\nاعتمادك على مؤسسة اعتمد يضمن لك سلاسة عملية تنفيذ وتركيب، وصيانة الأبواب الأوتوماتيكية وسرعة الإنجاز مع الحفاظ على الجودة.";
       case AllStrings.helpTitle:
         return "المساعدة";
       case AllStrings.helloTitle:
@@ -391,6 +391,16 @@ class ArStrings implements IStrings {
         return "منتج محذوف";
       case AllStrings.payRemainingTitle:
         return "دفع المبلغ المتبقى";
+      case AllStrings.couldNotLoadNotificationsTitle:
+        return "تعذر تحميل الإشعارات";
+      case AllStrings.retryTitle:
+        return "إعادة المحاولة";
+      case AllStrings.paymentSuccessfulTitle:
+        return "تم الدفع بنجاح";
+      case AllStrings.payTheDifferenceTitle:
+        return "دفع الفرق";
+      case AllStrings.districtTitle:
+        return "الحي";
     }
   }
 
@@ -470,6 +480,8 @@ class ArStrings implements IStrings {
         return "طلب #${order.id} الذاهب الي ${order.address.address} وتكلفته ${order.totalPrice} SAR قد تم الغاءه ";
       case NotificationType.userOrderStatusChanged:
         return "طلب #${order.id} تم تغيير حالته من \"${getOrderStatusString(oldOrderStatus!)}\" إلى \"${getOrderStatusString(order.status!)}\"";
+      case NotificationType.userOrderPriceChanged:
+        return "تم تحديث طلبك #${order.id}. الإجمالي الجديد: ${order.totalPrice} ر.س. اضغط للدفع.";
     }
   }
 
@@ -480,6 +492,8 @@ class ArStrings implements IStrings {
         return "الغاء طلب";
       case NotificationType.userOrderStatusChanged:
         return "تغيير حالة الطلب";
+      case NotificationType.userOrderPriceChanged:
+        return "مطلوب الدفع";
     }
   }
 }

@@ -10,6 +10,7 @@ import 'package:injector/injector.dart';
 
 import '../../../common/customalertdialog/customeaddressedialog.dart';
 import '../../../common/main_loading.dart';
+import '../../../models/location_model.dart';
 import '../../../viewmodels/end_user_viewmodels/addresses_view_model.dart';
 
 class UserAddressesScreenArguments {
@@ -161,10 +162,16 @@ class AddressesScreenState extends BaseStateArgumentObject<AddressesScreen,
                     }
                     Navigator.of(context).pop();
                   }
+                  final location = Location();
                   return CustomAddressDialogWidget(
-                    countryList: const ["Country 1", "Country 2"],
-                    cityList: const ["City 1", "City 2"],
-                    regionList: const ["Region 1", "Region 2"],
+                    countryList: location.countries!
+                        .map((e) => e.getCountryName())
+                        .toList(),
+                    cityList:
+                        location.cities!.map((e) => e.getCityName()).toList(),
+                    regionList: location.regions!
+                        .map((e) => e.getRegionName())
+                        .toList(),
                     userAddress: address,
                     onSaveChanges: saveChanges,
                   );

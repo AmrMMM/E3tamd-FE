@@ -84,10 +84,22 @@ class HelpScreenState extends BaseStateObject<HelpScreen, HelpViewModel> {
                             InkWell(
                               onTap: () async => await viewModel
                                   .contactViaWhatsapp(supportWhatsAppNumber),
-                              child: Image.asset(
-                                "assets/whatsapp_logo.png",
-                                width: 30,
-                                height: 30,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text(
+                                    supportWhatsAppNumber,
+                                    textDirection: TextDirection.ltr,
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 14),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Image.asset(
+                                    "assets/whatsapp_logo.png",
+                                    width: 30,
+                                    height: 30,
+                                  ),
+                                ],
                               ),
                             ),
                           ],

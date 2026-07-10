@@ -30,7 +30,9 @@ class CheckoutViewModel
   final _makeOrderState = BehaviorSubject<bool?>.seeded(null);
   final _addressState = BehaviorSubject<bool?>.seeded(null);
   final cartLogic = Injector.appInstance.get<ICart>();
-  var isBankCardPayment = false;
+  // Card is the default payment method. For normal product orders the client can
+  // still switch to cash; agent-visit and maintenance orders are card-only.
+  var isBankCardPayment = true;
 
   final Order order = Order(
       addedDate: DateTime.now(),
@@ -53,8 +55,10 @@ class CheckoutViewModel
 
   Stream<bool?> get addressState => _addressState;
 
-  bool get isAgentCheckout =>
-      args!.orderItems.any((item) => item.isAgent);
+  /// Card-only checkout: agent-visit ("ask for agent") and maintenance orders
+  /// must be paid by card — no cash option.
+  bool get isCardOnly =>
+      args!.orderItems.any((item) => item.isAgent || item.maintenance);
 
   void _init() async {
     final addresses = (await authLogic.getUserAddresses());
@@ -68,7 +72,7 @@ class CheckoutViewModel
   @override
   void onArgsPushed() {
     order.items = args!.orderItems;
-    if (isAgentCheckout) {
+    if (isCardOnly) {
       isBankCardPayment = true;
     }
   }
@@ -98,7 +102,7 @@ class CheckoutViewModel
             CheckoutScreenArgs(orderItems: args!.orderItems)))) {
       return;
     }
-    if (isAgentCheckout || isBankCardPayment) {
+    if (isCardOnly || isBankCardPayment) {
       Navigator.of(context)
           .pushNamed("/payment", arguments: PaymentScreenArgs(request: order));
       return;

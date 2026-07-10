@@ -89,7 +89,7 @@ class NotificationHandler {
 
     // bring to foreground
     notificationManager.notificationsStream.listen((event) async {
-      if (event != null && event.isNotEmpty) {
+      if (event.isNotEmpty) {
         for (var notification in event) {
           await notificationsPlugin.show(
               notification.id,

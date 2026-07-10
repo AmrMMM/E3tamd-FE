@@ -223,7 +223,7 @@ class CheckoutScreenState extends BaseStateArgumentObject<CheckoutScreen,
                       RichText(
                           text: TextSpan(children: [
                         TextSpan(
-                          text: viewModel.isAgentCheckout ||
+                          text: viewModel.isCardOnly ||
                                   viewModel.isBankCardPayment
                               ? strings.getStrings(
                                   AllStrings.paymentMethodCardTitle)
@@ -235,7 +235,7 @@ class CheckoutScreenState extends BaseStateArgumentObject<CheckoutScreen,
                               color: Colors.black),
                         )
                       ])),
-                      if (!viewModel.isAgentCheckout)
+                      if (!viewModel.isCardOnly)
                         Directionality(
                           textDirection: TextDirection.rtl,
                           child: TextButton(
@@ -365,7 +365,7 @@ class CheckoutScreenState extends BaseStateArgumentObject<CheckoutScreen,
         builder: (context) => Dialog(
               child: AddPaymentPopUpDialog(
                 order: viewModel.order,
-                cardOnly: viewModel.isAgentCheckout,
+                cardOnly: viewModel.isCardOnly,
                 paymentCallback: (isCardPayment) {
                   viewModel.setPaymentMode(isCardPayment);
                   setState(() {});

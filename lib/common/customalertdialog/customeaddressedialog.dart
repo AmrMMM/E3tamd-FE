@@ -88,7 +88,7 @@ class _CustomAddressDialogWidgetState extends State<CustomAddressDialogWidget> {
                         userAddress.city = value ?? "";
                       })),
               FieldDropDownMenu(
-                  hintText: strings.getStrings(AllStrings.regionTitle),
+                  hintText: strings.getStrings(AllStrings.districtTitle),
                   initialValue:
                       userAddress.region == "" ? null : userAddress.region,
                   items: widget.regionList,

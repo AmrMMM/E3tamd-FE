@@ -26,5 +26,8 @@ abstract class ICoreLogic {
 
   Future<List<Order>> getUserOrders();
 
+  /// Fetches a single order (of the current user) by id, or null if not found.
+  Future<Order?> getOrder(int orderId);
+
   Future<bool> cancelOrder(Order order);
 }

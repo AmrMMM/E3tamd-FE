@@ -9,10 +9,16 @@ class OrderSuccessDialog extends StatelessWidget {
   final VoidCallback onViewOrders;
   final VoidCallback onContinueShopping;
 
+  /// A difference/top-up payment (not a brand-new order). Shows a single
+  /// confirm button and a "payment successful" message instead of the
+  /// order-placed shopping actions.
+  final bool isDifferencePayment;
+
   const OrderSuccessDialog({
     Key? key,
     required this.onViewOrders,
     required this.onContinueShopping,
+    this.isDifferencePayment = false,
   }) : super(key: key);
 
   @override
@@ -37,7 +43,9 @@ class OrderSuccessDialog extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
-                strings.getStrings(AllStrings.orderPlacedSuccessfullyTitle),
+                strings.getStrings(isDifferencePayment
+                    ? AllStrings.paymentSuccessfulTitle
+                    : AllStrings.orderPlacedSuccessfullyTitle),
                 style: TextStyle(
                   color: accentColor,
                   fontSize: 18,
@@ -45,32 +53,37 @@ class OrderSuccessDialog extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
-              Text(
-                strings
-                    .getStrings(AllStrings.orderPlacedSuccessfullyDescription),
-                style: TextStyle(
-                  color: Theme.of(context).primaryColor,
-                  fontSize: 14,
+              if (!isDifferencePayment) ...[
+                const SizedBox(height: 8),
+                Text(
+                  strings.getStrings(
+                      AllStrings.orderPlacedSuccessfullyDescription),
+                  style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 14,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
+              ],
               const SizedBox(height: 8),
               PrimaryButtonShape(
                 width: double.infinity,
-                text: strings.getStrings(AllStrings.myOrdersTitle),
+                text: strings.getStrings(isDifferencePayment
+                    ? AllStrings.confirmTitle
+                    : AllStrings.myOrdersTitle),
                 color: accentColor,
                 stream: null,
                 onTap: onViewOrders,
               ),
-              SecondaryButtonShape(
-                width: double.infinity,
-                text: strings.getStrings(AllStrings.continueShoppingTitle),
-                color: accentColor,
-                stream: null,
-                clickable: true,
-                onTap: onContinueShopping,
-              ),
+              if (!isDifferencePayment)
+                SecondaryButtonShape(
+                  width: double.infinity,
+                  text: strings.getStrings(AllStrings.continueShoppingTitle),
+                  color: accentColor,
+                  stream: null,
+                  clickable: true,
+                  onTap: onContinueShopping,
+                ),
             ],
           ),
         ),
@@ -83,7 +96,8 @@ void _navigateHome(BuildContext context) {
   Navigator.of(context).pushNamedAndRemoveUntil("/home", (_) => false);
 }
 
-Future<void> showOrderSuccessDialog(BuildContext context) {
+Future<void> showOrderSuccessDialog(BuildContext context,
+    {bool isDifferencePayment = false}) {
   return showDialog(
     barrierDismissible: false,
     useSafeArea: false,
@@ -93,18 +107,24 @@ Future<void> showOrderSuccessDialog(BuildContext context) {
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
         Navigator.of(dialogContext).pop();
-        _navigateHome(context);
+        // A difference payment must NOT navigate home — the caller pops the
+        // payment screen afterwards to return to the order. Navigating home
+        // here would destroy that screen and crash the subsequent pop.
+        if (!isDifferencePayment) _navigateHome(context);
       },
       child: Dialog(
         child: OrderSuccessDialog(
+          isDifferencePayment: isDifferencePayment,
           onViewOrders: () {
             Navigator.of(dialogContext).pop();
-            _navigateHome(context);
-            Navigator.of(context).pushNamed("/myOrders");
+            if (!isDifferencePayment) {
+              _navigateHome(context);
+              Navigator.of(context).pushNamed("/myOrders");
+            }
           },
           onContinueShopping: () {
             Navigator.of(dialogContext).pop();
-            _navigateHome(context);
+            if (!isDifferencePayment) _navigateHome(context);
           },
         ),
       ),

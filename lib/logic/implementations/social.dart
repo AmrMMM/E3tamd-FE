@@ -4,7 +4,8 @@ import 'package:url_launcher/url_launcher.dart';
 class SocialImplementation implements ISocial {
   @override
   Future<void> contactViaWhatsApp(String phoneNumber) async {
-    var whatsapp = phoneNumber;
+    // wa.me needs digits only (no '+', spaces or dashes).
+    final whatsapp = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
     var whatAppUrl = "https://wa.me/$whatsapp?text=${Uri.parse("hello")}";
     await launchUrl(Uri.parse(whatAppUrl),
         mode: LaunchMode.externalApplication);

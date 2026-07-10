@@ -52,8 +52,13 @@ class Auth extends IAuth {
         currentState == LoginState.guest) {
       _loggedInController.add(isAgent! ? LoginState.agent : LoginState.user);
     }
-    if (isAgent!) {
-      Injector.appInstance.get<INotificationsManager>().initialize(body.token);
+    // Initialize the realtime notification hub once per session for BOTH agents
+    // and clients. The token is read live inside the manager, so we deliberately
+    // do NOT re-initialize on every refresh (that churn was a source of the
+    // stale-token 401/403 on negotiate).
+    if (!notificationsInitialized) {
+      notificationsInitialized = true;
+      Injector.appInstance.get<INotificationsManager>().initialize();
     }
     return true;
   }
@@ -66,6 +71,8 @@ class Auth extends IAuth {
       http.setJWToken("");
       _userData.add(null);
       _loggedInController.add(LoginState.guest);
+      notificationsInitialized = false;
+      Injector.appInstance.get<INotificationsManager>().disconnect();
       return;
     }
     isAgent = res.body![0].role == "Agent";
@@ -124,6 +131,8 @@ class Auth extends IAuth {
     _userData.add(null);
     _loggedInController.add(LoginState.guest);
     pref.setString("token", "");
+    notificationsInitialized = false;
+    Injector.appInstance.get<INotificationsManager>().disconnect();
     return true;
   }
 

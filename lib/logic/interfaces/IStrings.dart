@@ -195,7 +195,12 @@ enum AllStrings {
   paidAmount,
   totalDue,
   deletedProductTitle,
-  payRemainingTitle
+  payRemainingTitle,
+  couldNotLoadNotificationsTitle,
+  retryTitle,
+  paymentSuccessfulTitle,
+  payTheDifferenceTitle,
+  districtTitle
 }
 
 abstract class IStrings {

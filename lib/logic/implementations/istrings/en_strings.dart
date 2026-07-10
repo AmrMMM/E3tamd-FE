@@ -55,7 +55,7 @@ class EnStrings implements IStrings {
       case AllStrings.aboutTitle:
         return "About";
       case AllStrings.aboutMessageTile:
-        return "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum";
+        return "Etemad Company is the optimal choice in the Kingdom of Saudi Arabia for obtaining high-quality automatic doors - including their installation and maintenance - with precision and professionalism at competitive prices, carried out by a team of specialists with extensive experience and high technical skill.\nRelying on Etemad Company ensures a smooth process of implementation, installation, and maintenance of automatic doors, with fast completion while maintaining top quality.";
       case AllStrings.helpTitle:
         return "Help";
       case AllStrings.helloTitle:
@@ -393,6 +393,16 @@ class EnStrings implements IStrings {
         return "Deleted product";
       case AllStrings.payRemainingTitle:
         return "Pay remaining";
+      case AllStrings.couldNotLoadNotificationsTitle:
+        return "Couldn't load notifications";
+      case AllStrings.retryTitle:
+        return "Retry";
+      case AllStrings.paymentSuccessfulTitle:
+        return "Payment successful";
+      case AllStrings.payTheDifferenceTitle:
+        return "Pay the difference";
+      case AllStrings.districtTitle:
+        return "District";
     }
   }
 
@@ -472,6 +482,8 @@ class EnStrings implements IStrings {
         return "Order #${order.id} Delivering to ${order.address.address} with a cost of ${order.totalPrice} has been cancelled by user";
       case NotificationType.userOrderStatusChanged:
         return "Your order #${order.id} status changed from \"${getOrderStatusString(oldOrderStatus!)}\" to \"${getOrderStatusString(order.status!)}\"";
+      case NotificationType.userOrderPriceChanged:
+        return "Your order #${order.id} was updated. New total: ${order.totalPrice} SAR. Tap to pay the difference.";
     }
   }
 
@@ -482,6 +494,8 @@ class EnStrings implements IStrings {
         return "Order canceled";
       case NotificationType.userOrderStatusChanged:
         return "Order status changed";
+      case NotificationType.userOrderPriceChanged:
+        return "Payment required";
     }
   }
 }

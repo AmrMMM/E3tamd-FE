@@ -60,9 +60,12 @@ class PaymentScreenViewModel
       if (!isDifferencePayment) {
         cartLogic.checkoutCallback();
       }
-      await showOrderSuccessDialog(context);
+      await showOrderSuccessDialog(context,
+          isDifferencePayment: isDifferencePayment);
       if (isDifferencePayment) {
-        // Return to order details so the refreshed balance is shown.
+        // Return to order details (signalling success so it can refresh the
+        // balance). The dialog did NOT navigate home, so this screen is still
+        // on the stack and safe to pop.
         Navigator.of(context).pop(true);
       }
     } else {

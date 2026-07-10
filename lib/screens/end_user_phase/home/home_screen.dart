@@ -24,6 +24,44 @@ class HomeScreenState extends BaseStateObject<HomeScreen, HomeViewModel> {
 
   final string = Injector.appInstance.get<IStrings>();
 
+  Widget _buildNotificationBell(BuildContext context) {
+    return StreamBuilder<int>(
+      stream: viewModel.notificationCount,
+      builder: (context, snapshot) {
+        final count = snapshot.data ?? 0;
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.notifications_outlined,
+                  color: Colors.white),
+              onPressed: viewModel.navigateToNotifications,
+            ),
+            if (count > 0)
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  constraints:
+                      const BoxConstraints(minWidth: 16, minHeight: 16),
+                  decoration: const BoxDecoration(
+                    color: Colors.red,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    count > 9 ? "9+" : "$count",
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.white, fontSize: 10),
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,17 +75,19 @@ class HomeScreenState extends BaseStateObject<HomeScreen, HomeViewModel> {
               final isGuest = snapshot.data == LoginState.guest ||
                   snapshot.data == LoginState.unAuthenticated ||
                   snapshot.data == null;
-              if (!isGuest) return const SizedBox.shrink();
-              return TextButton(
-                onPressed: viewModel.navigateToLogin,
-                child: Text(
-                  string.getStrings(AllStrings.loginTitle),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+              if (isGuest) {
+                return TextButton(
+                  onPressed: viewModel.navigateToLogin,
+                  child: Text(
+                    string.getStrings(AllStrings.loginTitle),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              );
+                );
+              }
+              return _buildNotificationBell(context);
             },
           ),
         ],
