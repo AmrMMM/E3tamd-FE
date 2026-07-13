@@ -49,15 +49,14 @@ class HomeViewModel extends BaseViewModelWithLogic<ICoreLogic> {
   navigateToService(Category category) {
     Category targetCategory;
     if (category.maintenanceCategoryId != null) {
-      final maintenanceCategory = _rawServiceList!.firstWhere(
-          (element) => element.id == category.maintenanceCategoryId);
-      // Build a fresh Category instead of mutating the shared one from the home
-      // list: the maintenance products are fetched by the maintenance category's
-      // id, but shown under the clicked category's name. Mutating the shared
-      // object renamed the maintenance category on the home grid until a refetch.
+      // Build a fresh Category from the pointer instead of looking the target up
+      // in (and mutating) the shared root list: the products are fetched by the
+      // referenced category's id but shown under the clicked tile's name. This
+      // also works when the pointer targets a non-root (child) category, which
+      // the old firstWhere-over-roots lookup would throw on.
       targetCategory = Category(
-          id: maintenanceCategory.id,
-          maintenanceCategoryId: maintenanceCategory.maintenanceCategoryId,
+          id: category.maintenanceCategoryId!,
+          maintenanceCategoryId: null,
           nameAr: category.nameAr,
           nameEn: category.nameEn);
     } else {

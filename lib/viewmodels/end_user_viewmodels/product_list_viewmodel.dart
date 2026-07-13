@@ -31,37 +31,52 @@ class ProductListViewModel
 
   Stream<bool> get showScreen => _showScreen;
 
+  /// A maintenance category owns no products; it points (maintenanceCategoryId)
+  /// at the category whose products it maintains. Queries use the resolved id
+  /// so a maintenance child tab shows the referenced sibling's products.
+  Category _dataCategoryFor(Category c) => c.maintenanceCategoryId == null
+      ? c
+      : Category(
+          id: c.maintenanceCategoryId!,
+          nameAr: c.nameAr,
+          nameEn: c.nameEn,
+          maintenanceCategoryId: null);
+
   void _init() async {
     final topSwitchItems = await logic.getChildrenOf(args!.category);
     if (topSwitchItems.isNotEmpty) {
       _selectedTopCategory = topSwitchItems[0];
       _topSwitchItems.add(topSwitchItems);
-      _filterItems.add(await logic.getChildrenOf(_selectedTopCategory!));
+      _filterItems.add(
+          await logic.getChildrenOf(_dataCategoryFor(_selectedTopCategory!)));
     } else {
       _topSwitchItems.add([]);
     }
     _showScreen.add(true);
-    _itemsList
-        .add(await logic.getProductsOf(_selectedTopCategory ?? args!.category));
+    _itemsList.add(await logic
+        .getProductsOf(_dataCategoryFor(_selectedTopCategory ?? args!.category)));
   }
 
   void setTopSwitchCategory(Category category) async {
     _itemsList.add(null);
     _filterItems.add(null);
     _selectedTopCategory = category;
-    _itemsList.add(await logic.getProductsOf(category));
-    _filterItems.add(await logic.getChildrenOf(_selectedTopCategory!));
+    _itemsList.add(await logic.getProductsOf(_dataCategoryFor(category)));
+    _filterItems.add(
+        await logic.getChildrenOf(_dataCategoryFor(_selectedTopCategory!)));
   }
 
   void setFilterCategory(Category? category) async {
     _itemsList.add(null);
-    _itemsList
-        .add(await logic.getProductsOf(category ?? _selectedTopCategory!));
+    _itemsList.add(await logic
+        .getProductsOf(category ?? _dataCategoryFor(_selectedTopCategory!)));
   }
 
   void navigateToItemDetails(Product product) {
     Navigator.pushNamed(context, "/itemDetails",
         arguments: ItemDetailsScreenArgs(
-            product: product, maintenanceMode: args!.maintenanceMode));
+            product: product,
+            maintenanceMode: args!.maintenanceMode ||
+                (_selectedTopCategory?.maintenanceCategoryId != null)));
   }
 }
