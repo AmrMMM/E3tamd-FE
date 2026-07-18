@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
 
 import '../../../DI.dart';
+import '../../../common/empty_state_widget.dart';
+import '../../../common/load_error_widget.dart';
 import '../../../common/main_loading.dart';
 import '../../../logic/interfaces/IStrings.dart';
 import '../../../models/user_auth_model.dart';
@@ -157,10 +159,16 @@ class HomeScreenState extends BaseStateObject<HomeScreen, HomeViewModel> {
                     child: StreamBuilder<List<Category>?>(
                         stream: viewModel.servicesList,
                         builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return LoadErrorWidget(onRetry: viewModel.retry);
+                          }
                           if (snapshot.data == null) {
                             return const Center(
                               child: MainLoadinIndicatorWidget(),
                             );
+                          }
+                          if (snapshot.data!.isEmpty) {
+                            return const EmptyStateWidget();
                           }
                           return ListView(
                               children: snapshot.data!

@@ -38,8 +38,19 @@ class HomeViewModel extends BaseViewModelWithLogic<ICoreLogic> {
   }
 
   _init() async {
-    _rawServiceList = await logic.getRootCategories();
-    _servicesList.add(_rawServiceList);
+    try {
+      _rawServiceList = await logic.getRootCategories();
+      _servicesList.add(_rawServiceList);
+    } catch (e) {
+      // Transport gave up (bounded retries exhausted): surface it so the screen
+      // can show an error + retry instead of spinning forever.
+      _servicesList.addError(e);
+    }
+  }
+
+  void retry() {
+    _servicesList.add(null); // back to the loading state
+    _init();
   }
 
   void navigateToLogin() {

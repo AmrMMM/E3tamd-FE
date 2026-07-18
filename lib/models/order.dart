@@ -204,18 +204,22 @@ class OrderItemFactory implements IModelFactory<OrderItem> {
 }
 
 class OrderItemImage implements IJsonSerializable {
-  final String data;
+  // `id` is set when the image comes back from the server (order responses carry only the id, and
+  // the full image is fetched on demand via Product/OrderItemImage). `data` (base64) is set only
+  // when uploading a newly-picked photo while placing an order.
+  final int? id;
+  final String? data;
 
-  OrderItemImage({required this.data});
+  OrderItemImage({this.id, this.data});
 
   @override
-  Map<String, dynamic> toJson() => {"data": data};
+  Map<String, dynamic> toJson() => {if (data != null) "data": data};
 }
 
 class OrderItemImageFactory implements IModelFactory<OrderItemImage> {
   @override
   OrderItemImage fromJson(Map<String, dynamic> jsonMap) {
-    return OrderItemImage(data: jsonMap["data"]);
+    return OrderItemImage(id: jsonMap["id"], data: jsonMap["data"]);
   }
 }
 

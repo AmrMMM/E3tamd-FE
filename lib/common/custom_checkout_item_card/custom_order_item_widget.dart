@@ -1,15 +1,11 @@
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:e3tmed/models/order.dart';
 import 'package:e3tmed/models/order_item_extensions.dart';
 import 'package:e3tmed/screens/agent_phase/order/additional_custom_widgets/order_details_custom_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
-import 'package:photo_view/photo_view.dart';
 
 import '../../logic/interfaces/IStrings.dart';
-import '../../screens/end_user_phase/requesting_item_screen/item_details_screen/extra_photo_widget.dart';
+import '../image_widgets/order_item_image_tile.dart';
 import '../image_widgets/product_image.dart';
 
 class OrderItemWidget extends StatefulWidget {
@@ -31,18 +27,7 @@ class OrderItemWidget extends StatefulWidget {
 }
 
 class _OrderItemWidgetState extends State<OrderItemWidget> {
-  List<Uint8List> photosList = [];
-
   final strings = Injector.appInstance.get<IStrings>();
-
-  @override
-  void initState() {
-    super.initState();
-    final list = widget.orderItem.images ?? [];
-    if (list.isNotEmpty) {
-      photosList = list.map((e) => base64.decode(e.data)).toList();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,20 +134,13 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                           decoration: const BoxDecoration(),
                           child: ListView(
                             scrollDirection: Axis.horizontal,
-                            children: photosList
+                            children: (widget.orderItem.images ?? [])
+                                .where((e) => e.id != null)
                                 .map((e) => Padding(
                                       padding: const EdgeInsets.all(5.0),
-                                      child: ExtraPhotoWidget(
-                                        imageSize: widget.hasImagesSize ?? 65,
-                                        imageData: e,
-                                        isRemovable:
-                                            widget.isImageRemovable ?? false,
-                                        removeImage: (imageData) =>
-                                            setState(() {
-                                          photosList.remove(imageData);
-                                        }),
-                                        previewImage: (imageData) =>
-                                            showPopUpDialog(context, imageData),
+                                      child: OrderItemImageTile(
+                                        imageId: e.id!,
+                                        size: widget.hasImagesSize ?? 65,
                                       ),
                                     ))
                                 .toList(),
@@ -319,24 +297,5 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
           )
       ],
     );
-  }
-
-  void showPopUpDialog(BuildContext context, Uint8List image) {
-    showDialog(
-        barrierDismissible: true,
-        useSafeArea: false,
-        context: context,
-        builder: (context) {
-          return PhotoView(
-            enableRotation: false,
-            filterQuality: FilterQuality.high,
-            initialScale: PhotoViewComputedScale.contained,
-            minScale: PhotoViewComputedScale.contained * 0.8,
-            maxScale: PhotoViewComputedScale.covered * 1.8,
-            backgroundDecoration:
-                const BoxDecoration(color: Colors.transparent),
-            imageProvider: MemoryImage(image),
-          );
-        });
   }
 }

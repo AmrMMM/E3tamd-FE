@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
 
 import '../../../DI.dart';
+import '../../../common/image_widgets/order_item_image_tile.dart';
 import '../../../common/image_widgets/product_image.dart';
 import '../../../models/motor.dart';
 import '../../../models/order.dart';
@@ -654,6 +655,34 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                             ],
                           )
                         : const SizedBox(),
+                    // Photos the client attached to this item. Fetched by id, so
+                    // they no longer bloat the order response.
+                    if ((widget.item.images ?? [])
+                        .any((e) => e.id != null)) ...[
+                      const SizedBox(height: 10),
+                      Text(
+                        strings.getStrings(AllStrings.photosTitle),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      SizedBox(
+                        height: 80,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: (widget.item.images ?? [])
+                              .where((e) => e.id != null)
+                              .map((e) => Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: OrderItemImageTile(imageId: e.id!),
+                                  ))
+                              .toList(),
+                        ),
+                      ),
+                    ],
                   ],
                 )
               : const SizedBox(),

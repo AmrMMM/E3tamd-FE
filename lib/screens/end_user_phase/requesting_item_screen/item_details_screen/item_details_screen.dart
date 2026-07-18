@@ -3,13 +3,13 @@ import 'dart:typed_data';
 import 'package:e3tmed/common/BaseWidgets.dart';
 import 'package:e3tmed/common/custom_dotted_border/custom_dotted_border.dart';
 import 'package:e3tmed/common/customtextfield/CustomTextField.dart';
+import 'package:e3tmed/common/image_widgets/image_viewer.dart';
 import 'package:e3tmed/common/image_widgets/product_image.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/models/motor.dart';
 import 'package:e3tmed/models/product.dart';
 import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
-import 'package:photo_view/photo_view.dart';
 
 import '../../../../DI.dart';
 import '../../../../common/buttons/primarybuttonshape.dart';
@@ -70,6 +70,7 @@ class ItemDetailsScreenState extends BaseStateArgumentObject<ItemDetailsScreen,
                       width: double.infinity,
                       height: 250,
                       fit: BoxFit.cover,
+                      preferThumbnail: false,
                     ),
                   ),
                 ),
@@ -309,18 +310,6 @@ class ItemDetailsScreenState extends BaseStateArgumentObject<ItemDetailsScreen,
   }
 
   void showPopUpDialog(BuildContext context, Uint8List image) {
-    showDialog(
-        barrierDismissible: true,
-        useSafeArea: false,
-        context: context,
-        builder: (context) {
-          return PhotoView(
-            enableRotation: true,
-            filterQuality: FilterQuality.high,
-            backgroundDecoration:
-                const BoxDecoration(color: Colors.transparent),
-            imageProvider: MemoryImage(image),
-          );
-        });
+    showImageViewer(context, MemoryImage(image));
   }
 }

@@ -401,6 +401,8 @@ class ArStrings implements IStrings {
         return "دفع الفرق";
       case AllStrings.districtTitle:
         return "الحي";
+      case AllStrings.couldNotLoadDataTitle:
+        return "تعذر تحميل البيانات، تحقق من اتصالك بالإنترنت";
     }
   }
 

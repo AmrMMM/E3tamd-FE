@@ -69,7 +69,13 @@ class AgentOrderDetailsViewModel
   // }
 
   void getSparePartsList(Category category) async {
-    _itemsList.add(await _coreLogic.getProductsOf(category));
+    try {
+      _itemsList.add(await _coreLogic.getProductsOf(category));
+    } catch (e) {
+      // Transport gave up after bounded retries; surface via the stream instead
+      // of leaking an unhandled async error.
+      _itemsList.addError(e);
+    }
   }
 
   addExtraToTotal(List<ExtraModel> extraItem, OrderItem requestItem) {

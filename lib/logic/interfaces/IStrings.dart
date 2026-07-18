@@ -200,7 +200,8 @@ enum AllStrings {
   retryTitle,
   paymentSuccessfulTitle,
   payTheDifferenceTitle,
-  districtTitle
+  districtTitle,
+  couldNotLoadDataTitle
 }
 
 abstract class IStrings {

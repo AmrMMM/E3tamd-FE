@@ -219,7 +219,8 @@ class AgentRequestScreenState
                                 dimension: e.dimension,
                                 extras: e.extras,
                                 images: e.images
-                                    ?.map((x) => OrderItemImage(data: x.data))
+                                    ?.map((x) =>
+                                        OrderItemImage(id: x.id, data: x.data))
                                     .toList(),
                                 isAgent: e.isAgent,
                                 maintenance: e.maintenance)))

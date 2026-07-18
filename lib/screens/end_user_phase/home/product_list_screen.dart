@@ -9,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
 
 import '../../../DI.dart';
+import '../../../common/empty_state_widget.dart';
+import '../../../common/load_error_widget.dart';
 import '../../../common/main_loading.dart';
 import '../../../logic/interfaces/IStrings.dart';
 import '../../../viewmodels/end_user_viewmodels/product_list_viewmodel.dart';
@@ -54,7 +56,10 @@ class ProductListState extends BaseStateArgumentObject<ProductListScreen,
               stream: viewModel.showScreen,
               initialData: false,
               builder: (context, snapshot) {
-                if (!snapshot.data!) {
+                if (snapshot.hasError) {
+                  return LoadErrorWidget(onRetry: viewModel.retryInit);
+                }
+                if (!(snapshot.data ?? false)) {
                   return const Center(child: MainLoadinIndicatorWidget());
                 }
                 return Flex(
@@ -248,20 +253,29 @@ class ProductListState extends BaseStateArgumentObject<ProductListScreen,
                     Expanded(
                       child: StreamBuilder<List<Product>?>(
                           stream: viewModel.itemsList,
-                          builder: (context, snapshot) => snapshot.data == null
-                              ? Center(
-                                  child: MainLoadinIndicatorWidget(
-                                    hasColor: Theme.of(context).primaryColor,
-                                  ),
-                                )
-                              : ListView(
-                                  children: snapshot.data!
-                                      .map((e) => ProductCardItemWidget(
-                                          product: e,
-                                          onTap:
-                                              viewModel.navigateToItemDetails))
-                                      .toList(),
-                                )),
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return LoadErrorWidget(
+                                  onRetry: viewModel.retryProducts);
+                            }
+                            if (snapshot.data == null) {
+                              return Center(
+                                child: MainLoadinIndicatorWidget(
+                                  hasColor: Theme.of(context).primaryColor,
+                                ),
+                              );
+                            }
+                            if (snapshot.data!.isEmpty) {
+                              return const EmptyStateWidget();
+                            }
+                            return ListView(
+                              children: snapshot.data!
+                                  .map((e) => ProductCardItemWidget(
+                                      product: e,
+                                      onTap: viewModel.navigateToItemDetails))
+                                  .toList(),
+                            );
+                          }),
                     )
                   ],
                 );

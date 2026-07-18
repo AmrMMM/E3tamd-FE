@@ -24,6 +24,10 @@ class Product implements IJsonSerializable {
   List<Motor>? motors;
   int stock;
 
+  /// Inline preview (a `data:` URI) served with the product list so the list renders from
+  /// one request instead of a per-product call to Product/Image. Null when absent.
+  String? thumbnail;
+
   Product(
       {required this.id,
       required this.nameAr,
@@ -41,7 +45,8 @@ class Product implements IJsonSerializable {
       this.availableDimensions,
       this.availableThickness,
       this.availableExtras,
-      this.motors});
+      this.motors,
+      this.thumbnail});
 
   @override
   Map<String, dynamic> toJson() => {
@@ -59,7 +64,8 @@ class Product implements IJsonSerializable {
         "availableExtras":
             availableExtras?.map((u) => u.toJson()).toList() ?? [],
         "motors": motors?.map((u) => u.toJson()).toList() ?? [],
-        "stock": stock
+        "stock": stock,
+        "thumbnail": thumbnail
       };
 
   @override
@@ -126,7 +132,8 @@ class ProductFactory implements IModelFactory<Product> {
               .toList(),
           motors: jsonMap["motors"]
               ?.map<Motor>((u) => motorFactory.fromJson(u))
-              .toList());
+              .toList(),
+          thumbnail: jsonMap["thumbnail"]);
     } catch (ex) {
       print("ProductFactory.fromJson error: $ex");
       print("ProductFactory.fromJson data: $jsonMap");

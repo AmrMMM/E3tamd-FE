@@ -22,6 +22,9 @@ abstract class ICoreLogic {
 
   Future<Uint8List?> getProductImage(Product product);
 
+  /// Fetches a client-uploaded order item image by id (order responses carry only ids).
+  Future<Uint8List?> getOrderItemImage(int imageId);
+
   Future<bool> makeOrder(Order order);
 
   Future<List<Order>> getUserOrders();

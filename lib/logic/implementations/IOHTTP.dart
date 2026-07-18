@@ -21,6 +21,21 @@ class IOHTTP implements IHTTP {
   final String _baseUrl = "https://eatmed.cloud/api/";
   final Map<String, String> _headers = <String, String>{};
 
+  // Transport guards: without these a stale mobile socket used to leave requests
+  // pending forever (no timeout, no error path), which showed up as an infinite
+  // spinner until the user backed out and retried on a fresh connection.
+  static const int _maxAttempts = 3;
+  static const Duration _retryDelay = Duration(seconds: 2);
+  static const Duration _connectionTimeout = Duration(seconds: 8);
+  static const Duration _requestTimeout = Duration(seconds: 20);
+  static const Duration _streamStallTimeout = Duration(seconds: 15);
+
+  // One shared client so keep-alive connections are actually reused. The old
+  // code created a fresh HttpClient per request and never closed any of them.
+  HttpClient? _client;
+
+  HttpClient get _httpClient => _client ??= _makeClient();
+
   void log(String method, String endpoint, [Map<String, dynamic>? queryArgs]) {
     final url = _urlStringConstructor(endpoint, queryArgs);
     print("HTTP $method: $url");
@@ -28,8 +43,18 @@ class IOHTTP implements IHTTP {
 
   HttpClient _makeClient() {
     final client = HttpClient();
+    client.connectionTimeout = _connectionTimeout;
     client.badCertificateCallback = (a, b, c) => true;
     return client;
+  }
+
+  // Called when a request fails: drop the (possibly wedged) client so the next
+  // attempt opens fresh connections. In-flight requests on the old client fail
+  // fast and recover through their own retry.
+  void _resetClient() {
+    final old = _client;
+    _client = null;
+    old?.close(force: true);
   }
 
   String _urlStringConstructor(String endpoint,
@@ -70,16 +95,28 @@ class IOHTTP implements IHTTP {
     return req;
   }
 
+  // Both readers used to complete only in onDone: a mid-body connection error
+  // or a frozen stream left the future pending forever. The stall timeout is
+  // per-chunk, so a large-but-flowing download is fine while a silent socket
+  // errors out after _streamStallTimeout of no data.
   Future<String> _readResponseAsString(
       HttpClientResponse response, void Function(double)? progress) {
     final completer = Completer<String>();
     final buffer = <int>[];
-    response.listen((data) {
-      buffer.addAll(data);
-      if (response.contentLength != -1 && progress != null) {
-        progress(buffer.length / response.contentLength);
-      }
-    }, onDone: () => completer.complete(utf8.decode(buffer)));
+    response
+        .timeout(_streamStallTimeout,
+            onTimeout: (sink) =>
+                sink.addError(TimeoutException("Response stream stalled")))
+        .listen(
+            (data) {
+              buffer.addAll(data);
+              if (response.contentLength != -1 && progress != null) {
+                progress(buffer.length / response.contentLength);
+              }
+            },
+            onDone: () => completer.complete(utf8.decode(buffer)),
+            onError: completer.completeError,
+            cancelOnError: true);
     return completer.future;
   }
 
@@ -87,12 +124,20 @@ class IOHTTP implements IHTTP {
       HttpClientResponse response, void Function(double)? progress) {
     final completer = Completer<Uint8List>();
     final buffer = <int>[];
-    response.listen((data) {
-      buffer.addAll(data);
-      if (response.contentLength != -1 && progress != null) {
-        progress(buffer.length / response.contentLength);
-      }
-    }, onDone: () => completer.complete(Uint8List.fromList(buffer)));
+    response
+        .timeout(_streamStallTimeout,
+            onTimeout: (sink) =>
+                sink.addError(TimeoutException("Response stream stalled")))
+        .listen(
+            (data) {
+              buffer.addAll(data);
+              if (response.contentLength != -1 && progress != null) {
+                progress(buffer.length / response.contentLength);
+              }
+            },
+            onDone: () => completer.complete(Uint8List.fromList(buffer)),
+            onError: completer.completeError,
+            cancelOnError: true);
     return completer.future;
   }
 
@@ -112,6 +157,7 @@ class IOHTTP implements IHTTP {
       }
       return Tuple2(result, resBody);
     } catch (ex) {
+      print("HTTP: failed to parse response body: $ex");
       return Tuple2(null, resBody);
     }
   }
@@ -120,7 +166,9 @@ class IOHTTP implements IHTTP {
       dynamic body, void Function(double)? progress) async {
     req = _injectHeaders(req);
     req = _writeToBody(req, body, progress);
-    return await req.close();
+    // The timeout turns a silently stalled request into a TimeoutException the
+    // retry loop can act on, instead of an await that never returns.
+    return await req.close().timeout(_requestTimeout);
   }
 
   Future<HttpClientResponse> _sendRequestHelper(
@@ -132,22 +180,26 @@ class IOHTTP implements IHTTP {
     HttpClientRequest? req;
     switch (method) {
       case HTTPRequestMethod.GET:
-        req = await _makeClient().getUrl(_urlConstructor(endpoint, queryArgs));
+        req = await _httpClient.getUrl(_urlConstructor(endpoint, queryArgs));
         break;
       case HTTPRequestMethod.POST:
-        req = await _makeClient().postUrl(_urlConstructor(endpoint, queryArgs));
+        req = await _httpClient.postUrl(_urlConstructor(endpoint, queryArgs));
         break;
       case HTTPRequestMethod.PUT:
-        req = await _makeClient().putUrl(_urlConstructor(endpoint, queryArgs));
+        req = await _httpClient.putUrl(_urlConstructor(endpoint, queryArgs));
         break;
       case HTTPRequestMethod.DELETE:
-        req =
-            await _makeClient().deleteUrl(_urlConstructor(endpoint, queryArgs));
+        req = await _httpClient.deleteUrl(_urlConstructor(endpoint, queryArgs));
         break;
     }
     return await _processRequest(req, body, progress);
   }
 
+  // Retries used to be `while (true)` catching only SocketException: a stall
+  // threw nothing (stuck forever) and a persistent failure retried forever.
+  // Now every transport failure (IO or timeout) resets the shared client and is
+  // retried a bounded number of times; the final failure escapes to the caller
+  // so the UI can show an error instead of an eternal spinner.
   @override
   Future<BackendResultWithBody<O>>
       sendRequestWithResult<O extends IJsonSerializable>(
@@ -155,7 +207,7 @@ class IOHTTP implements IHTTP {
           {Map<String, dynamic>? queryArgs,
           dynamic body,
           void Function(double)? progress}) async {
-    while (true) {
+    for (var attempt = 1;; attempt++) {
       try {
         final response = await _sendRequestHelper(
             method, endpoint, queryArgs, body, progress);
@@ -164,9 +216,14 @@ class IOHTTP implements IHTTP {
             statusCode: response.statusCode,
             body: res.item0,
             rawBody: res.item1);
-      } on SocketException {
-        await Future.delayed(const Duration(seconds: 2));
+      } on IOException {
+        _resetClient();
+        if (attempt >= _maxAttempts) rethrow;
+      } on TimeoutException {
+        _resetClient();
+        if (attempt >= _maxAttempts) rethrow;
       }
+      await Future.delayed(_retryDelay);
     }
   }
 
@@ -175,14 +232,19 @@ class IOHTTP implements IHTTP {
       {Map<String, dynamic>? queryArgs,
       dynamic body,
       void Function(double)? progress}) async {
-    while (true) {
+    for (var attempt = 1;; attempt++) {
       try {
         final response = await _sendRequestHelper(
             method, endpoint, queryArgs, body, progress);
         return BackendResult(statusCode: response.statusCode);
-      } on SocketException {
-        await Future.delayed(const Duration(seconds: 2));
+      } on IOException {
+        _resetClient();
+        if (attempt >= _maxAttempts) rethrow;
+      } on TimeoutException {
+        _resetClient();
+        if (attempt >= _maxAttempts) rethrow;
       }
+      await Future.delayed(_retryDelay);
     }
   }
 
@@ -191,16 +253,23 @@ class IOHTTP implements IHTTP {
       {Map<String, dynamic>? queryArgs,
       dynamic body,
       void Function(double)? progress}) async {
-    while (true) {
+    for (var attempt = 1;; attempt++) {
       try {
         final req =
-            await _makeClient().getUrl(_urlConstructor(endpoint, queryArgs));
+            await _httpClient.getUrl(_urlConstructor(endpoint, queryArgs));
         final response = await _processRequest(req, body, progress);
         if (response.statusCode != 200) return null;
         return await _readResponseAsBytes(response, progress);
-      } on SocketException {
-        await Future.delayed(const Duration(seconds: 2));
+      } on IOException {
+        _resetClient();
+        // HTTPImage renders its error state for a null result, so the image
+        // path degrades gracefully instead of throwing into the widget tree.
+        if (attempt >= _maxAttempts) return null;
+      } on TimeoutException {
+        _resetClient();
+        if (attempt >= _maxAttempts) return null;
       }
+      await Future.delayed(_retryDelay);
     }
   }
 

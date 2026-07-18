@@ -403,6 +403,8 @@ class EnStrings implements IStrings {
         return "Pay the difference";
       case AllStrings.districtTitle:
         return "District";
+      case AllStrings.couldNotLoadDataTitle:
+        return "Couldn't load data, check your connection";
     }
   }
 

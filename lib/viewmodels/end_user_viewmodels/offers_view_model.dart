@@ -14,6 +14,17 @@ class OffersViewModel extends BaseViewModelWithLogic<ICoreLogic> {
   Stream<List<Offer>?> get offers => _offers;
 
   void _init() async {
-    _offers.add(await logic.getOffers());
+    try {
+      _offers.add(await logic.getOffers());
+    } catch (e) {
+      // Transport/backend failure: surface it so the screen shows error + retry
+      // instead of a silent empty list.
+      _offers.addError(e);
+    }
+  }
+
+  void retry() {
+    _offers.add(null); // back to the loading state
+    _init();
   }
 }

@@ -19,10 +19,18 @@ class MyOrderViewModel extends BaseViewModelWithLogic<ICoreLogic> {
 
   _init() async {
     _myOrdersList.add(null);
-    final res = await logic.getUserOrders();
-    res.sort((a, b) => b.addedDate.compareTo(a.addedDate));
-    _myOrdersList.add(res);
+    try {
+      final res = await logic.getUserOrders();
+      res.sort((a, b) => b.addedDate.compareTo(a.addedDate));
+      _myOrdersList.add(res);
+    } catch (e) {
+      // Transport/backend failure: surface it so the screen shows error + retry
+      // instead of a silent empty list.
+      _myOrdersList.addError(e);
+    }
   }
+
+  void retry() => _init();
 
   navigateToOrderDetails(Order order) {
     //Another callback 34an 7oss bytnak

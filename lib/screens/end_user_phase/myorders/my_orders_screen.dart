@@ -4,6 +4,7 @@ import 'package:e3tmed/models/order.dart';
 import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
 
+import '../../../common/load_error_widget.dart';
 import '../../../common/main_loading.dart';
 import '../../../logic/interfaces/IStrings.dart';
 import '../../../viewmodels/end_user_viewmodels/my_orders_view_model.dart';
@@ -34,7 +35,9 @@ class MyOrderScreenState
         child: Center(
           child: StreamBuilder<List<Order>?>(
             stream: viewModel.myOrdersList,
-            builder: (context, snapshot) => snapshot.data == null
+            builder: (context, snapshot) => snapshot.hasError
+                ? LoadErrorWidget(onRetry: viewModel.retry)
+                : snapshot.data == null
                 ? MainLoadinIndicatorWidget(
                     hasColor: Theme.of(context).primaryColor,
                   )

@@ -10,6 +10,18 @@ import 'package:e3tmed/models/product.dart';
 import 'package:e3tmed/models/user_address.dart';
 import 'package:injector/injector.dart';
 
+/// Thrown when the backend answers with a non-200 (e.g. a 502/503 from a proxy
+/// while the server is down). Lets the category/product screens show their
+/// error + retry state instead of silently rendering an empty (blank) list.
+class BackendException implements Exception {
+  final int statusCode;
+
+  BackendException(this.statusCode);
+
+  @override
+  String toString() => "BackendException(status: $statusCode)";
+}
+
 class CoreLogic implements ICoreLogic {
   final http = Injector.appInstance.get<IHTTP>();
 
@@ -17,29 +29,23 @@ class CoreLogic implements ICoreLogic {
   Future<List<Category>> getChildrenOf(Category category) async {
     final res = await http
         .rget<Category>("Category", queryArgs: {"categoryId": category.id});
-    if (res.statusCode == 200) {
-      return res.body ?? [];
-    }
-    return [];
+    if (res.statusCode != 200) throw BackendException(res.statusCode);
+    return res.body ?? [];
   }
 
   @override
   Future<List<Product>> getProductsOf(Category category) async {
     final res =
         await http.rpost<Product>("Product/InCategory", body: [category.id]);
-    if (res.statusCode == 200) {
-      return res.body ?? [];
-    }
-    return [];
+    if (res.statusCode != 200) throw BackendException(res.statusCode);
+    return res.body ?? [];
   }
 
   @override
   Future<List<Category>> getRootCategories() async {
     final res = await http.rget<Category>("Category");
-    if (res.statusCode == 200) {
-      return res.body ?? [];
-    }
-    return [];
+    if (res.statusCode != 200) throw BackendException(res.statusCode);
+    return res.body ?? [];
   }
 
   @override
@@ -52,6 +58,12 @@ class CoreLogic implements ICoreLogic {
   Future<Uint8List?> getProductImage(Product product) async {
     return await http
         .getBytes("Product/Image", queryArgs: {"productId": product.id});
+  }
+
+  @override
+  Future<Uint8List?> getOrderItemImage(int imageId) async {
+    return await http
+        .getBytes("Product/OrderItemImage", queryArgs: {"imageId": imageId});
   }
 
   @override
@@ -80,10 +92,8 @@ class CoreLogic implements ICoreLogic {
   @override
   Future<List<Offer>> getOffers() async {
     final res = await http.rget<Offer>("Product/Offer");
-    if (res.statusCode == 200) {
-      return res.body ?? [];
-    }
-    return [];
+    if (res.statusCode != 200) throw BackendException(res.statusCode);
+    return res.body ?? [];
   }
 
   @override
@@ -98,10 +108,8 @@ class CoreLogic implements ICoreLogic {
   @override
   Future<List<Order>> getUserOrders() async {
     final res = await http.rget<Order>("Product/Order");
-    if (res.statusCode == 200) {
-      return res.body ?? [];
-    }
-    return [];
+    if (res.statusCode != 200) throw BackendException(res.statusCode);
+    return res.body ?? [];
   }
 
   @override

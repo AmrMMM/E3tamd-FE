@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:e3tmed/common/BaseWidgets.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +28,8 @@ class SplashScreenState
   final _strings = Injector.appInstance.get<IStrings>();
   StreamSubscription<bool>? _newVersionSubscription;
 
+  static const _iosAppStoreId = '6769091090';
+
   @override
   void initState() {
     super.initState();
@@ -52,9 +55,14 @@ class SplashScreenState
   }
 
   Future<void> _openStoreListing() async {
-    final packageInfo = await PackageInfo.fromPlatform();
-    final storeUri = Uri.https('play.google.com', '/store/apps/details',
-        {'id': packageInfo.packageName});
+    final Uri storeUri;
+    if (Platform.isIOS) {
+      storeUri = Uri.parse('itms-apps://apps.apple.com/app/id$_iosAppStoreId');
+    } else {
+      final packageInfo = await PackageInfo.fromPlatform();
+      storeUri = Uri.https('play.google.com', '/store/apps/details',
+          {'id': packageInfo.packageName});
+    }
     await url_launcher.launchUrl(storeUri,
         mode: url_launcher.LaunchMode.externalApplication);
     await SystemChannels.platform.invokeMethod('SystemNavigator.pop');

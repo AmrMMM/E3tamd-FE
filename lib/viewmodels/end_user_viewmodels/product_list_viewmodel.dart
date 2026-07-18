@@ -22,6 +22,7 @@ class ProductListViewModel
   final _filterItems = BehaviorSubject<List<Category>?>.seeded(null);
   final _showScreen = BehaviorSubject<bool>.seeded(false);
   Category? _selectedTopCategory;
+  Category? _selectedFilterCategory; // null means "All"
 
   Stream<List<Product>?> get itemsList => _itemsList;
 
@@ -43,33 +44,66 @@ class ProductListViewModel
           maintenanceCategoryId: null);
 
   void _init() async {
-    final topSwitchItems = await logic.getChildrenOf(args!.category);
-    if (topSwitchItems.isNotEmpty) {
-      _selectedTopCategory = topSwitchItems[0];
-      _topSwitchItems.add(topSwitchItems);
-      _filterItems.add(
-          await logic.getChildrenOf(_dataCategoryFor(_selectedTopCategory!)));
-    } else {
-      _topSwitchItems.add([]);
+    try {
+      final topSwitchItems = await logic.getChildrenOf(args!.category);
+      if (topSwitchItems.isNotEmpty) {
+        _selectedTopCategory = topSwitchItems[0];
+        _topSwitchItems.add(topSwitchItems);
+        _filterItems.add(
+            await logic.getChildrenOf(_dataCategoryFor(_selectedTopCategory!)));
+      } else {
+        _topSwitchItems.add([]);
+      }
+      _showScreen.add(true);
+      await _loadProducts();
+    } catch (e) {
+      // Transport gave up (bounded retries exhausted): surface it on the outer
+      // gate so the screen shows an error + retry instead of spinning forever.
+      _showScreen.addError(e);
     }
-    _showScreen.add(true);
-    _itemsList.add(await logic
-        .getProductsOf(_dataCategoryFor(_selectedTopCategory ?? args!.category)));
+  }
+
+  void retryInit() {
+    _showScreen.add(false);
+    _topSwitchItems.add(null);
+    _filterItems.add(null);
+    _itemsList.add(null);
+    _init();
+  }
+
+  Future<void> _loadProducts() async {
+    try {
+      _itemsList.add(await logic.getProductsOf(_selectedFilterCategory ??
+          _dataCategoryFor(_selectedTopCategory ?? args!.category)));
+    } catch (e) {
+      _itemsList.addError(e);
+    }
+  }
+
+  void retryProducts() {
+    _itemsList.add(null);
+    _loadProducts();
   }
 
   void setTopSwitchCategory(Category category) async {
     _itemsList.add(null);
     _filterItems.add(null);
     _selectedTopCategory = category;
-    _itemsList.add(await logic.getProductsOf(_dataCategoryFor(category)));
-    _filterItems.add(
-        await logic.getChildrenOf(_dataCategoryFor(_selectedTopCategory!)));
+    _selectedFilterCategory = null;
+    await _loadProducts();
+    try {
+      _filterItems.add(
+          await logic.getChildrenOf(_dataCategoryFor(_selectedTopCategory!)));
+    } catch (e) {
+      // The filter row is optional chrome; don't leave it spinning forever.
+      _filterItems.add([]);
+    }
   }
 
   void setFilterCategory(Category? category) async {
     _itemsList.add(null);
-    _itemsList.add(await logic
-        .getProductsOf(category ?? _dataCategoryFor(_selectedTopCategory!)));
+    _selectedFilterCategory = category;
+    await _loadProducts();
   }
 
   void navigateToItemDetails(Product product) {

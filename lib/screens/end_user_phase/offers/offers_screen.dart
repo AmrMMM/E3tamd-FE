@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:injector/injector.dart';
 
 import '../../../DI.dart';
+import '../../../common/load_error_widget.dart';
 import '../../../common/main_loading.dart';
 import '../../../logic/interfaces/IStrings.dart';
 import '../../../viewmodels/end_user_viewmodels/offers_view_model.dart';
@@ -38,6 +39,9 @@ class OffersScreenState extends BaseStateObject<OffersScreen, OffersViewModel> {
           child: StreamBuilder<List<Offer>?>(
               stream: viewModel.offers,
               builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return LoadErrorWidget(onRetry: viewModel.retry);
+                }
                 if (snapshot.data == null) {
                   return const Center(child: MainLoadinIndicatorWidget());
                 }
