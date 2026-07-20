@@ -7,6 +7,7 @@ import 'package:e3tmed/models/motor.dart';
 import 'package:e3tmed/models/offer.dart';
 import 'package:e3tmed/models/order.dart';
 import 'package:e3tmed/models/product.dart';
+import 'package:e3tmed/models/product_image_ref.dart';
 import 'package:e3tmed/models/user_address.dart';
 import 'package:injector/injector.dart';
 
@@ -58,6 +59,20 @@ class CoreLogic implements ICoreLogic {
   Future<Uint8List?> getProductImage(Product product) async {
     return await http
         .getBytes("Product/Image", queryArgs: {"productId": product.id});
+  }
+
+  @override
+  Future<List<ProductImageRef>> getProductImages(Product product) async {
+    final res = await http.rget<ProductImageRef>("Product/Images",
+        queryArgs: {"productId": product.id});
+    if (res.statusCode != 200) throw BackendException(res.statusCode);
+    return res.body ?? [];
+  }
+
+  @override
+  Future<Uint8List?> getProductImageById(int imageId) async {
+    return await http
+        .getBytes("Product/Image", queryArgs: {"imageId": imageId});
   }
 
   @override

@@ -4,7 +4,7 @@ import 'package:e3tmed/common/BaseWidgets.dart';
 import 'package:e3tmed/common/custom_dotted_border/custom_dotted_border.dart';
 import 'package:e3tmed/common/customtextfield/CustomTextField.dart';
 import 'package:e3tmed/common/image_widgets/image_viewer.dart';
-import 'package:e3tmed/common/image_widgets/product_image.dart';
+import 'package:e3tmed/common/image_widgets/product_gallery.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/models/motor.dart';
 import 'package:e3tmed/models/product.dart';
@@ -65,13 +65,7 @@ class ItemDetailsScreenState extends BaseStateArgumentObject<ItemDetailsScreen,
                   elevation: 0.7,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: ProductImage(
-                      product: args!.product,
-                      width: double.infinity,
-                      height: 250,
-                      fit: BoxFit.cover,
-                      preferThumbnail: false,
-                    ),
+                    child: ProductGallery(product: args!.product),
                   ),
                 ),
               ),

@@ -30,6 +30,7 @@ import 'package:e3tmed/models/motor.dart';
 import 'package:e3tmed/models/notification.dart';
 import 'package:e3tmed/models/offer.dart';
 import 'package:e3tmed/models/order.dart';
+import 'package:e3tmed/models/product_image_ref.dart';
 import 'package:e3tmed/models/payment.dart';
 import 'package:e3tmed/models/price.dart';
 import 'package:e3tmed/models/product.dart';
@@ -55,6 +56,8 @@ void __setModelFactories() {
   injector.registerSingleton<IModelFactory<Category>>(() => CategoryFactory());
   injector.registerSingleton<IModelFactory<Product>>(() => ProductFactory());
   injector.registerSingleton<IModelFactory<Motor>>(() => MotorFactory());
+  injector.registerSingleton<IModelFactory<ProductImageRef>>(
+      () => ProductImageRefFactory());
   injector.registerSingleton<IModelFactory<UserAuthModel>>(
       () => UserAuthModelFactory());
   injector.registerSingleton<IModelFactory<UserAddress>>(

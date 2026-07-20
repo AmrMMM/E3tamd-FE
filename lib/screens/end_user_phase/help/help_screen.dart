@@ -69,50 +69,39 @@ class HelpScreenState extends BaseStateObject<HelpScreen, HelpViewModel> {
                 Card(
                   elevation: 0,
                   color: Theme.of(context).colorScheme.secondary,
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "${string.getStrings(AllStrings.helloTitle)} ${auth?.name}",
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 20),
-                            ),
-                            InkWell(
-                              onTap: () async => await viewModel
-                                  .contactViaWhatsapp(supportWhatsAppNumber),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Text(
-                                    supportWhatsAppNumber,
-                                    textDirection: TextDirection.ltr,
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 14),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Image.asset(
-                                    "assets/whatsapp_logo.png",
-                                    width: 30,
-                                    height: 30,
-                                  ),
-                                ],
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    onTap: () async => await viewModel
+                        .contactViaWhatsapp(supportWhatsAppNumber),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "${string.getStrings(AllStrings.helloTitle)} ${auth?.name}",
+                                style: const TextStyle(
+                                    color: Colors.white, fontSize: 20),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          string.getStrings(AllStrings.instructionsTitle),
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 16),
-                        ),
-                      ],
+                              Image.asset(
+                                "assets/whatsapp_logo.png",
+                                width: 30,
+                                height: 30,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            string.getStrings(AllStrings.instructionsTitle),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 16),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

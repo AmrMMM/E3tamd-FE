@@ -3,6 +3,7 @@ import 'package:e3tmed/models/motor.dart';
 import 'package:e3tmed/models/offer.dart';
 import 'package:e3tmed/models/order.dart';
 import 'package:e3tmed/models/product.dart';
+import 'package:e3tmed/models/product_image_ref.dart';
 import 'package:e3tmed/models/user_address.dart';
 import 'package:flutter/services.dart';
 
@@ -21,6 +22,13 @@ abstract class ICoreLogic {
   Future<Uint8List?> getCategoryImage(Category category);
 
   Future<Uint8List?> getProductImage(Product product);
+
+  /// Lists a product's gallery - ids plus inline previews. The full-size image for an entry is then
+  /// fetched with [getProductImageById].
+  Future<List<ProductImageRef>> getProductImages(Product product);
+
+  /// Full-size bytes of one gallery image.
+  Future<Uint8List?> getProductImageById(int imageId);
 
   /// Fetches a client-uploaded order item image by id (order responses carry only ids).
   Future<Uint8List?> getOrderItemImage(int imageId);
