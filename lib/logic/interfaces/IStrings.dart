@@ -201,7 +201,16 @@ enum AllStrings {
   paymentSuccessfulTitle,
   payTheDifferenceTitle,
   districtTitle,
-  couldNotLoadDataTitle
+  couldNotLoadDataTitle,
+  addNewSparePartTitle,
+  sparePartNameArTitle,
+  sparePartNameEnTitle,
+  sparePartPriceTitle,
+  sparePartStockTitle,
+  sparePartDescriptionTitle,
+  sparePartCreatedTitle,
+  errorWhileCreatingSparePartTitle,
+  saveTitle
 }
 
 abstract class IStrings {

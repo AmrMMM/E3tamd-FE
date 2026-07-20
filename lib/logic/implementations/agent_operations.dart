@@ -1,10 +1,32 @@
 import 'package:e3tmed/logic/interfaces/IAgentOperations.dart';
 import 'package:e3tmed/logic/interfaces/IHTTP.dart';
 import 'package:e3tmed/models/agent_requests_model.dart';
+import 'package:e3tmed/models/product.dart';
 import 'package:injector/injector.dart';
 
 class AgentRequestImplementation implements IAgentOperations {
   final http = Injector.appInstance.get<IHTTP>();
+
+  @override
+  Future<Product?> createSparePart({
+    required String nameAr,
+    required String nameEn,
+    required String description,
+    required double price,
+    required int stock,
+  }) async {
+    final res = await http.rpost<Product>("Agent/SpareParts", body: {
+      "nameAr": nameAr,
+      "nameEn": nameEn,
+      "description": description,
+      "price": price,
+      "stock": stock,
+    });
+    if (res.statusCode == 200 && (res.body?.isNotEmpty ?? false)) {
+      return res.body!.first;
+    }
+    return null;
+  }
 
   @override
   Future<bool> acceptRequest(AgentRequest request) async {

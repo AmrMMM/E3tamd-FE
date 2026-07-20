@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:e3tmed/DI.dart';
+import 'package:e3tmed/logic/interfaces/IAgentOperations.dart';
 import 'package:e3tmed/logic/interfaces/IAuth.dart';
 import 'package:e3tmed/logic/interfaces/ISocial.dart';
 import 'package:e3tmed/logic/interfaces/core_logic.dart';
@@ -24,8 +25,10 @@ class AgentOrderDetailsViewModel
 
   final _social = Injector.appInstance.get<ISocial>();
   final _coreLogic = Injector.appInstance.get<ICoreLogic>();
+  final _agentOps = Injector.appInstance.get<IAgentOperations>();
   final _itemsList = BehaviorSubject<List<Product>?>.seeded(null);
   final _loading = BehaviorSubject<bool>();
+  final _createLoading = BehaviorSubject<bool>.seeded(false);
   final BehaviorSubject<double> _totalPriceDetails = BehaviorSubject.seeded(0);
 
   Stream<double> get totalPriceDetails => _totalPriceDetails;
@@ -33,6 +36,8 @@ class AgentOrderDetailsViewModel
   Stream<List<Product>?> get itemsList => _itemsList;
 
   Stream<bool> get loading => _loading;
+
+  Stream<bool> get createLoading => _createLoading;
 
   final double vat = VAT;
 
@@ -98,6 +103,36 @@ class AgentOrderDetailsViewModel
       List<OrderItemExtraProduct> productItem, OrderItem requestItem) {
     requestItem.extraProducts?.addAll(productItem);
     // calculateTotalPriceDetails();
+  }
+
+  /// Creates a new spare part on the backend (persisted to the catalog) and adds
+  /// it to the selectable list so it shows up alongside the existing spare parts.
+  /// Returns the created product, or null if creation failed. Attaching it to the
+  /// order is handled by the selection flow, like any other spare part.
+  Future<Product?> createSparePart({
+    required String nameAr,
+    required String nameEn,
+    required String description,
+    required double price,
+    required int stock,
+  }) async {
+    _createLoading.add(true);
+    try {
+      final product = await _agentOps.createSparePart(
+        nameAr: nameAr,
+        nameEn: nameEn,
+        description: description,
+        price: price,
+        stock: stock,
+      );
+      if (product == null) return null;
+
+      // Surface the new part in the "select existing spare parts" sheet too.
+      _itemsList.add([...?_itemsList.value, product]);
+      return product;
+    } finally {
+      _createLoading.add(false);
+    }
   }
 
   removeSpareFromTotal(Product productItem, OrderItem requestItem) {

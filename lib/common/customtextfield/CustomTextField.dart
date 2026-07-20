@@ -3,6 +3,7 @@
 import 'package:e3tmed/DI.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:injector/injector.dart';
 
 import '../../screens/end_user_phase/settings/settings_screen.dart';
@@ -28,6 +29,10 @@ class PrimaryTextFieldWithHeader extends StatefulWidget {
   final bool? isEditable;
   final bool? isRequired;
   final int? maxChars;
+  // Restrict what can be typed/pasted (the validator alone only runs on submit).
+  final List<TextInputFormatter>? inputFormatters;
+  // Overrides the keyboard derived from [inputType] (e.g. a decimal number pad).
+  final TextInputType? keyboardType;
   final void Function(String value) onChangedValue;
 
   const PrimaryTextFieldWithHeader(
@@ -42,7 +47,9 @@ class PrimaryTextFieldWithHeader extends StatefulWidget {
       this.initialValue,
       this.validation,
       this.labelText,
-      this.maxChars})
+      this.maxChars,
+      this.inputFormatters,
+      this.keyboardType})
       : super(key: key);
 
   @override
@@ -243,10 +250,12 @@ class _PrimaryTextFieldWithHeaderState
                             : widget.inputType == InputType.phone
                                 ? phonePrefix.numberOfDigits
                                 : null,
-                        keyboardType: widget.inputType == InputType.phone ||
-                                widget.inputType == InputType.number
-                            ? TextInputType.number
-                            : null,
+                        keyboardType: widget.keyboardType ??
+                            (widget.inputType == InputType.phone ||
+                                    widget.inputType == InputType.number
+                                ? TextInputType.number
+                                : null),
+                        inputFormatters: widget.inputFormatters,
                         initialValue: widget.inputType == InputType.phone &&
                                 widget.initialValue != null &&
                                 phonePrefixes.any((element) => widget

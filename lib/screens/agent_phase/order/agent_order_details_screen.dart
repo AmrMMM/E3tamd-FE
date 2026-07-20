@@ -11,6 +11,8 @@ import 'package:e3tmed/models/agent_requests_model.dart';
 import 'package:e3tmed/screens/agent_phase/order/additional_custom_widgets/adding_dimensions_manually_widget.dart';
 import 'package:e3tmed/viewmodels/agent_viewmodels/order/agent_order_details_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:injector/injector.dart';
 
 import '../../../DI.dart';
@@ -520,33 +522,47 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                               icon: Icons.add,
                               title: strings
                                   .getStrings(AllStrings.addSparePartsTitle),
-                              onTap: () => snapshot.data != null &&
-                                      snapshot.data!.isNotEmpty
-                                  ? selectExtrasBottomSheet<
-                                          OrderItemExtraProduct>(
-                                      snapshot.data!
-                                          .map((e) => OrderItemExtraProduct(
-                                              product: e,
-                                              productId: e.id,
-                                              purchasePrice: e.basePrice,
-                                              quantity: 1))
-                                          .toList(),
-                                      context, (value) {
-                                      setState(() {
-                                        sparePartsList.addAll(value);
-                                        totalSparePartsPrice = 0;
-                                        widget.viewModel!.addSpareToTotal(
-                                            value, widget.item);
-                                      });
-                                    },
-                                      (value) =>
-                                          value.product!.getProductName(),
-                                      (value) => value.purchasePrice!,
-                                      (value) => ProductImage(
-                                          product: value.product!,
-                                          width: 40,
-                                          height: 40))
-                                  : const SizedBox());
+                              onTap: () => selectExtrasBottomSheet<
+                                      OrderItemExtraProduct>(
+                                    (snapshot.data ?? <Product>[])
+                                        .map((e) => OrderItemExtraProduct(
+                                            product: e,
+                                            productId: e.id,
+                                            purchasePrice: e.basePrice,
+                                            quantity: 1))
+                                        .toList(),
+                                    context, (value) {
+                                    setState(() {
+                                      sparePartsList.addAll(value);
+                                      totalSparePartsPrice = 0;
+                                      widget.viewModel!
+                                          .addSpareToTotal(value, widget.item);
+                                    });
+                                  },
+                                    (value) => value.product!.getProductName(),
+                                    (value) => value.purchasePrice!,
+                                    (value) => ProductImage(
+                                        product: value.product!,
+                                        width: 40,
+                                        height: 40),
+                                    // "Add new spare part" lives inside the list; a
+                                    // created part is returned, then selected here.
+                                    onAddNew: widget.viewModel == null
+                                        ? null
+                                        : () async {
+                                            final product =
+                                                await openAddNewSparePartBottomSheet(
+                                                    context, widget.viewModel!);
+                                            if (product == null) return null;
+                                            return OrderItemExtraProduct(
+                                                product: product,
+                                                productId: product.id,
+                                                purchasePrice: product.basePrice,
+                                                quantity: 1);
+                                          },
+                                    addNewLabel: strings.getStrings(
+                                        AllStrings.addNewSparePartTitle),
+                                  ));
                         }),
                     const Divider(
                       thickness: 0.7,
@@ -701,8 +717,10 @@ void selectExtrasBottomSheet<T>(
   void Function(List<T> data) returnData,
   String Function(T model) titleSelector,
   double Function(T model) priceSelector,
-  Widget Function(T model)? imageSelector,
-) {
+  Widget Function(T model)? imageSelector, {
+  Future<T?> Function()? onAddNew,
+  String? addNewLabel,
+}) {
   showModalBottomSheet(
       context: context,
       builder: (context) => MultiSelectList<T>(
@@ -710,7 +728,9 @@ void selectExtrasBottomSheet<T>(
           selectedItems: (value) => returnData(value),
           titleSelector: titleSelector,
           priceSelector: priceSelector,
-          imageSelector: imageSelector));
+          imageSelector: imageSelector,
+          onAddNew: onAddNew,
+          addNewLabel: addNewLabel));
 }
 
 void openPopUpDialogForAddingExtras(
@@ -850,4 +870,164 @@ void openBottomSheetForMotors(
           ],
         )),
   );
+}
+
+/// Opens the "add new spare part" form and returns the created [Product], or null
+/// if the agent cancelled or creation failed.
+Future<Product?> openAddNewSparePartBottomSheet(
+  BuildContext context,
+  AgentOrderDetailsViewModel viewModel,
+) {
+  return showModalBottomSheet<Product>(
+    context: context,
+    isScrollControlled: true,
+    builder: (context) => Padding(
+      // Lift the sheet above the keyboard so the fields and Save button stay visible.
+      padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: MyBottomSheetDialog(
+        customWidget: AddNewSparePartForm(viewModel: viewModel),
+      ),
+    ),
+  );
+}
+
+class AddNewSparePartForm extends StatefulWidget {
+  final AgentOrderDetailsViewModel viewModel;
+
+  const AddNewSparePartForm({
+    Key? key,
+    required this.viewModel,
+  }) : super(key: key);
+
+  @override
+  State<AddNewSparePartForm> createState() => _AddNewSparePartFormState();
+}
+
+class _AddNewSparePartFormState extends State<AddNewSparePartForm> {
+  final strings = Injector.appInstance.get<IStrings>();
+  final formKey = GlobalKey<FormState>();
+
+  String nameAr = "";
+  String nameEn = "";
+  String description = "";
+  String price = "";
+  String stock = "";
+
+  Future<void> submit() async {
+    if (!formKey.currentState!.validate()) return;
+    final product = await widget.viewModel.createSparePart(
+      nameAr: nameAr.trim(),
+      nameEn: nameEn.trim(),
+      description: description.trim(),
+      price: double.parse(price.trim()),
+      stock: int.parse(stock.trim()),
+    );
+    if (!mounted) return;
+    if (product != null) {
+      Fluttertoast.showToast(
+          msg: strings.getStrings(AllStrings.sparePartCreatedTitle),
+          gravity: ToastGravity.BOTTOM);
+      Navigator.pop(context, product);
+    } else {
+      Fluttertoast.showToast(
+          msg: strings.getStrings(AllStrings.errorWhileCreatingSparePartTitle),
+          gravity: ToastGravity.BOTTOM);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+      child: Form(
+        key: formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                Expanded(
+                  child: Text(
+                    strings.getStrings(AllStrings.addNewSparePartTitle),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 18),
+                  ),
+                ),
+                // Balances the back button so the title stays centred.
+                const SizedBox(width: 48),
+              ],
+            ),
+            const Divider(thickness: 0.7),
+            PrimaryTextFieldWithHeader(
+              isObscure: false,
+              inputType: InputType.name,
+              isRequired: true,
+              hintText: strings.getStrings(AllStrings.sparePartNameArTitle),
+              onChangedValue: (value) => nameAr = value,
+            ),
+            PrimaryTextFieldWithHeader(
+              isObscure: false,
+              inputType: InputType.name,
+              isRequired: true,
+              hintText: strings.getStrings(AllStrings.sparePartNameEnTitle),
+              onChangedValue: (value) => nameEn = value,
+            ),
+            PrimaryTextFieldWithHeader(
+              isObscure: false,
+              inputType: InputType.longText,
+              isRequired: true,
+              hintText: strings.getStrings(AllStrings.sparePartDescriptionTitle),
+              onChangedValue: (value) => description = value,
+            ),
+            PrimaryTextFieldWithHeader(
+              isObscure: false,
+              inputType: InputType.number,
+              isRequired: true,
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
+              // Only digits and a single decimal point (max 2 places) can be
+              // typed or pasted - no letters, no minus sign.
+              inputFormatters: [
+                TextInputFormatter.withFunction((oldValue, newValue) =>
+                    RegExp(r'^\d*\.?\d{0,2}$').hasMatch(newValue.text)
+                        ? newValue
+                        : oldValue),
+              ],
+              // Must be a positive amount; fractions allowed. The lookahead
+              // requires at least one non-zero digit, so 0 / 0.00 are rejected.
+              validation: RegExp(r'^(?=.*[1-9])\d+(\.\d{1,2})?$'),
+              hintText: strings.getStrings(AllStrings.sparePartPriceTitle),
+              onChangedValue: (value) => price = value,
+            ),
+            PrimaryTextFieldWithHeader(
+              isObscure: false,
+              inputType: InputType.number,
+              isRequired: true,
+              // Whole units only - digits, no decimal point, no minus sign.
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              // Positive whole number (at least 1, no leading zeros).
+              validation: RegExp(r'^[1-9][0-9]*$'),
+              hintText: strings.getStrings(AllStrings.sparePartStockTitle),
+              onChangedValue: (value) => stock = value,
+            ),
+            PrimaryButtonShape(
+              width: double.infinity,
+              text: strings.getStrings(AllStrings.saveTitle),
+              color: Theme.of(context).primaryColor,
+              stream: widget.viewModel.createLoading,
+              onTap: submit,
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
 }

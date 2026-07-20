@@ -403,6 +403,24 @@ class ArStrings implements IStrings {
         return "الحي";
       case AllStrings.couldNotLoadDataTitle:
         return "تعذر تحميل البيانات، تحقق من اتصالك بالإنترنت";
+      case AllStrings.addNewSparePartTitle:
+        return "إضافة قطعة غيار جديدة";
+      case AllStrings.sparePartNameArTitle:
+        return "الاسم (بالعربية)";
+      case AllStrings.sparePartNameEnTitle:
+        return "الاسم (بالإنجليزية)";
+      case AllStrings.sparePartPriceTitle:
+        return "السعر";
+      case AllStrings.sparePartStockTitle:
+        return "الكمية المتوفرة";
+      case AllStrings.sparePartDescriptionTitle:
+        return "الوصف";
+      case AllStrings.sparePartCreatedTitle:
+        return "تمت إضافة قطعة الغيار بنجاح";
+      case AllStrings.errorWhileCreatingSparePartTitle:
+        return "تعذّر إضافة قطعة الغيار، حاول مرة أخرى";
+      case AllStrings.saveTitle:
+        return "حفظ";
     }
   }
 

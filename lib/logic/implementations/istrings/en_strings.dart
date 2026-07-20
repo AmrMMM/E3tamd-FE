@@ -405,6 +405,24 @@ class EnStrings implements IStrings {
         return "District";
       case AllStrings.couldNotLoadDataTitle:
         return "Couldn't load data, check your connection";
+      case AllStrings.addNewSparePartTitle:
+        return "Add new spare part";
+      case AllStrings.sparePartNameArTitle:
+        return "Name (Arabic)";
+      case AllStrings.sparePartNameEnTitle:
+        return "Name (English)";
+      case AllStrings.sparePartPriceTitle:
+        return "Price";
+      case AllStrings.sparePartStockTitle:
+        return "Quantity in stock";
+      case AllStrings.sparePartDescriptionTitle:
+        return "Description";
+      case AllStrings.sparePartCreatedTitle:
+        return "Spare part added successfully";
+      case AllStrings.errorWhileCreatingSparePartTitle:
+        return "Couldn't add the spare part, please try again";
+      case AllStrings.saveTitle:
+        return "Save";
     }
   }
 

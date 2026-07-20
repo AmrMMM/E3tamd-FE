@@ -153,20 +153,14 @@ class PartsAndExtrasWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (image != null)
-                image!
-              else
-                //TODO: Add better image for extra items
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: const BoxDecoration(
-                    color: Colors.black26,
-                  ),
+              // Extras have no image, so nothing is rendered in that slot rather
+              // than an empty grey placeholder.
+              if (image != null) ...[
+                image!,
+                const SizedBox(
+                  width: 5,
                 ),
-              const SizedBox(
-                width: 5,
-              ),
+              ],
               Flexible(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
