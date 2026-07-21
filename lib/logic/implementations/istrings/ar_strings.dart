@@ -337,6 +337,8 @@ class ArStrings implements IStrings {
         return "تمت إضافة الطلب إلى سلة التسوق";
       case AllStrings.failedToAddOrderToCartTitle:
         return "فشل إضافة الطلب إلى عربة التسوق";
+      case AllStrings.failedToCalculatePriceTitle:
+        return "تعذّر حساب السعر، يرجى المحاولة مرة أخرى";
       case AllStrings.thanksForOrderingTitle:
         return "شكرا للطلب";
       case AllStrings.nameChangedSuccessfullyTitle:

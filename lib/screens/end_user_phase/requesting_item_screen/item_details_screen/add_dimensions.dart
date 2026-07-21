@@ -1,3 +1,4 @@
+import 'package:e3tmed/common/auth/auth_guard.dart';
 import 'package:e3tmed/common/buttons/secondarybuttonshape.dart';
 import 'package:e3tmed/common/customalertdialog/item_take_action_dialog.dart';
 import 'package:e3tmed/common/dropdownmenu/field_drop_down_menu.dart';
@@ -173,7 +174,13 @@ class _AddDimensionsWidgetState extends State<AddDimensionsWidget> {
             color: Theme.of(context).colorScheme.secondary,
             stream: null,
             clickable: isSaveClickable,
-            onTap: () {
+            onTap: () async {
+              // Pricing is an authenticated endpoint, so a guest would otherwise sit on an endless
+              // spinner in the dialog below. Send them to login first; this screen stays alive
+              // underneath the login route, so the selections made above are still here afterwards.
+              if (!await AuthGuard.ensureClientLogin(context)) return;
+              if (!context.mounted) return;
+
               widget.calculatePrice(
                   dimensions, thickness, motor, selectedExtrasList);
               showPopUpDialog(

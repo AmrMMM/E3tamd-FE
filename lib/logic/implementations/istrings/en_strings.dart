@@ -337,6 +337,8 @@ class EnStrings implements IStrings {
         return "Order added to cart";
       case AllStrings.failedToAddOrderToCartTitle:
         return "Failed to add order to cart";
+      case AllStrings.failedToCalculatePriceTitle:
+        return "Couldn't calculate the price, please try again";
       case AllStrings.thanksForOrderingTitle:
         return "Thanks for ordering";
       case AllStrings.nameChangedSuccessfullyTitle:

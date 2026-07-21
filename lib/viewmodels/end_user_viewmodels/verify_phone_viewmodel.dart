@@ -42,7 +42,7 @@ class VerifyUsernameViewModel
         Fluttertoast.showToast(
             msg: strings
                 .getStrings(AllStrings.registerSuccessfulPleaseLoginTitle));
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
+        _returnToLogin();
       } else {
         Fluttertoast.showToast(
             msg:
@@ -51,5 +51,35 @@ class VerifyUsernameViewModel
       }
     } else {}
     _loading.add(false);
+  }
+
+  /// Registering does not sign the user in - no token is issued, which is why the toast above asks
+  /// them to log in. So this unwinds the registration screens back to the login screen instead of
+  /// rebuilding the app at '/home'.
+  ///
+  /// Rebuilding at '/home' used to destroy the whole root stack, taking NavHostScreen's nested
+  /// navigator with it - and with that, the product screen the user was configuring plus any pending
+  /// action waiting to resume after authentication.
+  void _returnToLogin() {
+    // Captured before popping: the NavigatorState outlives this route, whereas `context` does not.
+    final navigator = Navigator.of(context);
+
+    // The predicate records what it found on the way down, because once popUntil returns this
+    // route is gone and its context can no longer be asked where it landed. `route.isFirst` is the
+    // safety net - without it a missing '/mainLogin' would pop until the stack was empty.
+    var landedOnLogin = false;
+    navigator.popUntil((route) {
+      if (route.settings.name == '/mainLogin') {
+        landedOnLogin = true;
+        return true;
+      }
+      return route.isFirst;
+    });
+
+    // Registration was started somewhere that never went through the login screen - the guest
+    // profile/settings cards push '/register' directly - so send them there now.
+    if (!landedOnLogin) {
+      navigator.pushNamed('/mainLogin');
+    }
   }
 }

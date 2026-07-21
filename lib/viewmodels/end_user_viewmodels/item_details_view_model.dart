@@ -126,13 +126,21 @@ class ItemDetailsViewModel
       List<ExtraModel> extras,
       int quantity,
       List<Uint8List>? imagesList) async {
+    if (!await _ensureLoginIfPriceNeeded()) return;
+
     if (_lastCalculatedPrice == null) {
       await calculatePrice(dimension, thickness, motor, extras);
     }
-    final checkoutArgs = CheckoutScreenArgs(
-        orderItems: [_buildOrderItem(
-            notes, dimension, thickness, color, motor, extras, quantity,
-            imagesList)]);
+    final item = _buildOrderItem(
+        notes, dimension, thickness, color, motor, extras, quantity, imagesList);
+    if (item == null) {
+      Fluttertoast.showToast(
+          msg: strings.getStrings(AllStrings.failedToCalculatePriceTitle),
+          gravity: ToastGravity.BOTTOM);
+      return;
+    }
+
+    final checkoutArgs = CheckoutScreenArgs(orderItems: [item]);
     if (!await AuthGuard.requireClientLogin(context,
         pending: PendingAuthAction.checkout(checkoutArgs))) {
       return;
@@ -152,11 +160,20 @@ class ItemDetailsViewModel
       List<ExtraModel> extras,
       int quantity,
       List<Uint8List>? imagesList) async {
+    if (!await _ensureLoginIfPriceNeeded()) return;
+
     if (_lastCalculatedPrice == null) {
       await calculatePrice(dimension, thickness, motor, extras);
     }
     final item = _buildOrderItem(
         notes, dimension, thickness, color, motor, extras, quantity, imagesList);
+    if (item == null) {
+      Fluttertoast.showToast(
+          msg: strings.getStrings(AllStrings.failedToCalculatePriceTitle),
+          gravity: ToastGravity.BOTTOM);
+      return;
+    }
+
     if (!await AuthGuard.requireClientLogin(context,
         pending: PendingAuthAction.addToCart(item))) {
       return;
@@ -173,7 +190,24 @@ class ItemDetailsViewModel
     }
   }
 
-  OrderItem _buildOrderItem(
+  /// Pricing is an authenticated endpoint, so for a product whose total comes from it a guest must
+  /// sign in *before* the calculation is attempted - otherwise the call 401s, the price stays null
+  /// and the action dies with an error toast instead of the login prompt the user expects.
+  ///
+  /// Reached by maintenance-mode items, which show the direct action buttons even when the product
+  /// has extra details. The non-maintenance route is gated earlier, at "Save & Continue".
+  ///
+  /// Returns false if the user is still not authenticated, meaning the caller should abort.
+  Future<bool> _ensureLoginIfPriceNeeded() async {
+    if (!args!.product.withExtraDetails) return true;
+    if (AuthGuard.isClientLoggedIn) return true;
+
+    return AuthGuard.ensureClientLogin(context);
+  }
+
+  /// Null when the item needs a calculated price that isn't available - a failed or unauthorised
+  /// pricing call. Callers surface that rather than pushing an item with a bogus price.
+  OrderItem? _buildOrderItem(
       String notes,
       String? dimension,
       String? thickness,
@@ -182,6 +216,10 @@ class ItemDetailsViewModel
       List<ExtraModel> extras,
       int quantity,
       List<Uint8List>? imagesList) {
+    if (args!.product.withExtraDetails && _lastCalculatedPrice == null) {
+      return null;
+    }
+
     return OrderItem(
         product: args!.product,
         motor: motor,

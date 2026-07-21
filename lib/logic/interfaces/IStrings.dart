@@ -170,6 +170,7 @@ enum AllStrings {
   failedToSendMessageTitle,
   orderAddedToCartTitle,
   failedToAddOrderToCartTitle,
+  failedToCalculatePriceTitle,
   thanksForOrderingTitle,
   nameChangedSuccessfullyTitle,
   errorWhileChangingNameTitle,
