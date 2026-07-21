@@ -1,3 +1,4 @@
+import 'package:e3tmed/common/markdown_text.dart';
 import 'package:e3tmed/models/order.dart';
 import 'package:e3tmed/models/order_item_extensions.dart';
 import 'package:e3tmed/screens/agent_phase/order/additional_custom_widgets/order_details_custom_widgets.dart';
@@ -68,7 +69,9 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                             color: Theme.of(context).primaryColor,
                             fontSize: 16),
                       ),
-                      Text(widget.orderItem.product?.description ?? '',
+                      Text(
+                          stripMarkdown(
+                              widget.orderItem.product?.getDescription() ?? ''),
                           style: TextStyle(
                               color: Theme.of(context).primaryColor,
                               fontSize: 13)),

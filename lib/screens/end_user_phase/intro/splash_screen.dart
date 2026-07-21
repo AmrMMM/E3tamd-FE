@@ -76,39 +76,33 @@ class SplashScreenState
 
   @override
   Widget build(BuildContext context) {
+    // White background with the logo in its own colours, so this continues the native launch screen
+    // rather than cutting to a different-looking one. Note the GIF is deliberately left untinted:
+    // it is already a two-tone navy/green animation, and an Image `color` would srcIn-flatten it to
+    // a single flat colour (which is how it used to be forced to white on the old dark background).
     return SafeArea(
       child: Scaffold(
-        body: Container(
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.fromRGBO(43, 162, 129, 1),
-              Color.fromRGBO(18, 0, 66, 1),
-            ],
-          )),
-          child: Center(
-            child: Padding(
-              padding:
-                  const EdgeInsets.only(top: 0, left: 0, right: 0, bottom: 50),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/logo-etmed.gif',
-                      color: Colors.white,
-                      width: 182,
-                      height: 182,
-                    ),
-                    const Text(
-                      'Doors & Windows Repair\nServices',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    )
-                  ]),
-            ),
+        backgroundColor: Colors.white,
+        body: Center(
+          child: Padding(
+            padding:
+                const EdgeInsets.only(top: 0, left: 0, right: 0, bottom: 50),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/logo-etmed.gif',
+                    width: 182,
+                    height: 182,
+                  ),
+                  Text(
+                    'Doors & Windows Repair\nServices',
+                    style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  )
+                ]),
           ),
         ),
       ),

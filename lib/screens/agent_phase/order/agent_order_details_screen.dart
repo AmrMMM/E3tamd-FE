@@ -4,6 +4,7 @@ import 'package:e3tmed/models/order_item_extensions.dart';
 import 'package:e3tmed/common/buttons/primarybuttonshape.dart';
 import 'package:e3tmed/common/customalertdialog/add_extra_alert_dialog.dart';
 import 'package:e3tmed/common/customtextfield/CustomTextField.dart';
+import 'package:e3tmed/common/markdown_text.dart';
 import 'package:e3tmed/common/multi_select_list/multi_select_list.dart';
 import 'package:e3tmed/common/price_summary_widget.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
@@ -332,7 +333,7 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                             color: Theme.of(context).primaryColor,
                             fontSize: 16),
                       ),
-                      Text(product.description,
+                      Text(stripMarkdown(product.getDescription()),
                           style: TextStyle(
                               color: Theme.of(context).primaryColor,
                               fontSize: 13)),

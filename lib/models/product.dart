@@ -9,7 +9,14 @@ class Product implements IJsonSerializable {
   int id;
   String nameAr;
   String nameEn;
+  /// Plain-text description served for backwards compatibility. Superseded by the Markdown pair
+  /// below; kept so this build still works against a backend that predates them.
   String description;
+
+  /// Markdown, per language. Null when talking to an older backend.
+  String? descriptionAr;
+  String? descriptionEn;
+
   DateTime manufactureDate;
   double basePrice;
   String manufacturerNameAr;
@@ -33,6 +40,8 @@ class Product implements IJsonSerializable {
       required this.nameAr,
       required this.nameEn,
       required this.description,
+      this.descriptionAr,
+      this.descriptionEn,
       required this.manufactureDate,
       required this.basePrice,
       required this.manufacturerNameAr,
@@ -54,6 +63,8 @@ class Product implements IJsonSerializable {
         "nameAr": nameAr,
         "nameEn": nameEn,
         "description": description,
+        "descriptionAr": descriptionAr,
+        "descriptionEn": descriptionEn,
         "manufactureDate": manufactureDate.toUtc().toString(),
         "basePrice": basePrice,
         "manufacturerNameAr": manufacturerNameAr,
@@ -87,6 +98,15 @@ class Product implements IJsonSerializable {
     }
   }
 
+  /// The active language's Markdown description, falling back to the legacy plain-text field when
+  /// the backend hasn't been updated yet (or when that language was left blank).
+  String getDescription() {
+    final localized =
+        useLanguage == Languages.arabic.name ? descriptionAr : descriptionEn;
+    if (localized != null && localized.trim().isNotEmpty) return localized;
+    return description;
+  }
+
   String getCategoryName() {
     if (useLanguage == Languages.arabic.name) {
       return categoryNameAr ?? '';
@@ -117,6 +137,8 @@ class ProductFactory implements IModelFactory<Product> {
           nameEn: jsonMap["nameEn"],
           stock: jsonMap["stock"],
           description: jsonMap["description"],
+          descriptionAr: jsonMap["descriptionAr"],
+          descriptionEn: jsonMap["descriptionEn"],
           manufactureDate: DateTime.parse(jsonMap["manufactureDate"]),
           basePrice: jsonMap["basePrice"].toDouble(),
           manufacturerNameAr: jsonMap["manufacturerNameAr"],

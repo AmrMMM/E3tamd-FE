@@ -4,6 +4,7 @@ import 'package:e3tmed/common/BaseWidgets.dart';
 import 'package:e3tmed/common/custom_dotted_border/custom_dotted_border.dart';
 import 'package:e3tmed/common/customtextfield/CustomTextField.dart';
 import 'package:e3tmed/common/image_widgets/image_viewer.dart';
+import 'package:e3tmed/common/markdown_body_view.dart';
 import 'package:e3tmed/common/image_widgets/product_gallery.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/models/motor.dart';
@@ -108,13 +109,8 @@ class ItemDetailsScreenState extends BaseStateArgumentObject<ItemDetailsScreen,
                     ),
                     SizedBox(
                       width: double.infinity,
-                      child: Text(
-                        args!.product.description,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 15,
-                        ),
-                        textAlign: TextAlign.start,
+                      child: MarkdownBodyView(
+                        data: args!.product.getDescription(),
                       ),
                     ),
                     if (!args!.product.withExtraDetails) ...[
