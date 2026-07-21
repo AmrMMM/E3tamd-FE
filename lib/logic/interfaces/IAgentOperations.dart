@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import '../../models/agent_requests_model.dart';
 import '../../models/product.dart';
 
@@ -18,11 +20,15 @@ abstract class IAgentOperations {
 
   /// Creates a new spare part (a product in the spare-parts category) with the
   /// agent-supplied price and returns it so it can be attached to the order.
+  /// [imageBytes] is optional; when given it becomes the part's only photo.
   Future<Product?> createSparePart({
     required String nameAr,
     required String nameEn,
-    required String description,
+    required String descriptionAr,
+    required String descriptionEn,
     required double price,
     required int stock,
+    Uint8List? imageBytes,
+    String? imageMimeType,
   });
 }

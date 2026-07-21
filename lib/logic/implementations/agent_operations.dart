@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:e3tmed/logic/interfaces/IAgentOperations.dart';
 import 'package:e3tmed/logic/interfaces/IHTTP.dart';
 import 'package:e3tmed/models/agent_requests_model.dart';
@@ -11,16 +14,28 @@ class AgentRequestImplementation implements IAgentOperations {
   Future<Product?> createSparePart({
     required String nameAr,
     required String nameEn,
-    required String description,
+    required String descriptionAr,
+    required String descriptionEn,
     required double price,
     required int stock,
+    Uint8List? imageBytes,
+    String? imageMimeType,
   }) async {
     final res = await http.rpost<Product>("Agent/SpareParts", body: {
       "nameAr": nameAr,
       "nameEn": nameEn,
-      "description": description,
+      "descriptionAr": descriptionAr,
+      "descriptionEn": descriptionEn,
       "price": price,
       "stock": stock,
+      // The server defaults a missing contentType and re-encodes anyway, so a
+      // null mime type from the picker is fine.
+      "image": imageBytes == null
+          ? null
+          : {
+              "dataBase64": base64.encode(imageBytes),
+              "contentType": imageMimeType,
+            },
     });
     if (res.statusCode == 200 && (res.body?.isNotEmpty ?? false)) {
       return res.body!.first;

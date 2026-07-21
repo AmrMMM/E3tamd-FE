@@ -415,8 +415,10 @@ class EnStrings implements IStrings {
         return "Price";
       case AllStrings.sparePartStockTitle:
         return "Quantity in stock";
-      case AllStrings.sparePartDescriptionTitle:
-        return "Description";
+      case AllStrings.sparePartDescriptionArTitle:
+        return "Description (Arabic)";
+      case AllStrings.sparePartDescriptionEnTitle:
+        return "Description (English)";
       case AllStrings.sparePartCreatedTitle:
         return "Spare part added successfully";
       case AllStrings.errorWhileCreatingSparePartTitle:

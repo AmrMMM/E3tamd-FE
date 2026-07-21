@@ -413,8 +413,10 @@ class ArStrings implements IStrings {
         return "السعر";
       case AllStrings.sparePartStockTitle:
         return "الكمية المتوفرة";
-      case AllStrings.sparePartDescriptionTitle:
-        return "الوصف";
+      case AllStrings.sparePartDescriptionArTitle:
+        return "الوصف (بالعربية)";
+      case AllStrings.sparePartDescriptionEnTitle:
+        return "الوصف (بالإنجليزية)";
       case AllStrings.sparePartCreatedTitle:
         return "تمت إضافة قطعة الغيار بنجاح";
       case AllStrings.errorWhileCreatingSparePartTitle:

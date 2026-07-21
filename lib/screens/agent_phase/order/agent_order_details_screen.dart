@@ -911,18 +911,33 @@ class _AddNewSparePartFormState extends State<AddNewSparePartForm> {
 
   String nameAr = "";
   String nameEn = "";
-  String description = "";
+  String descriptionAr = "";
+  String descriptionEn = "";
   String price = "";
   String stock = "";
+  Uint8List? imageBytes;
+  String? imageMimeType;
+
+  Future<void> pickImage() async {
+    final picked = await widget.viewModel.pickSparePartImage();
+    if (picked == null || !mounted) return;
+    setState(() {
+      imageBytes = picked.bytes;
+      imageMimeType = picked.mimeType;
+    });
+  }
 
   Future<void> submit() async {
     if (!formKey.currentState!.validate()) return;
     final product = await widget.viewModel.createSparePart(
       nameAr: nameAr.trim(),
       nameEn: nameEn.trim(),
-      description: description.trim(),
+      descriptionAr: descriptionAr.trim(),
+      descriptionEn: descriptionEn.trim(),
       price: double.parse(price.trim()),
       stock: int.parse(stock.trim()),
+      imageBytes: imageBytes,
+      imageMimeType: imageMimeType,
     );
     if (!mounted) return;
     if (product != null) {
@@ -984,8 +999,17 @@ class _AddNewSparePartFormState extends State<AddNewSparePartForm> {
               isObscure: false,
               inputType: InputType.longText,
               isRequired: true,
-              hintText: strings.getStrings(AllStrings.sparePartDescriptionTitle),
-              onChangedValue: (value) => description = value,
+              hintText:
+                  strings.getStrings(AllStrings.sparePartDescriptionArTitle),
+              onChangedValue: (value) => descriptionAr = value,
+            ),
+            PrimaryTextFieldWithHeader(
+              isObscure: false,
+              inputType: InputType.longText,
+              isRequired: true,
+              hintText:
+                  strings.getStrings(AllStrings.sparePartDescriptionEnTitle),
+              onChangedValue: (value) => descriptionEn = value,
             ),
             PrimaryTextFieldWithHeader(
               isObscure: false,
@@ -1018,6 +1042,48 @@ class _AddNewSparePartFormState extends State<AddNewSparePartForm> {
               hintText: strings.getStrings(AllStrings.sparePartStockTitle),
               onChangedValue: (value) => stock = value,
             ),
+            const SizedBox(height: 12),
+            // Optional photo - the part saves fine without one.
+            Row(
+              children: [
+                InkWell(
+                  onTap: pickImage,
+                  child: Container(
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: imageBytes == null
+                        ? const Icon(Icons.add_a_photo, color: Colors.grey)
+                        : ClipRRect(
+                            borderRadius: BorderRadius.circular(6),
+                            child: Image.memory(imageBytes!,
+                                width: 70, height: 70, fit: BoxFit.cover),
+                          ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    strings.getStrings(AllStrings.addPhotoTitle),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
+                        fontSize: 16),
+                  ),
+                ),
+                if (imageBytes != null)
+                  InkWell(
+                    onTap: () => setState(() {
+                      imageBytes = null;
+                      imageMimeType = null;
+                    }),
+                    child: const Icon(Icons.close, color: Colors.grey, size: 25),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
             PrimaryButtonShape(
               width: double.infinity,
               text: strings.getStrings(AllStrings.saveTitle),

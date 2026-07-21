@@ -207,7 +207,8 @@ enum AllStrings {
   sparePartNameEnTitle,
   sparePartPriceTitle,
   sparePartStockTitle,
-  sparePartDescriptionTitle,
+  sparePartDescriptionArTitle,
+  sparePartDescriptionEnTitle,
   sparePartCreatedTitle,
   errorWhileCreatingSparePartTitle,
   saveTitle

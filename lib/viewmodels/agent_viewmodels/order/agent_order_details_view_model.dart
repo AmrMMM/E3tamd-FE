@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:typed_data';
 
 import 'package:e3tmed/DI.dart';
 import 'package:e3tmed/logic/interfaces/IAgentOperations.dart';
@@ -13,6 +14,7 @@ import 'package:e3tmed/screens/agent_phase/order/agent_order_summary_screen.dart
 import 'package:e3tmed/viewmodels/baseViewModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:injector/injector.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -26,6 +28,7 @@ class AgentOrderDetailsViewModel
   final _social = Injector.appInstance.get<ISocial>();
   final _coreLogic = Injector.appInstance.get<ICoreLogic>();
   final _agentOps = Injector.appInstance.get<IAgentOperations>();
+  final ImagePicker _picker = ImagePicker();
   final _itemsList = BehaviorSubject<List<Product>?>.seeded(null);
   final _loading = BehaviorSubject<bool>();
   final _createLoading = BehaviorSubject<bool>.seeded(false);
@@ -105,6 +108,14 @@ class AgentOrderDetailsViewModel
     // calculateTotalPriceDetails();
   }
 
+  /// Lets the agent pick a photo for a new spare part from the gallery.
+  /// Returns null if they backed out without choosing one.
+  Future<({Uint8List bytes, String? mimeType})?> pickSparePartImage() async {
+    final image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image == null) return null;
+    return (bytes: await image.readAsBytes(), mimeType: image.mimeType);
+  }
+
   /// Creates a new spare part on the backend (persisted to the catalog) and adds
   /// it to the selectable list so it shows up alongside the existing spare parts.
   /// Returns the created product, or null if creation failed. Attaching it to the
@@ -112,18 +123,24 @@ class AgentOrderDetailsViewModel
   Future<Product?> createSparePart({
     required String nameAr,
     required String nameEn,
-    required String description,
+    required String descriptionAr,
+    required String descriptionEn,
     required double price,
     required int stock,
+    Uint8List? imageBytes,
+    String? imageMimeType,
   }) async {
     _createLoading.add(true);
     try {
       final product = await _agentOps.createSparePart(
         nameAr: nameAr,
         nameEn: nameEn,
-        description: description,
+        descriptionAr: descriptionAr,
+        descriptionEn: descriptionEn,
         price: price,
         stock: stock,
+        imageBytes: imageBytes,
+        imageMimeType: imageMimeType,
       );
       if (product == null) return null;
 
