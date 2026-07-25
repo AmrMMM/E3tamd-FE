@@ -1,4 +1,5 @@
 import 'package:e3tmed/common/buttons/secondarybuttonshape.dart';
+import 'package:e3tmed/common/price_text.dart';
 import 'package:e3tmed/common/quantity_counter/quantity_counter.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/models/order.dart';
@@ -54,10 +55,12 @@ class _CustomCartItemWidgetState extends State<CustomCartItemWidget> {
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16)),
-                        TextSpan(
-                            text:
-                                "${(widget.orderItem.totalPrice! * widget.orderItem.quantity)} SAR",
-                            style: const TextStyle(color: Colors.black)),
+                        // Null price: the product behind this cart line was
+                        // deleted, so it has no price to multiply out.
+                        priceSpan(
+                            (widget.orderItem.totalPrice ?? 0) *
+                                widget.orderItem.quantity,
+                            color: Colors.black),
                       ],
                     ),
                   )
@@ -75,7 +78,8 @@ class _CustomCartItemWidgetState extends State<CustomCartItemWidget> {
                           fontSize: 16)),
                 QuantityCounter(
                   initialValue: widget.orderItem.quantity,
-                  max: widget.orderItem.product?.stock ?? widget.orderItem.quantity,
+                  max: widget.orderItem.product?.stock ??
+                      widget.orderItem.quantity,
                   onQuantityChange: (quantity) => setState(() {
                     widget.callBack(quantity);
                     widget.orderItem.quantity = quantity;

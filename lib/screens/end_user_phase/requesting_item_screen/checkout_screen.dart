@@ -225,8 +225,8 @@ class CheckoutScreenState extends BaseStateArgumentObject<CheckoutScreen,
                         TextSpan(
                           text: viewModel.isCardOnly ||
                                   viewModel.isBankCardPayment
-                              ? strings.getStrings(
-                                  AllStrings.paymentMethodCardTitle)
+                              ? strings
+                                  .getStrings(AllStrings.paymentMethodCardTitle)
                               : strings.getStrings(
                                   AllStrings.paymentMethodCashTitle),
                           style: const TextStyle(
@@ -241,8 +241,7 @@ class CheckoutScreenState extends BaseStateArgumentObject<CheckoutScreen,
                           child: TextButton(
                             onPressed: () => showAddPaymentDialog(context),
                             child: Text(
-                              strings
-                                  .getStrings(AllStrings.changePaymentTitle),
+                              strings.getStrings(AllStrings.changePaymentTitle),
                               style: const TextStyle(
                                   fontSize: 14, color: Colors.blueAccent),
                             ),
@@ -276,13 +275,28 @@ class CheckoutScreenState extends BaseStateArgumentObject<CheckoutScreen,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  child: Text(
-                    strings.getStrings(AllStrings
-                        .priceMayChangeAccordingToAgentsVisitAndFeesWillBeDeductedFromTotalPaymentWhenTheRequestIsCompletedTitle),
-                    style: const TextStyle(
-                        color: Colors.grey,
+                  child: GestureDetector(
+                    onTap: () async {
+                      final agreed = await Navigator.of(context)
+                          .pushNamed("/termsAndConditions");
+                      if (agreed == true) {
+                        setState(() {
+                          agree = true;
+                        });
+                      }
+                    },
+                    child: Text(
+                      strings.getStrings(AllStrings
+                          .viewTermsAndConditionsTitle), // e.g. "View" / "Open"
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.secondary,
                         fontSize: 14,
-                        fontWeight: FontWeight.normal),
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                        decorationColor:
+                            Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
                   ),
                 ),
                 Row(

@@ -43,7 +43,9 @@ dependencies:
   darq: ^2.0.0
   universal_io: ^2.0.4
   http: ^0.13.3
-  carousel_slider: ^4.0.0
+  # 5.x renamed CarouselController to CarouselSliderController, resolving the name clash with the
+  # CarouselController that Flutter's own material library now exports.
+  carousel_slider: ^5.0.0
   snippet_coder_utils: ^1.0.12
   flutter_keyboard_visibility: ^6.0.0
   introduction_screen: ^3.0.2
@@ -65,6 +67,8 @@ dependencies:
   intl: ^0.18.1
   device_info_plus: ^10.1.2
   android_id: ^0.4.0
+  flutter_markdown_plus: ^1.0.12
+  markdown: ^7.3.1
 
 dev_dependencies:
   flutter_test:
@@ -101,6 +105,17 @@ flutter:
 
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
+
+  # Saudi Riyal symbol font. Uncomment once the official SAMA .ttf is placed at
+  # fonts/SaudiRiyal.ttf (see fonts/README.md). Left commented so the build stays
+  # green until the file exists; lib/common/price_text.dart already targets this
+  # family and falls back harmlessly until the font is bundled.
+  fonts:
+    - family: SaudiRiyal
+      fonts:
+        - asset: fonts/regular/saudi_riyal.ttf
+        - asset: fonts/bold/saudi_riyal.ttf
+          weight: 900
 
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a

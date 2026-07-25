@@ -52,7 +52,9 @@ class CartViewModel extends BaseViewModelWithLogic<ICart> {
           strings.getStrings(AllStrings.orderRemovedFromCartTitle),
           style:
               const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          textDirection: useLanguage == Languages.arabic.name?TextDirection.rtl:TextDirection.ltr,
+          textDirection: useLanguage == Languages.arabic.name
+              ? TextDirection.rtl
+              : TextDirection.ltr,
         ),
         backgroundColor: Theme.of(context).colorScheme.secondary,
       ));
@@ -62,16 +64,34 @@ class CartViewModel extends BaseViewModelWithLogic<ICart> {
         strings.getStrings(AllStrings.failedToRemoveOrderFromCartTitle),
         style:
             const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            textDirection: useLanguage == Languages.arabic.name?TextDirection.rtl:TextDirection.ltr,
+        textDirection: useLanguage == Languages.arabic.name
+            ? TextDirection.rtl
+            : TextDirection.ltr,
       )));
     }
   }
 
   navigateToCheckoutScreen(OrderItem orderItem) {
+    // The product behind this line was deleted, so there is no details screen to
+    // open. Tell the user instead of dereferencing a null product and throwing.
+    final product = orderItem.product;
+    if (product == null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          strings.getStrings(AllStrings.deletedProductTitle),
+          style:
+              const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          textDirection: useLanguage == Languages.arabic.name
+              ? TextDirection.rtl
+              : TextDirection.ltr,
+        ),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+      ));
+      return;
+    }
     Navigator.of(context).pushNamed("/itemDetails",
         arguments: ItemDetailsScreenArgs(
-            product: orderItem.product!,
-            maintenanceMode: orderItem.maintenance));
+            product: product, maintenanceMode: orderItem.maintenance));
   }
 
   proceedToCheckoutAllItem(List<OrderItem> cartList) async {

@@ -1,4 +1,6 @@
+import 'package:e3tmed/common/expandable_description.dart';
 import 'package:e3tmed/common/markdown_text.dart';
+import 'package:e3tmed/common/price_text.dart';
 import 'package:e3tmed/models/order.dart';
 import 'package:e3tmed/models/order_item_extensions.dart';
 import 'package:e3tmed/screens/agent_phase/order/additional_custom_widgets/order_details_custom_widgets.dart';
@@ -69,8 +71,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                             color: Theme.of(context).primaryColor,
                             fontSize: 16),
                       ),
-                      Text(
-                          stripMarkdown(
+                      ExpandableDescription(
+                          text: stripMarkdown(
                               widget.orderItem.product?.getDescription() ?? ''),
                           style: TextStyle(
                               color: Theme.of(context).primaryColor,
@@ -157,7 +159,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                 height: 5,
               ),
               if (widget.orderItem.product?.withExtraDetails == true &&
-                  !widget.orderItem.maintenance && !widget.orderItem.isAgent)
+                  !widget.orderItem.maintenance &&
+                  !widget.orderItem.isAgent)
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -200,10 +203,19 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                       height: 5,
                     ),
                     if (widget.orderItem.motor != null)
-                      Text(
-                        "${strings.getStrings(AllStrings.motorTitle)} : ${widget.orderItem.motor!.getMotorName()} - (${widget.orderItem.motor!.price} SAR)",
-                        style:
-                            const TextStyle(color: Colors.grey, fontSize: 14),
+                      Text.rich(
+                        TextSpan(
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 14),
+                          children: [
+                            TextSpan(
+                                text:
+                                    "${strings.getStrings(AllStrings.motorTitle)} : ${widget.orderItem.motor!.getMotorName()} - ("),
+                            priceSpan(widget.orderItem.motor!.price,
+                                fontSize: 14, color: Colors.grey),
+                            const TextSpan(text: ")"),
+                          ],
+                        ),
                       ),
                   ],
                 ),
@@ -237,7 +249,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                                   itemName: e.product?.getProductName() ??
                                       strings.getStrings(
                                           AllStrings.deletedProductTitle),
-                                  itemPrice: e.purchasePrice!,
+                                  // Deleted extras carry no purchase price.
+                                  itemPrice: e.purchasePrice ?? 0,
                                   image: e.product != null
                                       ? ProductImage(
                                           product: e.product!,
@@ -282,8 +295,8 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                         const SizedBox(
                           width: 5,
                         ),
-                        Text(
-                          "${widget.orderItem.priceWithoutExtras} SAR",
+                        PriceText(
+                          widget.orderItem.priceWithoutExtras ?? 0,
                           style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 12,

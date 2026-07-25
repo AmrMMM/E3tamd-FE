@@ -1,4 +1,5 @@
 import 'package:e3tmed/common/image_widgets/product_image.dart';
+import 'package:e3tmed/common/price_text.dart';
 import 'package:e3tmed/models/order.dart';
 import 'package:e3tmed/models/product.dart';
 import 'package:flutter/material.dart';
@@ -174,10 +175,17 @@ class PartsAndExtrasWidget extends StatelessWidget {
                             color: Theme.of(context).primaryColor,
                             fontSize: 16),
                       ),
-                      Text("Price : $itemPrice SAR",
-                          style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 13)),
+                      Text.rich(TextSpan(
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 13),
+                        children: [
+                          const TextSpan(text: "Price : "),
+                          priceSpan(itemPrice,
+                              fontSize: 13,
+                              color: Theme.of(context).primaryColor),
+                        ],
+                      )),
                       const SizedBox(
                         height: 15,
                       ),
@@ -251,10 +259,18 @@ class SpareProductWidget extends StatelessWidget {
                             color: Theme.of(context).primaryColor,
                             fontSize: 16),
                       ),
-                      Text("Price : ${item.purchasePrice!} SAR",
-                          style: TextStyle(
-                              color: Theme.of(context).primaryColor,
-                              fontSize: 13)),
+                      Text.rich(TextSpan(
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontSize: 13),
+                        children: [
+                          const TextSpan(text: "Price : "),
+                          // Deleted spare parts carry no purchase price.
+                          priceSpan(item.purchasePrice ?? 0,
+                              fontSize: 13,
+                              color: Theme.of(context).primaryColor),
+                        ],
+                      )),
                       const SizedBox(
                         height: 15,
                       ),

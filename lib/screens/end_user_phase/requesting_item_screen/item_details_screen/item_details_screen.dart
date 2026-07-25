@@ -6,6 +6,7 @@ import 'package:e3tmed/common/customtextfield/CustomTextField.dart';
 import 'package:e3tmed/common/image_widgets/image_viewer.dart';
 import 'package:e3tmed/common/markdown_body_view.dart';
 import 'package:e3tmed/common/image_widgets/product_gallery.dart';
+import 'package:e3tmed/common/price_text.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/models/motor.dart';
 import 'package:e3tmed/models/product.dart';
@@ -119,8 +120,8 @@ class ItemDetailsScreenState extends BaseStateArgumentObject<ItemDetailsScreen,
                       ),
                       SizedBox(
                         width: double.infinity,
-                        child: Text(
-                          "${(args!.product.basePrice * quantity).toString()} SAR",
+                        child: PriceText(
+                          args!.product.basePrice * quantity,
                           style: const TextStyle(
                             color: Colors.blue,
                             fontWeight: FontWeight.bold,

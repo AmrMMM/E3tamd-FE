@@ -21,6 +21,7 @@ import '../requesting_item_screen/checkout_screen.dart';
 import '../requesting_item_screen/item_details_screen/item_details_screen.dart';
 import '../settings/account_information_screen.dart';
 import '../settings/addresses_screen.dart';
+import '../terms_and_conditions/terms_and_conditions_screen.dart';
 import '../settings/chage_email_screen.dart';
 import '../settings/change_password_screen.dart';
 import '../settings/change_phone_number_screen.dart';
@@ -127,6 +128,7 @@ class NavHostScreenState
       '/checkout': (context) => CheckoutScreen(context),
       '/orderDetails': (context) => OrderDetailsScreen(context),
       '/payment': (context) => PaymentScreen(context),
+      '/termsAndConditions': (context) => TermsAndConditionsScreen(context),
       '/notifications': (context) => AgentNotificationScreen(context)
     };
 

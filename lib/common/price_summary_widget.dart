@@ -9,6 +9,7 @@ import '../models/order.dart';
 import '../models/price.dart';
 import '../screens/end_user_phase/settings/settings_screen.dart';
 import 'main_loading.dart';
+import 'price_text.dart';
 
 class PriceSummaryWidget extends StatefulWidget {
   const PriceSummaryWidget(
@@ -117,52 +118,51 @@ class _PriceSummaryWidgetState extends State<PriceSummaryWidget> {
                       child: _DetailsItem(
                           item:
                               strings.getStrings(AllStrings.productPriceTitle),
-                          value: totalProductPrice.toString())),
+                          amount: totalProductPrice)),
                 if (totalSparePartsPrice != 0)
                   Padding(
                       padding: const EdgeInsets.symmetric(vertical: 1),
                       child: _DetailsItem(
                           item: strings.getStrings(AllStrings.sparePartsTitle),
-                          value: totalSparePartsPrice.toString())),
+                          amount: totalSparePartsPrice)),
                 if (totalExtrasPrice != 0)
                   Padding(
                       padding: const EdgeInsets.symmetric(vertical: 1),
                       child: _DetailsItem(
                           item: strings
                               .getStrings(AllStrings.extrasAndServicesTitle),
-                          value: totalExtrasPrice.toString())),
+                          amount: totalExtrasPrice)),
                 if (totalAgentVisitPrice != 0)
                   Padding(
                       padding: const EdgeInsets.symmetric(vertical: 1),
                       child: _DetailsItem(
                           item: strings.getStrings(AllStrings.agentVisitTitle),
-                          value: totalAgentVisitPrice.toString())),
+                          amount: totalAgentVisitPrice)),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 1),
                     child: _DetailsItem(
                         item: strings.getStrings(AllStrings.vatTitle),
-                        value: totalVatPrice.toString())),
+                        amount: totalVatPrice)),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: _DetailsItem(
                       isTotal: true,
                       item: strings.getStrings(AllStrings.totalTitle),
-                      value: "${finalTotalPrice.toString()} SAR",
+                      amount: finalTotalPrice,
                     )),
                 if (paidAmount > 0) ...[
                   Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: _DetailsItem(
                         item: strings.getStrings(AllStrings.paidAmount),
-                        value: "${paidAmount.toString()} SAR",
+                        amount: paidAmount,
                       )),
                   Padding(
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       child: _DetailsItem(
                         isTotal: true,
                         item: strings.getStrings(AllStrings.totalDue),
-                        value:
-                            "${(finalTotalPrice - paidAmount).toString()} SAR",
+                        amount: finalTotalPrice - paidAmount,
                       )),
                   if (widget.onPayDifference != null &&
                       (finalTotalPrice - paidAmount) > 0)
@@ -171,12 +171,16 @@ class _PriceSummaryWidgetState extends State<PriceSummaryWidget> {
                       child: SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: () => widget.onPayDifference!(
-                              finalTotalPrice - paidAmount),
+                          onPressed: () => widget
+                              .onPayDifference!(finalTotalPrice - paidAmount),
                           icon: const Icon(Icons.credit_card),
-                          label: Text(
-                              "${strings.getStrings(AllStrings.payRemainingTitle)} "
-                              "(${(finalTotalPrice - paidAmount).toString()} SAR)"),
+                          label: Text.rich(TextSpan(children: [
+                            TextSpan(
+                                text:
+                                    "${strings.getStrings(AllStrings.payRemainingTitle)} ("),
+                            priceSpan(finalTotalPrice - paidAmount),
+                            const TextSpan(text: ")"),
+                          ])),
                         ),
                       ),
                     ),
@@ -190,55 +194,41 @@ class _PriceSummaryWidgetState extends State<PriceSummaryWidget> {
 // ignore: must_be_immutable
 class _DetailsItem extends StatelessWidget {
   final String item;
+  // A plain-text value (e.g. the section header's empty string). Monetary rows
+  // pass [amount] instead so the value renders through PriceText with the symbol.
   final String value;
+  final double? amount;
   bool? mainTitle;
   bool? isTotal;
 
   _DetailsItem(
       {Key? key,
       required this.item,
-      required this.value,
+      this.value = "",
+      this.amount,
       this.mainTitle,
       this.isTotal})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final textStyle = mainTitle ?? false
+        ? const TextStyle(
+            color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)
+        : isTotal ?? false
+            ? const TextStyle(
+                color: Colors.teal, fontWeight: FontWeight.bold, fontSize: 14)
+            : const TextStyle(
+                color: Colors.grey,
+                fontWeight: FontWeight.normal,
+                fontSize: 14);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(item,
-            style: mainTitle ?? false
-                ? const TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16)
-                : isTotal ?? false
-                    ? const TextStyle(
-                        color: Colors.teal,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14)
-                    : const TextStyle(
-                        color: Colors.grey,
-                        fontWeight: FontWeight.normal,
-                        fontSize: 14)),
-        Text(
-          value,
-          style: mainTitle ?? false
-              ? const TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16)
-              : isTotal ?? false
-                  ? const TextStyle(
-                      color: Colors.teal,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14)
-                  : const TextStyle(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.normal,
-                      fontSize: 14),
-        )
+        Text(item, style: textStyle),
+        amount != null
+            ? PriceText(amount!, style: textStyle)
+            : Text(value, style: textStyle),
       ],
     );
   }

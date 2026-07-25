@@ -75,14 +75,14 @@ class _PrimaryTextFieldWithHeaderState
   // final String? Function(String? value) validator;
   final IStrings strings = Injector.appInstance.get<IStrings>();
   late bool textVisibility;
+  // The app serves Saudi Arabia only for now. Adding another entry here is all it takes to bring
+  // the country picker back - the field derives the dropdown, digit count and validation from it.
   static const List<PrefixItem> phonePrefixes = [
     PrefixItem(
         prefix: "+966",
         country: "Saudi Arabia",
         shortCode: "SA",
         numberOfDigits: 9),
-    PrefixItem(
-        prefix: "+20", country: "Egypt", shortCode: "EG", numberOfDigits: 10)
   ];
   PrefixItem phonePrefix = phonePrefixes.first;
   String valueBuffer = "";
@@ -189,44 +189,59 @@ class _PrimaryTextFieldWithHeaderState
                           borderRadius: BorderRadius.circular(10),
                         ),
                         padding: const EdgeInsets.all(8),
-                        child: DropdownButton<PrefixItem>(
-                            isExpanded: true,
-                            underline: const SizedBox(),
-                            borderRadius: BorderRadius.circular(25),
-                            items: !(widget.isEditable ?? true)
-                                ? []
-                                : phonePrefixes
+                        // With a single supported country there is nothing to choose, so the prefix
+                        // is shown as plain text instead of a dropdown that opens to one option.
+                        child: phonePrefixes.length < 2
+                            ? Align(
+                                alignment: const AlignmentDirectional(-1.0, 0),
+                                child: Text(
+                                  "${phonePrefix.prefix} (${phonePrefix.shortCode})",
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              )
+                            : DropdownButton<PrefixItem>(
+                                isExpanded: true,
+                                underline: const SizedBox(),
+                                borderRadius: BorderRadius.circular(25),
+                                items: !(widget.isEditable ?? true)
+                                    ? []
+                                    : phonePrefixes
+                                        .map(
+                                            (e) => DropdownMenuItem<PrefixItem>(
+                                                  value: e,
+                                                  child: Text(
+                                                    "${e.country} (${e.prefix})"
+                                                        .trim(),
+                                                    style: const TextStyle(
+                                                        fontSize: 14),
+                                                  ),
+                                                ))
+                                        .toList(),
+                                selectedItemBuilder: (context) => phonePrefixes
                                     .map((e) => DropdownMenuItem<PrefixItem>(
                                           value: e,
                                           child: Text(
-                                            "${e.country} (${e.prefix})".trim(),
+                                            "${e.prefix} (${e.shortCode})"
+                                                .trim(),
                                             style:
                                                 const TextStyle(fontSize: 14),
                                           ),
                                         ))
                                     .toList(),
-                            selectedItemBuilder: (context) => phonePrefixes
-                                .map((e) => DropdownMenuItem<PrefixItem>(
-                                      value: e,
-                                      child: Text(
-                                        "${e.prefix} (${e.shortCode})".trim(),
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                    ))
-                                .toList(),
-                            hint: !(widget.isEditable ?? true)
-                                ? Align(
-                                    alignment:
-                                        const AlignmentDirectional(-1.0, 0),
-                                    child: Text(
-                                        "${phonePrefix.prefix} (${phonePrefix.shortCode})"))
-                                : const SizedBox(),
-                            value: phonePrefix,
-                            onChanged: (newVal) => setState(() {
-                                  phonePrefix = newVal ?? phonePrefixes.first;
-                                  widget.onChangedValue(
-                                      phonePrefix.prefix + valueBuffer);
-                                })),
+                                hint: !(widget.isEditable ?? true)
+                                    ? Align(
+                                        alignment:
+                                            const AlignmentDirectional(-1.0, 0),
+                                        child: Text(
+                                            "${phonePrefix.prefix} (${phonePrefix.shortCode})"))
+                                    : const SizedBox(),
+                                value: phonePrefix,
+                                onChanged: (newVal) => setState(() {
+                                      phonePrefix =
+                                          newVal ?? phonePrefixes.first;
+                                      widget.onChangedValue(
+                                          phonePrefix.prefix + valueBuffer);
+                                    })),
                       ),
                       const SizedBox(
                         width: 10,

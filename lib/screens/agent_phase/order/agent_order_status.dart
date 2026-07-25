@@ -1,4 +1,5 @@
 import 'package:e3tmed/common/BaseWidgets.dart';
+import 'package:e3tmed/common/price_text.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/viewmodels/agent_viewmodels/order/agent_order_status_view_model.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +46,7 @@ class AgentOrderStatusScreenState extends BaseStateArgumentObject<
   @override
   Widget build(BuildContext context) {
     double totalPrice = args!.request.items
-        .map((e) => e.totalPrice!)
+        .map((e) => e.totalPrice ?? 0)
         .reduce((value, element) => value + element);
     double extrasTotalPrice = 0;
     var extrasList = args!.request.items.expand((element) => element.extras);
@@ -70,8 +71,7 @@ class AgentOrderStatusScreenState extends BaseStateArgumentObject<
                   children: [
                     Text(
                       args!.request.items.isNotEmpty
-                          ? args!.request.items[0]
-                              .categoryDisplayName(strings)
+                          ? args!.request.items[0].categoryDisplayName(strings)
                           : '',
                       style: const TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
@@ -497,9 +497,15 @@ class _ProductDetailsWidgetState extends State<_ProductDetailsWidget> {
                         ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Text("Price ${widget.item.totalPrice} SAR",
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 13)),
+                        child: Text.rich(TextSpan(
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 13),
+                          children: [
+                            const TextSpan(text: "Price "),
+                            priceSpan(widget.item.totalPrice ?? 0,
+                                fontSize: 13, color: Colors.grey),
+                          ],
+                        )),
                       ),
                       const SizedBox(
                         height: 5,

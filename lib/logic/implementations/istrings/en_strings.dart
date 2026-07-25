@@ -257,7 +257,7 @@ class EnStrings implements IStrings {
       case AllStrings.changeLanguageTitle:
         return "Change language";
       case AllStrings
-          .priceMayChangeAccordingToAgentsVisitAndFeesWillBeDeductedFromTotalPaymentWhenTheRequestIsCompletedTitle:
+            .priceMayChangeAccordingToAgentsVisitAndFeesWillBeDeductedFromTotalPaymentWhenTheRequestIsCompletedTitle:
         return "Price may change according to agent’s visit, and fees will be deducted from total payment when the request is completed.";
       case AllStrings.ifYouDontKnowTheDoorDimensionsYouCanAskForAnAgentTitle:
         return "If you dont know the door dimensions, you can ask for an agent";
@@ -268,10 +268,10 @@ class EnStrings implements IStrings {
       case AllStrings.confirmTitle:
         return "Confirm";
       case AllStrings
-          .youWillReceiveACodeToVerifyYourPhoneNumberPleaseWriteItDownWhenYouReceiveItTitle:
+            .youWillReceiveACodeToVerifyYourPhoneNumberPleaseWriteItDownWhenYouReceiveItTitle:
         return "You will receive a code to verify your ${currentAuthenticationMode.name}, please write it down when you receive it.";
       case AllStrings
-          .youWillReceiveACodeToResetYourPasswordPleaseWriteItDownWhenYouReceiveItTitle:
+            .youWillReceiveACodeToResetYourPasswordPleaseWriteItDownWhenYouReceiveItTitle:
         return "You will receive a code to reset your password, please write it down when you receive it.";
       case AllStrings.codeTitle:
         return "Code";
@@ -339,6 +339,10 @@ class EnStrings implements IStrings {
         return "Failed to add order to cart";
       case AllStrings.failedToCalculatePriceTitle:
         return "Couldn't calculate the price, please try again";
+      case AllStrings.showMoreTitle:
+        return "Show more";
+      case AllStrings.showLessTitle:
+        return "Show less";
       case AllStrings.thanksForOrderingTitle:
         return "Thanks for ordering";
       case AllStrings.nameChangedSuccessfullyTitle:
@@ -427,6 +431,10 @@ class EnStrings implements IStrings {
         return "Couldn't add the spare part, please try again";
       case AllStrings.saveTitle:
         return "Save";
+      case AllStrings.agreeTitle:
+        return "Agree";
+      case AllStrings.viewTermsAndConditionsTitle:
+        return "View Terms & Conditions";
     }
   }
 

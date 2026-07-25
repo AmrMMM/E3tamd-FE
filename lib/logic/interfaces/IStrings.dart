@@ -171,6 +171,8 @@ enum AllStrings {
   orderAddedToCartTitle,
   failedToAddOrderToCartTitle,
   failedToCalculatePriceTitle,
+  showMoreTitle,
+  showLessTitle,
   thanksForOrderingTitle,
   nameChangedSuccessfullyTitle,
   errorWhileChangingNameTitle,
@@ -212,7 +214,9 @@ enum AllStrings {
   sparePartDescriptionEnTitle,
   sparePartCreatedTitle,
   errorWhileCreatingSparePartTitle,
-  saveTitle
+  saveTitle,
+  agreeTitle,
+  viewTermsAndConditionsTitle
 }
 
 abstract class IStrings {

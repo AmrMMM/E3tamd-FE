@@ -30,6 +30,10 @@ class MarkdownBodyView extends StatelessWidget {
       data: data,
       // Tables are a GitHub-flavoured extension - without this they render as literal pipes.
       extensionSet: md.ExtensionSet.gitHubFlavored,
+      // Treat a single newline as a line break, so pressing Enter in the admin editor shows up as a
+      // new line. Without this a lone newline is collapsed to a space (and raw <br /> is ignored,
+      // since this renderer drops HTML).
+      softLineBreak: true,
       styleSheet: MarkdownStyleSheet(
         p: body,
         listBullet: body,

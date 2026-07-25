@@ -1,5 +1,6 @@
 import 'package:e3tmed/common/BaseWidgets.dart';
 import 'package:e3tmed/common/buttons/primarybuttonshape.dart';
+import 'package:e3tmed/common/price_text.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/models/agent_requests_model.dart';
 import 'package:e3tmed/models/order.dart';
@@ -68,8 +69,8 @@ class OrderDetailsScreenState extends BaseStateArgumentObject<
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 5.0),
                     child: Text(
-                      strings.getOrderAgentStatusInformationString(
-                          order.status!),
+                      strings
+                          .getOrderAgentStatusInformationString(order.status!),
                       style: const TextStyle(color: Colors.black, fontSize: 16),
                     ),
                   ),
@@ -90,10 +91,17 @@ class OrderDetailsScreenState extends BaseStateArgumentObject<
                         onPressed: () => viewModel.payDifference(order),
                         icon:
                             const Icon(Icons.credit_card, color: Colors.white),
-                        label: Text(
-                          "${strings.getStrings(AllStrings.payRemainingTitle)} "
-                          "(${due.toStringAsFixed(2)} SAR)",
-                          style: const TextStyle(color: Colors.white),
+                        label: Text.rich(
+                          TextSpan(
+                            style: const TextStyle(color: Colors.white),
+                            children: [
+                              TextSpan(
+                                  text:
+                                      "${strings.getStrings(AllStrings.payRemainingTitle)} ("),
+                              priceSpan(due, color: Colors.white),
+                              const TextSpan(text: ")"),
+                            ],
+                          ),
                         ),
                       ),
                     );

@@ -1,9 +1,11 @@
 import 'package:e3tmed/common/BaseWidgets.dart';
 import 'package:e3tmed/common/custom_checkout_item_card/custom_order_item_widget.dart';
+import 'package:e3tmed/common/price_text.dart';
 import 'package:e3tmed/models/order_item_extensions.dart';
 import 'package:e3tmed/common/buttons/primarybuttonshape.dart';
 import 'package:e3tmed/common/customalertdialog/add_extra_alert_dialog.dart';
 import 'package:e3tmed/common/customtextfield/CustomTextField.dart';
+import 'package:e3tmed/common/expandable_description.dart';
 import 'package:e3tmed/common/markdown_text.dart';
 import 'package:e3tmed/common/multi_select_list/multi_select_list.dart';
 import 'package:e3tmed/common/price_summary_widget.dart';
@@ -59,7 +61,7 @@ class AgentOrderDetailsScreenState extends BaseStateArgumentObject<
   @override
   Widget build(BuildContext context) {
     double totalPrice = 0;
-    args!.request.items.map((e) => totalPrice += e.totalPrice!).toList();
+    args!.request.items.map((e) => totalPrice += e.totalPrice ?? 0).toList();
     return Scaffold(
       appBar: AppBar(
         title: Text(strings.getStrings(AllStrings.orderDetailsTitle)),
@@ -76,8 +78,7 @@ class AgentOrderDetailsScreenState extends BaseStateArgumentObject<
                   children: [
                     Text(
                       args!.request.items.isNotEmpty
-                          ? args!.request.items[0]
-                              .categoryDisplayName(strings)
+                          ? args!.request.items[0].categoryDisplayName(strings)
                           : '',
                       style: const TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
@@ -333,7 +334,8 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                             color: Theme.of(context).primaryColor,
                             fontSize: 16),
                       ),
-                      Text(stripMarkdown(product.getDescription()),
+                      ExpandableDescription(
+                          text: stripMarkdown(product.getDescription()),
                           style: TextStyle(
                               color: Theme.of(context).primaryColor,
                               fontSize: 13)),
@@ -371,11 +373,18 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                         const SizedBox(
                           height: 15,
                         ),
-                        Text("Price ${widget.item.totalPrice} SAR",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).primaryColor,
-                                fontSize: 13)),
+                        Text.rich(TextSpan(
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).primaryColor,
+                              fontSize: 13),
+                          children: [
+                            const TextSpan(text: "Price "),
+                            priceSpan(widget.item.totalPrice ?? 0,
+                                fontSize: 13,
+                                color: Theme.of(context).primaryColor),
+                          ],
+                        )),
                       ],
                       const SizedBox(
                         height: 15,
@@ -412,10 +421,8 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                     ProductSpecsDetailsWidget(
                       title: strings.getStrings(AllStrings.dimensionsTitle),
                       data: defaultDimensions,
-                      onTap: () => openBottomSheet(
-                          product.availableDimensions!,
-                          context,
-                          AllStrings.dimensionsTitle, (value) {
+                      onTap: () => openBottomSheet(product.availableDimensions!,
+                          context, AllStrings.dimensionsTitle, (value) {
                         Navigator.of(context).pop();
                         setState(() {
                           defaultDimensions = value;
@@ -432,10 +439,8 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                     ProductSpecsDetailsWidget(
                       title: strings.getStrings(AllStrings.thicknessTitle),
                       data: defaultThickness,
-                      onTap: () => openBottomSheet(
-                          product.availableThickness!,
-                          context,
-                          AllStrings.thicknessTitle, (value) {
+                      onTap: () => openBottomSheet(product.availableThickness!,
+                          context, AllStrings.thicknessTitle, (value) {
                         Navigator.of(context).pop();
                         setState(() {
                           defaultThickness = value;
@@ -452,10 +457,8 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                     ProductSpecsDetailsWidget(
                       title: strings.getStrings(AllStrings.colorTitle),
                       data: defaultColor,
-                      onTap: () => openBottomSheet(
-                          product.availableColors!,
-                          context,
-                          AllStrings.colorTitle, (value) {
+                      onTap: () => openBottomSheet(product.availableColors!,
+                          context, AllStrings.colorTitle, (value) {
                         Navigator.of(context).pop();
                         setState(() {
                           defaultColor = value;
@@ -506,7 +509,7 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                                                   .removeSpareFromTotal(
                                                       e.product!, widget.item);
                                               totalSparePartsPrice -=
-                                                  e.purchasePrice!;
+                                                  e.purchasePrice ?? 0;
                                             })))
                                     .toList(),
                               ),
@@ -532,14 +535,15 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                                             purchasePrice: e.basePrice,
                                             quantity: 1))
                                         .toList(),
-                                    context, (value) {
-                                    setState(() {
-                                      sparePartsList.addAll(value);
-                                      totalSparePartsPrice = 0;
-                                      widget.viewModel!
-                                          .addSpareToTotal(value, widget.item);
-                                    });
-                                  },
+                                    context,
+                                    (value) {
+                                      setState(() {
+                                        sparePartsList.addAll(value);
+                                        totalSparePartsPrice = 0;
+                                        widget.viewModel!.addSpareToTotal(
+                                            value, widget.item);
+                                      });
+                                    },
                                     (value) => value.product!.getProductName(),
                                     (value) => value.purchasePrice!,
                                     (value) => ProductImage(
@@ -558,7 +562,8 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                                             return OrderItemExtraProduct(
                                                 product: product,
                                                 productId: product.id,
-                                                purchasePrice: product.basePrice,
+                                                purchasePrice:
+                                                    product.basePrice,
                                                 quantity: 1);
                                           },
                                     addNewLabel: strings.getStrings(
@@ -594,8 +599,8 @@ class _ProductDetailsWidgetState extends State<ProductDetailsWidget> {
                         icon: Icons.add,
                         title: strings.getStrings(AllStrings.addExtrasTitle),
                         onTap: () => selectExtrasBottomSheet<ExtraModel>(
-                                product.availableExtras ?? [],
-                                context, (value) {
+                                product.availableExtras ?? [], context,
+                                (value) {
                               setState(() {
                                 extrasList.addAll(value);
                                 totalSparePartsPrice = 0;
@@ -884,8 +889,8 @@ Future<Product?> openAddNewSparePartBottomSheet(
     isScrollControlled: true,
     builder: (context) => Padding(
       // Lift the sheet above the keyboard so the fields and Save button stay visible.
-      padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom),
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: MyBottomSheetDialog(
         customWidget: AddNewSparePartForm(viewModel: viewModel),
       ),
@@ -1079,7 +1084,8 @@ class _AddNewSparePartFormState extends State<AddNewSparePartForm> {
                       imageBytes = null;
                       imageMimeType = null;
                     }),
-                    child: const Icon(Icons.close, color: Colors.grey, size: 25),
+                    child:
+                        const Icon(Icons.close, color: Colors.grey, size: 25),
                   ),
               ],
             ),

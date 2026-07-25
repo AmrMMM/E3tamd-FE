@@ -1,4 +1,5 @@
 import 'package:e3tmed/DI.dart';
+import 'package:e3tmed/common/price_text.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/models/order.dart';
 import 'package:e3tmed/models/order_item_extensions.dart';
@@ -25,7 +26,8 @@ class MyOrdersCardWidget extends StatelessWidget {
         )
         .toString();
     double totalPrice = 0;
-    order.items.map((e) => totalPrice += e.totalPrice!).toList();
+    // A deleted product's line has no price; count it as 0 instead of throwing.
+    order.items.map((e) => totalPrice += e.totalPrice ?? 0).toList();
     return InkWell(
       onTap: onTap,
       child: Directionality(
@@ -131,8 +133,8 @@ class MyOrdersCardWidget extends StatelessWidget {
                             const SizedBox(
                               width: 5,
                             ),
-                            Text(
-                              "${order.totalPrice} SAR",
+                            PriceText(
+                              order.totalPrice,
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 12,

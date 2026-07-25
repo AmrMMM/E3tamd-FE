@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:e3tmed/DI.dart';
 import 'package:e3tmed/common/BaseWidgets.dart';
+import 'package:e3tmed/common/price_text.dart';
 import 'package:e3tmed/common/buttons/primarybuttonshape.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/models/order.dart';
@@ -42,8 +43,10 @@ class CartScreenState extends BaseStateObject<CartScreen, CartViewModel> {
         if (event?.isEmpty ?? true) {
           subtotal = 0;
         } else {
+          // A deleted product's line has no price, so it contributes nothing
+          // rather than throwing.
           subtotal = event!
-              .map((e) => (e.totalPrice! * e.quantity.toDouble()))
+              .map((e) => ((e.totalPrice ?? 0) * e.quantity.toDouble()))
               .reduce((value, element) => (value + element));
         }
       });
@@ -85,7 +88,9 @@ class CartScreenState extends BaseStateObject<CartScreen, CartViewModel> {
         ),
       ),
       body: Directionality(
-        textDirection: useLanguage == Languages.arabic.name?TextDirection.rtl:TextDirection.ltr,
+        textDirection: useLanguage == Languages.arabic.name
+            ? TextDirection.rtl
+            : TextDirection.ltr,
         child: Column(
           children: [
             Container(
@@ -105,8 +110,8 @@ class CartScreenState extends BaseStateObject<CartScreen, CartViewModel> {
                         ),
                         label: Text(
                           "${strings.getStrings(AllStrings.deliverToTitle)} $_address",
-                          style:
-                              const TextStyle(color: Colors.white, fontSize: 12),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 12),
                         )),
                   const Padding(
                     padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -136,15 +141,16 @@ class CartScreenState extends BaseStateObject<CartScreen, CartViewModel> {
                     ),
                   ),
                   RichText(
+                    textDirection: TextDirection.ltr,
                     text: TextSpan(children: [
+                      riyalSymbolSpan(fontSize: 16, color: Colors.black),
+                      const TextSpan(text: " "),
                       TextSpan(
-                          text: "$subtotal",
+                          text: formatAmount(subtotal),
                           style: const TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize: 16)),
-                      const TextSpan(
-                          text: "  SAR", style: TextStyle(color: Colors.black)),
                     ]),
                   ),
                 ],
@@ -169,7 +175,7 @@ class CartScreenState extends BaseStateObject<CartScreen, CartViewModel> {
                                     setState(() {
                                       event.quantity = quantity;
                                       subtotal = cartList!
-                                          .map((e) => (e.totalPrice! *
+                                          .map((e) => ((e.totalPrice ?? 0) *
                                               e.quantity.toDouble()))
                                           .reduce((value, element) =>
                                               (value + element));

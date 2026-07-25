@@ -1,5 +1,6 @@
 import 'package:e3tmed/common/BaseWidgets.dart';
 import 'package:e3tmed/common/custom_checkout_item_card/custom_order_item_widget.dart';
+import 'package:e3tmed/common/price_text.dart';
 import 'package:e3tmed/logic/interfaces/IStrings.dart';
 import 'package:e3tmed/viewmodels/agent_viewmodels/order/agent_order_summary_view_model.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ class AgentOrderSummaryScreenState extends BaseStateArgumentObject<
   @override
   Widget build(BuildContext context) {
     var allProductPrice =
-        args!.request.items.map((element) => element.totalPrice!);
+        args!.request.items.map((element) => element.totalPrice ?? 0);
     if (allProductPrice.isNotEmpty) {
       productPrice =
           allProductPrice.reduce((value, element) => value + element);
@@ -412,9 +413,15 @@ class _ProductDetailsWidgetState extends State<_ProductDetailsWidget> {
                         ),
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 1.0),
-                        child: Text("Price ${widget.item.totalPrice} SAR",
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 13)),
+                        child: Text.rich(TextSpan(
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 13),
+                          children: [
+                            const TextSpan(text: "Price "),
+                            priceSpan(widget.item.totalPrice ?? 0,
+                                fontSize: 13, color: Colors.grey),
+                          ],
+                        )),
                       ),
                       const SizedBox(
                         height: 5,

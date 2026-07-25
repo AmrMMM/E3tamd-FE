@@ -34,6 +34,7 @@ import 'package:e3tmed/models/product_image_ref.dart';
 import 'package:e3tmed/models/payment.dart';
 import 'package:e3tmed/models/price.dart';
 import 'package:e3tmed/models/product.dart';
+import 'package:e3tmed/models/terms_and_conditions.dart';
 import 'package:e3tmed/models/user_address.dart';
 import 'package:e3tmed/models/user_auth_model.dart';
 import 'package:e3tmed/screens/end_user_phase/settings/settings_screen.dart';
@@ -90,6 +91,8 @@ void __setModelFactories() {
       () => PaymentRequestFactory());
   injector.registerSingleton<IModelFactory<PaymentResult>>(
       () => PaymentResultFactory());
+  injector.registerSingleton<IModelFactory<TermsAndConditions>>(
+      () => TermsAndConditionsFactory());
 }
 
 void __setStubs() {
@@ -100,8 +103,8 @@ Future __setRealDependencies() async {
   final injector = Injector.appInstance;
   injector.registerSingleton<IHTTP>(() => IOHTTP());
   injector.registerSingleton<IAuth>(() => Auth());
-  injector.registerSingleton<IPendingAuthAction>(
-      () => PendingAuthActionService());
+  injector
+      .registerSingleton<IPendingAuthAction>(() => PendingAuthActionService());
   injector.registerSingleton<ISupport>(() => Support());
   injector.registerSingleton<ICoreLogic>(() => CoreLogic());
   injector.registerSingleton<ISocial>(() => SocialImplementation());

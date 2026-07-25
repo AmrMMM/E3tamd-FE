@@ -22,11 +22,13 @@ class OderDetailsBottomSheetWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double totalPrice = 0;
-    order.items.map((e) => totalPrice += e.totalPrice!).toList();
+    // Deleted products carry no price, so they contribute nothing to the totals
+    // rather than throwing.
+    order.items.map((e) => totalPrice += e.totalPrice ?? 0).toList();
     var list = order.items.expand((element) => element.extras);
     double extrasPrice = list.isNotEmpty
         ? list
-            .map((e) => e.purchasePrice!)
+            .map((e) => e.purchasePrice ?? 0)
             .reduce((value, element) => value + element)
         : 0;
     return Container(

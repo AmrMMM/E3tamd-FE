@@ -257,7 +257,7 @@ class ArStrings implements IStrings {
       case AllStrings.changeLanguageTitle:
         return "تغيير اللغة";
       case AllStrings
-          .priceMayChangeAccordingToAgentsVisitAndFeesWillBeDeductedFromTotalPaymentWhenTheRequestIsCompletedTitle:
+            .priceMayChangeAccordingToAgentsVisitAndFeesWillBeDeductedFromTotalPaymentWhenTheRequestIsCompletedTitle:
         return "يمكن للسعر أن يتغير بناء علي زيارة أحد موظفينا اليك, و سيتم استقطاع هذا المبلغ من السعر الاجمالي في حاله تم تأكيد طلبكم";
       case AllStrings.ifYouDontKnowTheDoorDimensionsYouCanAskForAnAgentTitle:
         return "في حالة عدم معرفة الأبعاد الصحيحة, يمكنك طلب أحد موظفينا";
@@ -268,10 +268,10 @@ class ArStrings implements IStrings {
       case AllStrings.confirmTitle:
         return "تأكيد";
       case AllStrings
-          .youWillReceiveACodeToVerifyYourPhoneNumberPleaseWriteItDownWhenYouReceiveItTitle:
+            .youWillReceiveACodeToVerifyYourPhoneNumberPleaseWriteItDownWhenYouReceiveItTitle:
         return "سوف تصلك رسالة بها رمز التأكيد الخاص بك, برجاء إدخال رمز التأكيد";
       case AllStrings
-          .youWillReceiveACodeToResetYourPasswordPleaseWriteItDownWhenYouReceiveItTitle:
+            .youWillReceiveACodeToResetYourPasswordPleaseWriteItDownWhenYouReceiveItTitle:
         return "سوف تصلك رسالة بها رمز التأكيد الخاص بك لتغيير رقم السري الخاص بك, برجاء إدخال رمز التأكيد";
       case AllStrings.codeTitle:
         return "رمز";
@@ -339,6 +339,10 @@ class ArStrings implements IStrings {
         return "فشل إضافة الطلب إلى عربة التسوق";
       case AllStrings.failedToCalculatePriceTitle:
         return "تعذّر حساب السعر، يرجى المحاولة مرة أخرى";
+      case AllStrings.showMoreTitle:
+        return "عرض المزيد";
+      case AllStrings.showLessTitle:
+        return "عرض أقل";
       case AllStrings.thanksForOrderingTitle:
         return "شكرا للطلب";
       case AllStrings.nameChangedSuccessfullyTitle:
@@ -425,6 +429,10 @@ class ArStrings implements IStrings {
         return "تعذّر إضافة قطعة الغيار، حاول مرة أخرى";
       case AllStrings.saveTitle:
         return "حفظ";
+      case AllStrings.agreeTitle:
+        return "موافق";
+      case AllStrings.viewTermsAndConditionsTitle:
+        return "عرض الشروط والأحكام";
     }
   }
 
@@ -501,7 +509,7 @@ class ArStrings implements IStrings {
       [OrderStatus? oldOrderStatus]) {
     switch (type) {
       case NotificationType.agentOrderCanceled:
-        return "طلب #${order.id} الذاهب الي ${order.address.address} وتكلفته ${order.totalPrice} SAR قد تم الغاءه ";
+        return "طلب #${order.id} الذاهب الي ${order.address.address} وتكلفته ${order.totalPrice} ر.س قد تم الغاءه ";
       case NotificationType.userOrderStatusChanged:
         return "طلب #${order.id} تم تغيير حالته من \"${getOrderStatusString(oldOrderStatus!)}\" إلى \"${getOrderStatusString(order.status!)}\"";
       case NotificationType.userOrderPriceChanged:
