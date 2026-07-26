@@ -162,7 +162,10 @@ class _PriceSummaryWidgetState extends State<PriceSummaryWidget> {
                       child: _DetailsItem(
                         isTotal: true,
                         item: strings.getStrings(AllStrings.totalDue),
-                        amount: finalTotalPrice - paidAmount,
+                        // Never render a negative balance: an overpaid order owes
+                        // nothing, it does not owe a negative amount.
+                        amount: (finalTotalPrice - paidAmount)
+                            .clamp(0, double.infinity),
                       )),
                   if (widget.onPayDifference != null &&
                       (finalTotalPrice - paidAmount) > 0)

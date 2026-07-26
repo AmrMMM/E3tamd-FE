@@ -16,6 +16,10 @@ enum InputType {
   address,
   number,
   longText,
+  // Single-line text with no format rules beyond "not empty" - for things that
+  // are not person names, e.g. a product/spare-part name that may contain
+  // digits or symbols ("Bracket 2", "Gear 5mm").
+  freeText,
 }
 
 class PrimaryTextFieldWithHeader extends StatefulWidget {
@@ -260,11 +264,15 @@ class _PrimaryTextFieldWithHeaderState
                         maxLines:
                             widget.inputType == InputType.longText ? 7 : 1,
                         obscureText: textVisibility,
-                        maxLength: widget.inputType == InputType.name
-                            ? widget.maxChars ?? 15
-                            : widget.inputType == InputType.phone
-                                ? phonePrefix.numberOfDigits
-                                : null,
+                        // An explicit maxChars always wins; otherwise fall back to
+                        // the per-type defaults (15 suits a person's name, which is
+                        // what InputType.name is for).
+                        maxLength: widget.maxChars ??
+                            (widget.inputType == InputType.name
+                                ? 15
+                                : widget.inputType == InputType.phone
+                                    ? phonePrefix.numberOfDigits
+                                    : null),
                         keyboardType: widget.keyboardType ??
                             (widget.inputType == InputType.phone ||
                                     widget.inputType == InputType.number
@@ -349,7 +357,8 @@ class _PrimaryTextFieldWithHeaderState
                               } else {
                                 return null;
                               }
-                            } else if (widget.inputType == InputType.address) {
+                            } else if (widget.inputType == InputType.address ||
+                                widget.inputType == InputType.freeText) {
                               if (value!.trim().isEmpty) {
                                 return "${widget.hintText} ${strings.getStrings(AllStrings.isRequiredTitle)}";
                               } else {

@@ -986,17 +986,22 @@ class _AddNewSparePartFormState extends State<AddNewSparePartForm> {
               ],
             ),
             const Divider(thickness: 0.7),
+            // freeText, not name: a part name is not a person's name - it may end
+            // in a digit or symbol ("Bracket 2", "Gear 5mm") and needs more room
+            // than the 15 characters InputType.name allows.
             PrimaryTextFieldWithHeader(
               isObscure: false,
-              inputType: InputType.name,
+              inputType: InputType.freeText,
               isRequired: true,
+              maxChars: 100,
               hintText: strings.getStrings(AllStrings.sparePartNameArTitle),
               onChangedValue: (value) => nameAr = value,
             ),
             PrimaryTextFieldWithHeader(
               isObscure: false,
-              inputType: InputType.name,
+              inputType: InputType.freeText,
               isRequired: true,
+              maxChars: 100,
               hintText: strings.getStrings(AllStrings.sparePartNameEnTitle),
               onChangedValue: (value) => nameEn = value,
             ),
